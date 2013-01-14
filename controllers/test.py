@@ -1,7 +1,5 @@
 from google.appengine.ext import webapp
 from imslti.ltilaunch import LTI_Launch
-import pickle
-import marshal
 import httplib
 import urllib
 
@@ -17,9 +15,16 @@ class Test(webapp.RequestHandler):
 
             # Dont include launch object yet, keep it simple for now ...
             # Shouldn't be too much work though
-            seriallaunch = pickle.dumps(launch, -1)
-            #seriallaunch = marshal.dumps(launch, -1)
-            params = urllib.urlencode({ 'launch':seriallaunch})
+            launchdict = { 
+                'isinstructor' : launch.isInstructor(),
+                'consumerkey' : launch.getConsumerKey(),
+                'coursekey' : launch.getCourseKey(),
+                'coursename': launch.getCourseName(),
+            
+                         }
+
+
+            params = urllib.urlencode(launchdict)
 
             conn.request("POST", self.request.path, params)
             self.response.out.write(conn.getresponse().read())
