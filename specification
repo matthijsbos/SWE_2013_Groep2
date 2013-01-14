@@ -1,0 +1,12 @@
+server:
+    draait default op 5000
+    kan alleen aangeroepen worden (default) met http://localhost/
+    verwacht een POST request in json
+    'model':
+    'function':
+    'params': ['bla','test=bla']
+    stuurt een POST response:
+    'status': 200 of 500
+    'model': 'object'
+
+

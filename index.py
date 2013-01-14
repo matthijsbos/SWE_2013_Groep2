@@ -2,7 +2,7 @@ import os
 import wsgiref.handlers
 from google.appengine.ext import webapp
 from imslti.ltilaunch import LTI_Launch
-from controllers.helloWorld import HelloWorld
+from controllers.test import Test
 
 class LaunchHandler(webapp.RequestHandler):
     def get(self):
@@ -37,8 +37,9 @@ class IndexHandler(webapp.RequestHandler):
 
 def main():
     # Add routes (ie. uri's which are bound to a class to handle that location)
-    routes = [ ('/launch', LaunchHandler) ]
-    routes.append( ('/Helloworld', HelloWorld) ) 
+
+    routes = [ ('/launch', Test) ]
+    routes.append( ('/test', Test) ) 
     routes.append( ('/.*', IndexHandler) )
 
     application = webapp.WSGIApplication(routes, debug=True)
