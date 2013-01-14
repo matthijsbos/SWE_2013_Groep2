@@ -16,4 +16,9 @@ class Model(Base):
     def __repr__(self):
         return self.text
 
+    @staticmethod
+    def getall():
+        return ['Hello','World','!']
+
+
 Base.metadata.create_all(engine)
