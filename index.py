@@ -14,14 +14,23 @@ class LaunchHandler(webapp.RequestHandler):
             return
 
         if launch.loaded:
-            self.response.out.write('<a href="' +
-                    launch.getUrl() +
-                    '" target="_new">Open (with session)</a></p>')
+            conn = httplib.HTTPConnection('localhost', 5000)   
 
-            # Value is preserved in this session
-            val = launch.get('val', 0)
-            self.response.out.write('<p>Val '+str(val)+'</p>')
-            launch['val'] = val + 1
+            # Dont include launch object yet, keep it simple for now ...
+            # Shouldn't be too much work though
+            launchdict = { 
+                'isinstructor' : launch.isInstructor(),
+                'consumerkey' : launch.getConsumerKey(),
+                'coursekey' : launch.getCourseKey(),
+                'coursename': launch.getCourseName(),
+            
+                         }
+
+            params = urllib.urlencode(launchdict)
+
+            conn.request("POST", self.request.path, params)
+            self.response.out.write(conn.getresponse().read())
+
         else:
             self.response.out.write('<p>This tool must be launched using ' +
                     'IMS Basic LTI.</p>')
