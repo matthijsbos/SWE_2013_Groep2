@@ -27,3 +27,9 @@ handlers:
 - url: /.*
   script: index.py
 
+libraries:
+- name: jinja2
+  version: latest
+
+- name: django
+  version: latest
