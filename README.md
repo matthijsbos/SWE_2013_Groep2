@@ -1,1 +1,1 @@
-de readme word later nog wel goed gevult
+# SWE 2013, Groep 2LTI plugin voor Sakai.
