@@ -2,6 +2,8 @@ import os
 import wsgiref.handlers
 from google.appengine.ext import webapp
 from imslti.ltilaunch import LTI_Launch
+import httplib
+import urllib
 
 class LaunchHandler(webapp.RequestHandler):
     def get(self):
@@ -20,6 +22,8 @@ class LaunchHandler(webapp.RequestHandler):
             # Shouldn't be too much work though
             launchdict = { 
                 'isinstructor' : launch.isInstructor(),
+                'userkey' : launch.getUserKey(),
+                'resourcekey' : launch.getResourceKey(),
                 'consumerkey' : launch.getConsumerKey(),
                 'coursekey' : launch.getCourseKey(),
                 'coursename': launch.getCourseName(),
