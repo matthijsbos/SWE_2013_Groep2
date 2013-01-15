@@ -19,8 +19,9 @@ class Answer():
 
             answer.AnswerModel.save(questionID,userID,answerText)
             return render_template('answersaved.html')
+
         elif self.request.form.has_key('showall'):
             #Render all
-            return render_template('showanswers.html',answers=answer.AnswerModel.getall())
+            return render_template('showanswers.html',answers=answer.AnswerModel.get_all()
         else:
             return render_template('answer.html',questionID=qID,userID=uID,questionText=qText)
