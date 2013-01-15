@@ -11,7 +11,24 @@ class ModifyTags():
     def __init__(self):
         self.taglist = []
         for tag in session.query(Tag):
-            taglist.append(tag)
+            self.taglist.append(tag)
+
+    def render(self):
+        return render_template('modifyTags.html',tags=self.taglist)
+
+class AddTag():
+    def __init__(self, request):
+        for tag in session.query(Tag):
+            if tag.name == request.form['newTag']:
+                break
+        else:
+            session.add(Tag(request.form['newTag']))
+            session.commit()
+
+
+        self.taglist = []
+        for tag in session.query(Tag):
+            self.taglist.append(tag)
 
     def render(self):
         return render_template('modifyTags.html',tags=self.taglist)

@@ -29,6 +29,11 @@ def managetags():
     ctrler = modifytags.ModifyTags()
     return ctrler.render()
 
+@app.route("/addtag",methods=['POST'])
+def addtags():
+    ctrler = modifytags.AddTag(request)
+    return ctrler.render()
+
 if __name__ == '__main__':
     app.run()
         
