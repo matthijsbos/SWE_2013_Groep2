@@ -36,6 +36,7 @@ def remove_tag(tag_id):
     for tag in session.query(Tag).filter(Tag.id==tag_id):
         session.delete(tag)
 
+
 class Answer(Base):
     __tablename__ = 'Answers'
     
