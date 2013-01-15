@@ -1,0 +1,21 @@
+<html>
+<head>
+	<title>add/remove tags</title>
+</head>
+<body>
+
+	<h3>this is a table of tags</h3>
+	<form>
+	add new tag:  <input type="text" name="newTag">
+	<input type="submit" value="Add Tag">
+	</form>
+	
+	<table class="tags">
+	
+	{% for tag in tags %}
+	<tr><td><input type="submit" value="{{tag.id}}" name="tag"> {{tag.name}} </td></tr>
+	{% endfor %}
+	</table>
+	
+</body>
+</html>
