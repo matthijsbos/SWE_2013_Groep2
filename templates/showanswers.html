@@ -1,0 +1,12 @@
+<html>
+    <body>
+        <table>
+            {% for answer in answers%}
+            <tr>
+                <td>{{ answer.answerID }}</td>
+                <td>{{ answer }}</td>
+            </tr>
+            {% endfor %}            
+        </table>
+    </body>
+</html>
