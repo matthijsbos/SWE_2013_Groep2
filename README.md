@@ -7,7 +7,7 @@ deze werkt als volgt:
 
     python flaskapplication.py
     dev_appserver.py .
-    roep de tool aan via de sakai omgeving
+    roep de tool aan via de sakai omgeving (sakai.chozo.nl).
 
 
 SWE_2013_Groep2
