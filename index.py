@@ -29,6 +29,9 @@ class LaunchHandler(webapp.RequestHandler):
                 'coursename': launch.getCourseName(),
             
                          }
+            
+            for argument in self.request.arguments():
+                launchdict[argument] = self.request.get(argument)
 
             params = urllib.urlencode(launchdict)
 
