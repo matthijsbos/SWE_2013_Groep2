@@ -9,9 +9,9 @@ from dbconnection import session
 
 class ModifyTags():
     def __init__(self):
-        taglist = []
+        self.taglist = []
         for tag in session.query(Tag):
             taglist.append(tag)
 
     def render(self):
-        return render_template('modifyTags.html',tags=taglist)
+        return render_template('modifyTags.html',tags=self.taglist)

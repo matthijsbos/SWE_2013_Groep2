@@ -4,7 +4,7 @@ Created on Mon Jan 14 14:01:46 2013
 
 @authors: David Schoorisse & Mustafa Karaalioglu
 """
-from sqlalchemy import Column, Integer, Sequence, String, Foreignkey
+from sqlalchemy import Column, Integer, Sequence, String, ForeignKey
 from sqlalchemy.ext.declarative import declarative_base
 
 from dbconnection import engine
@@ -41,8 +41,8 @@ class Answer(Base):
 class AnswerTag(Base):
     __tablename__ = 'AnswerTags'
     
-    answer_id = Column(Integer, Foreignkey('Awnsers.id'), primary_key=True)
-    tag_id = Column(Integer, Foreignkey('Tags.id'), primary_key=True)
+    answer_id = Column(Integer, ForeignKey('Answers.id'), primary_key=True)
+    tag_id = Column(Integer, ForeignKey('Tags.id'), primary_key=True)
     
     def __init__(self, answer_id, tag_id):
         self.answer_id = answer_id
