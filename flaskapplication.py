@@ -24,6 +24,11 @@ def launch():
     ctrler = hello.Hello()
     return ctrler.render()
 
+@app.route("/answer",methods=['POST'])
+def answerForm():
+    ctrler = answer.Answer(request)
+    return ctrler.render()
+
 if __name__ == '__main__':
         app.run()
         
