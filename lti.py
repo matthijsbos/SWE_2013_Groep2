@@ -93,11 +93,10 @@ class LTI():
         return flask.session['role'] == "Instructor"
 
     def dump_all(self):
-        ret = "<pre>"
+        ret = ""
         ret += "get_consumer = %s\n" % self.get_consumer()
         ret += "get_user_id = %s\n" % self.get_user_id()
         ret += "get_course_id = %s\n" % self.get_course_id()
         ret += "get_course_name = %s\n" % self.get_course_name()
         ret += "is_instructor = %s\n" % self.is_instructor()
-        ret += "</pre>"
         return ret
