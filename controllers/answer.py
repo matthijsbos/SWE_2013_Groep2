@@ -7,7 +7,7 @@ class Answer():
 
     def render(self):
         #dummy shit, get some real data
-        qText = 'dummy'
+        qText = 'wat is het antwoord op deze dummy vraag?'
         uID = -1
         qID = -1
 
