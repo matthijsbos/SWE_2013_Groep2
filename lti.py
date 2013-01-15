@@ -74,7 +74,11 @@ class LTI():
             # verify_request needs token stuff, so we manually call the check.
             version = oauth_server._get_version(oauth_request)
             consumer = oauth_server._get_consumer(oauth_request)
-            oauth_server._check_signature(oauth_request, consumer, None)
+            try:
+                oauth_server._check_signature(oauth_request, consumer, None)
+            except oauth.OAuthError as err:
+                # Rethrow our own for more details (the message itself)
+                raise LTIException("OAuth error: %s" % err.message)
 
             flask.session['consumer'] = params['oauth_consumer_key']
             flask.session['user_id'] = params['user_id']
