@@ -1,12 +1,11 @@
 # Author : Dexter Drupsteen
-# Descrp : Contains routing and calling of the constrollers
+# Descrp : Contains routing and calling of the controllers
 # Changes:
-# Comment: MultiDict with isinstructor,consumerkey,coursekey and coursename in
-#          the request.form field.
+# Comment:
 
 from flask import Flask, request, render_template, g
 from lti import LTI, LTIException
-from controllers import hello
+from controllers import index, answer
 
 app = Flask(__name__)
 app.debug = True
@@ -14,11 +13,15 @@ app.secret_key = "Hurdygurdy"
 
 @app.before_request
 def init_lti():
+    """Starts (or resumes) the LTI session before anything else is handled.
+
+    When no LTI session is available, an error page will be displayed."""
+
     params = {}
     if request.method == 'POST':
         params = request.form.to_dict()
     else:
-        params =request.args.to_dict()
+        params = request.args.to_dict()
 
     try:
         g.lti = LTI(request.url, params, dict(request.headers))
@@ -29,13 +32,11 @@ def init_lti():
             ret += "<hr>Debug info:<br/>%s" % str(error)
         return ret
 
-    else:
-        print g.lti.dump_all()
-
 # define the routes for our application
 @app.route("/",methods=['GET', 'POST'])
 def home():
-    return "This is not the way to call the application"
+    ctrler = index.Index(request)
+    return ctrler.render()
 
 @app.route("/test",methods=['POST'])
 def test():
@@ -43,7 +44,12 @@ def test():
 
 @app.route("/launch",methods=['POST'])
 def launch():
-    ctrler = hello.Hello()
+    ctrler = index.Index(request)
+    return ctrler.render()
+
+@app.route("/answer",methods=['POST'])
+def answerForm():
+    ctrler = answer.Answer(request)
     return ctrler.render()
 
 @app.route("/logout")
