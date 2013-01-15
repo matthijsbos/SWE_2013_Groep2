@@ -34,6 +34,12 @@ def addtags():
     ctrler = modifytags.AddTag(request)
     return ctrler.render()
 
+@app.route("/removetag",methods=['POST'])
+def removetags():
+    ctrler = modifytags.AddTag(request)
+    return ctrler.render()
+
+    
 if __name__ == '__main__':
     app.run()
         
