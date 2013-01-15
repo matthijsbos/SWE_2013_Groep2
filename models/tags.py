@@ -28,6 +28,14 @@ class Tag(Base):
             return "<Tag('%d', '%s')>" % (self.id, self.name)
             
 
+def add_tag(tag):
+    if session.query(Tag.name).filter(Tag.name==tag.name).first() is None:
+        session.add(tag)
+        
+def remove_tag(tag_id):
+    for tag in session.query(Tag).filter(Tag.id==tag_id):
+        session.delete(tag)
+
 class Answer(Base):
     __tablename__ = 'Answers'
     
