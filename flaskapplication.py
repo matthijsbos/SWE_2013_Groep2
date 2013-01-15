@@ -6,6 +6,7 @@
 
 from flask import Flask, request, render_template
 from controllers import hello, modifytags
+from models.tags import remove_tag
 
 app = Flask(__name__)
 app.debug = True
@@ -36,8 +37,8 @@ def addtags():
 
 @app.route("/removetag",methods=['POST'])
 def removetags():
-    ctrler = modifytags.AddTag(request)
-    return ctrler.render()
+    remove_tag(request.form['tag'])
+    return "OK"
 
     
 if __name__ == '__main__':
