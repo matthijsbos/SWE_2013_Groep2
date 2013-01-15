@@ -7,7 +7,7 @@ Created on Mon Jan 14 14:01:46 2013
 from sqlalchemy import Column, Integer, Sequence, String, ForeignKey
 from sqlalchemy.ext.declarative import declarative_base
 
-from dbconnection import engine
+from dbconnection import engine, session
 
 
 Base = declarative_base()
@@ -36,6 +36,9 @@ class Answer(Base):
     
     def __init__(self, answer):
         self.answer = answer
+        
+    def __repr__(self):
+        return "<Answer('%s')>" % (self.answer)
 
 
 class AnswerTag(Base):
