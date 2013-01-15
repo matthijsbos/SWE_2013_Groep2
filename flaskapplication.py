@@ -4,7 +4,7 @@
 # Comment: MultiDict with isinstructor,consumerkey,coursekey and coursename in
 #          the request.form field.
 
-from flask import Flask,request,render_template
+from flask import Flask, request, render_template
 from controllers import hello, modifytags
 
 app = Flask(__name__)
@@ -24,11 +24,11 @@ def launch():
     ctrler = hello.Hello()
     return ctrler.render()
 
-@app.route("/managetags",methods=['POST'])
+@app.route("/managetags",methods=['GET'])
 def managetags():
     ctrler = modifytags.ModifyTags()
     return ctrler.render()
 
 if __name__ == '__main__':
-        app.run()
+    app.run()
         
