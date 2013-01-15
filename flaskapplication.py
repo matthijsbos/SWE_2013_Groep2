@@ -24,11 +24,16 @@ def launch():
     ctrler = hello.Hello()
     return ctrler.render()
 
-@app.route("/managetags",methods=['POST'])
+@app.route("/managetags",methods=['GET'])
 def managetags():
     ctrler = modifytags.ModifyTags()
     return ctrler.render()
 
+@app.route("/addtag",methods=['POST'])
+def addtags():
+    ctrler = modifytags.AddTag(request)
+    return ctrler.render()
+
 if __name__ == '__main__':
-        app.run()
+    app.run()
         
