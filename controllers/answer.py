@@ -1,5 +1,5 @@
-from models import answer,Question
-from flask import render_template,g
+from models import answer
+from flask import render_template
 
 class Answer():
     def __init__(self,request):
@@ -9,15 +9,28 @@ class Answer():
 
         if self.request.form.has_key('answerText'):
             #save answer
-            questionID = self.request.form['questionID']
-            userID = self.request.form['userID']
+            questionID = int(self.request.form['questionID'])
+            userID = int(self.request.form['userID'])
             answerText = self.request.form['answerText']
 
             answer.AnswerModel.save(questionID,userID,answerText)
             return render_template('answersaved.html')
 
         elif self.request.form.has_key('showall'):
+            #Render all
             return self.render_all()
+        elif self.request.form.has_key('viewanswer'):
+            #show answer
+            aid = int(self.request.form['id'])
+            return render_template('editanswer.html', answer=answer.AnswerModel.by_id(aid))
+        elif self.request.form.has_key('reviewAnswer'):
+            #save review answer
+            questionID = int(self.request.form['questionID'])
+            userID = int(self.request.form['userID'])
+            reviewAnswer = self.request.form['reviewAnswer']
+            weight = int(self.request.form['weight'])
+            answer.AnswerModel.savereview(questionID,userID,reviewAnswer,weight)
+            return render_template('answersaved.html')
         else:
             #dummy shit, get some real data
             qText = 'wat is het antwoord op deze dummy vraag?'
