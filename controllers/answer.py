@@ -11,7 +11,7 @@ class Answer():
     def render(self):
         # dummy shit, get some real data
         qText = 'wat is het antwoord op deze dummy vraag?'
-        uID = 23455  # g.lti.get_user_id()
+        uID = g.lti.get_user_id()
         qID = -1
         timerD = 10
 
