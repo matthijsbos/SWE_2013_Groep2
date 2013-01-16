@@ -1,0 +1,16 @@
+<html>
+    <body>
+		{{ answer.userID }}'s answer on question {{ answer.questionID }}:<br>
+        {{ answer.text }}
+		<form action="/answer" id="answerform" method="post">
+            <input type="hidden"  name="questionID" value="{{answer.questionID}}" />
+            <input type="hidden" name="userID" value="{{answer.userID}}" />
+            <input type="hidden" name="weight" value="{{answer.weight}}" />
+            <br>
+            Edit answer: <br><textarea cols=50 rows=10 name="reviewAnswer">{{ answer.text }}</textarea>
+            <br>
+            <input type="submit"" value="edit" />
+		</form>
+
+    </body>
+</html>

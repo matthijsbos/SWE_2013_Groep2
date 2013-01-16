@@ -12,6 +12,7 @@ class AnswerModel(Base,BaseEntity):
     text = Column(String)
     questionID = Column(Integer)
     userID = Column(Integer)
+    weight = Column(Integer)
 
     def __repr__(self):
         return self.text + 'Represent'
@@ -21,7 +22,12 @@ class AnswerModel(Base,BaseEntity):
 
     @staticmethod
     def save(questionID,userID,answerText):
-        session.add(AnswerModel(questionID=questionID,userID=userID,text=answerText))
+        session.add(AnswerModel(questionID=questionID,userID=userID,text=answerText,weight=0))
+        session.commit()
+        
+    @staticmethod
+    def savereview(questionID,userID,answerText,weight):
+        session.add(AnswerModel(questionID=questionID,userID=userID,text=answerText,weight=weight+1))
         session.commit()
     
     @staticmethod
