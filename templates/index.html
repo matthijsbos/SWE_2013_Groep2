@@ -4,9 +4,13 @@
     <a href="#" onclick="document.questionForm.submit(); return false;">Ask a question</a>
     <form action="http://localhost:5000/question" method="post" name="questionForm">
     </form>
-    
+
     <a href="#" onclick="document.answerForm.submit(); return false;">Post an answer</a>
     <form action="http://localhost:5000/answer" method="post" name="answerForm">
+    </form>
+
+    <a href="#" onclick="document.deleteForm.submit(); return false;">Delete a question</a>
+    <form action="http://localhost:5000/deleteQuestion/1" method="post" name="deleteForm">
     </form>
 
     <hr />

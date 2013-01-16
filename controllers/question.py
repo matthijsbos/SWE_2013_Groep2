@@ -1,4 +1,4 @@
-from flask import render_template
+from flask import render_template, g
 from models.Question import Question
 from dbconnection import session
 from flask import escape
@@ -36,3 +36,41 @@ class questionController():
     def render(self):
         self.editQuestion(1, "Ben ik nu een echte vraag?", True)
         return render_template('question.html',wordlist=self.getQuestion(4))
+
+    @staticmethod
+    def delete_question(qid):
+        question = Question.by_id(int(qid))
+        if g.lti.is_instructor():
+            session.expunge(question)
+            session.commit()
+            return render_template('deleteQuestion.html',
+                    question = question,
+                    permission = True)
+        else:
+            return render_template('deleteQuestion.html',
+                    question = question,
+                    permission = False)
+
+    @staticmethod
+    def ask_question(self, instructor):
+        return render_template('askQuestion.html',instr=self.instructor)
+
+
+class HandleQuestion():
+    question = ""
+    time = 0
+
+    def __init__(self):
+        self.question = ""
+
+    def add_question(self,question):
+        self.question = question
+        session.add(Question("teacher1", "", question, False))
+        session.commit()
+
+    def set_time(self,time):
+        if isinstance(time,(int,long)):
+          self.time = time
+
+    def render(self):
+        return render_template('handleQuestion.html',question=self.question)
