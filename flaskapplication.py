@@ -3,9 +3,9 @@
 # Changes:
 # Comment:
 
-from flask import Flask, request, render_template, g
+from flask import Flask, Response, request, render_template, g
 from lti import LTI, LTIException
-from controllers import index, answer, askQuestion, handleQuestion
+from controllers import index, answer, askQuestion, handleQuestion, question
 
 app = Flask(__name__)
 app.debug = True
@@ -46,19 +46,30 @@ def test():
 def launch():
     ctrler = index.Index(request)
     return ctrler.render()
-    
+
 @app.route("/question",methods=['POST'])
-def question():
+def view_question():
     ctrler = askQuestion.AskQuestion()
     ctrler.set_instructor('Test_Instructor')
     return ctrler.render()
-    
+
 @app.route("/handleQuestion",methods=['POST'])
 def handle_Question():
     question = request.form['question']
     ctrler = handleQuestion.HandleQuestion()
     ctrler.add_question(question)
     return ctrler.render()
+
+@app.route("/question_export", methods=['GET', 'POST'])
+def question_export():
+    exp = question.questionController.exportCourse(g.lti.get_course_id())
+    print exp
+    return Response(exp,
+            mimetype="text/plain",
+            headers={"Content-Disposition":
+                "attachment;filename=questions_%s.txt" %
+                    g.lti.get_course_name()})
+
 
 @app.route("/answer",methods=['POST'])
 def answerForm():

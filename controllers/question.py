@@ -16,7 +16,7 @@ class questionController():
             session.add(Question("teacher1", "bla", "Hoe heet je?", False))
             session.add(Question("teacher1", "bla", "1337?", False))
             session.commit()
-            
+
     #function that updates the question in the db
     @staticmethod
     def editQuestion(q_id, question, activate):
@@ -28,6 +28,10 @@ class questionController():
     @staticmethod
     def getQuestion(n):
         return session.query(Question).order_by(Question.modified.desc())[:n]
+
+    @staticmethod
+    def exportCourse(course_id):
+        return Question.by_course_id(course_id)
 
     def render(self):
         self.editQuestion(1, "Ben ik nu een echte vraag?", True)

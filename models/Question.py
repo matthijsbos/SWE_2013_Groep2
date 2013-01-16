@@ -25,5 +25,9 @@ class Question(Base, BaseEntity):
                                                 self.question,
                                                 self.available)
 
+    @classmethod
+    def by_course_id(cls, course_id):
+        return session.query(cls).filter(cls.course_id == course_id).all()
+
 
 Base.metadata.create_all(engine)
