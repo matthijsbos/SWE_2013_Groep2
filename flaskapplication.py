@@ -39,27 +39,27 @@ def home():
     ctrler = index.Index(request)
     return ctrler.render()
 
-@app.route("/test",methods=['POST'])
+@app.route("/test",methods=['POST','GET'])
 def test():
     return "You posted it didn't you?"
 
-@app.route("/launch",methods=['POST'])
+@app.route("/launch",methods=['POST','GET'])
 def launch():
     ctrler = index.Index(request)
     return ctrler.render()
 
-@app.route("/managetags",methods=['POST'])
+@app.route("/managetags",methods=['POST','GET'])
 def managetags():
     ctrler = modifytags.Modifytags()
     return ctrler.render()
 
-@app.route("/addtag",methods=['POST'])
+@app.route("/addtag",methods=['POST','GET'])
 def addtags():
     ctrler = modifytags.Modifytags()
     ctrler.addtag(request)
     return ctrler.render()
 
-@app.route("/removetag",methods=['POST'])
+@app.route("/removetag",methods=['POST','GET'])
 def removetags():
     ctrler = modifytags.Modifytags()
     ctrler.deletetag(request)

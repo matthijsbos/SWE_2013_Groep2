@@ -3,13 +3,10 @@
 <body>
     <a href="http://localhost:5000/answer">Post an answer</a>
     <a href="http://localhost:5000/filteranswers">Show answers</a>
+    <a href="http://localhost:5000/managetags">Manage the tags</a>
 
     <hr />
     LTI data:<br />
     <pre>{{ lti_dump }}</pre>
-    
-    <a href="#" onclick="document.mtags.submit(); return false;">Manage the tags</a>
-    <form action="http://localhost:5000/managetags" method="post" name="mtags">
-    </form>
 </body>
 </html>
