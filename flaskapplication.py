@@ -49,6 +49,7 @@ def launch():
     ctrler = index.Index(request)
     return ctrler.render()
 
+# this route is used to ask a question to students
 @app.route("/question",methods=['POST'])
 def ask_question():
     if g.lti.is_instructor() == False:
@@ -56,6 +57,8 @@ def ask_question():
 
     return question.questionController.ask_question(g.lti.get_user_id())
 
+# this route is used for the feedback from inserting the question into the database,
+# it also inserts the question into the database
 @app.route("/handleQuestion",methods=['POST'])
 def handle_question():
     if g.lti.is_instructor() == False:
