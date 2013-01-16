@@ -3,7 +3,7 @@
 # Changes:
 # Comment:
 
-from flask import render_template
+from flask import render_template, session as fsession
 from models.tag import Tag, AnswerTag
 from models.answer import AnswerModel
 from dbconnection import session
@@ -20,26 +20,20 @@ class Modifytags():
             Tag.remove_tag(tid)
 
     def render(self):
-        self.taglist = []
-        for tag in session.query(Tag):
-            self.taglist.append(tag)
-
+        self.taglist = Tag.get_all()
         return render_template('modifytags.html',tags=self.taglist)
 
 
 class AssignTags():
     def __init__(self, answer_id):
-        self.answer_id = answer_id
+        self.answer = AnswerModel.by_id(answer_id)
+        fsession['assigntag'] = str(answer_id)
     
-    def assign(self, tag_id):
-        if self.answer is not None:
-            answer_tag = AnswerTag(self.answer_id, tag_id)
-            
-            if session.query(AnswerTag).filter(
-                AnswerTag.answer_id==self.answer_id,
-                AnswerTag.tag_id==tag_id).first() is None:
-                    session.add(answer_tag)
-    
+    @staticmethod
+    def assign(request):
+        for tag_id in request.form.getlist('tags'):
+            AnswerTag.add_answertag(fsession['assigntag'], tag_id)
+              
     def render(self):
-        return render_template('showanswers.html', answers=AnswerModel.get_all(),
+        return render_template('assigntag.html', answer=self.answer,
                                tags=Tag.get_all())

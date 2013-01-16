@@ -1,0 +1,15 @@
+<html>
+    <body>
+        <h1>Assign tags to answer:</h1>
+                {{ answer }}
+                <form action="/assigntags_done" method="POST">
+                    <legend>Assign tags:</legend>
+                    
+                    {% for tag in tags %}
+                      <input type="checkbox" name="tags" value="{{tag.id}}">Tag {{tag}}</input>
+                    {% endfor %}
+                      <input type="submit" value="assign"> 
+                </form>
+                <hr>
+    </body>
+</html>

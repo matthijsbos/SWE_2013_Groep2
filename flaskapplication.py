@@ -78,10 +78,17 @@ def answerForm():
     ctrler = answer.Answer(request)
     return ctrler.render()
     
+
 @app.route("/assigntags",methods=['POST'])
 def assign_tags():
     ctrler = tags.AssignTags(1)
     return ctrler.render()
+
+
+@app.route("/assigntags_done",methods=['POST'])
+def handle_assign_tags():
+    ctrler = tags.AssignTags.assign(request)
+    return "NEE"
 
 
 @app.route("/filteranswers", methods=['POST', 'GET'])

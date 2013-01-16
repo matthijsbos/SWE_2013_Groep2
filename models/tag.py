@@ -59,4 +59,11 @@ class AnswerTag(Base):
     def get_all():
         return session.query(AnswerTag).filter().all()
 
+    @staticmethod
+    def add_answertag(aid, tid):
+        if session.query(AnswerTag).filter(
+                    AnswerTag.answer_id==aid,
+                    AnswerTag.tag_id==tid).first() is None:
+                session.add(AnswerTag(aid, tid))
+
 Base.metadata.create_all(engine)
