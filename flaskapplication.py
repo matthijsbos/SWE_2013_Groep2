@@ -5,7 +5,7 @@
 
 from flask import Flask, request, render_template, g
 from lti import LTI, LTIException
-from controllers import index, answer, askQuestion, handleQuestion, deleteQuestion
+from controllers import index, answer, question, deleteQuestion
 
 app = Flask(__name__)
 app.debug = True
