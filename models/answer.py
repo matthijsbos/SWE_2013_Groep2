@@ -11,7 +11,7 @@ class AnswerModel(Base,BaseEntity):
 
     text = Column(String)
     questionID = Column(Integer)
-    userID = Column(Integer)
+    userID = Column(String)
     weight = Column(Integer)
 
     def __repr__(self):

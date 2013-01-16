@@ -1,5 +1,5 @@
 from models import answer
-from flask import render_template
+from flask import render_template,g
 
 class Answer():
     def __init__(self,request):
@@ -10,7 +10,7 @@ class Answer():
         if self.request.form.has_key('answerText'):
             #save answer
             questionID = int(self.request.form['questionID'])
-            userID = int(self.request.form['userID'])
+            userID = self.request.form['userID']
             answerText = self.request.form['answerText']
 
             answer.AnswerModel.save(questionID,userID,answerText)
@@ -26,7 +26,7 @@ class Answer():
         elif self.request.form.has_key('reviewAnswer'):
             #save review answer
             questionID = int(self.request.form['questionID'])
-            userID = int(self.request.form['userID'])
+            userID = self.request.form['userID']
             reviewAnswer = self.request.form['reviewAnswer']
             weight = int(self.request.form['weight'])
             answer.AnswerModel.savereview(questionID,userID,reviewAnswer,weight)

@@ -65,14 +65,13 @@ def removetags():
     ctrler.deletetag(request)
     return ctrler.render()
     
-
 @app.route("/answer",methods=['POST','GET'])
 def answerForm():
     ctrler = answer.Answer(request)
     return ctrler.render()
 
 @app.route("/filteranswers",methods=['POST','GET'])
-def answerForm():
+def answerFilter():
     ctrler = answer.Answer(request)
     return ctrler.render_filtered()
 
