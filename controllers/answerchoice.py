@@ -18,4 +18,4 @@ class Answerchoice():
 		session.commit()
 
     def render(self):
-        return render_template('choice.html',questions=Question.by_id(1), answers=AnswerModel.by_id(1))
+        return render_template('choice.html',questions=Question.by_id(1), answers=answer.AnswerModel.by_id(1))
