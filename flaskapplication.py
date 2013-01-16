@@ -5,7 +5,7 @@
 
 from flask import Flask, request, render_template, g
 from lti import LTI, LTIException
-from controllers import index, answer, question
+from controllers import index, answer, question, deleteQuestion
 
 app = Flask(__name__)
 app.debug = True
@@ -46,13 +46,13 @@ def test():
 def launch():
     ctrler = index.Index(request)
     return ctrler.render()
-    
+
 @app.route("/question",methods=['POST'])
 def ask_question():
     ctrler = question.AskQuestion()
     ctrler.set_instructor(g.lti.get_user_id())
     return ctrler.render()
-    
+
 @app.route("/handleQuestion",methods=['POST'])
 def handle_question():
     quest = request.form['question']
@@ -62,6 +62,13 @@ def handle_question():
     ctrler.set_course(g.lti.get_course_id())
     ctrler.set_time(time)
     ctrler.add_question(quest)
+    return ctrler.render()
+
+
+@app.route("/deleteQuestion/<id>", methods=['POST'])
+def delete_question(id):
+    ctrler = deleteQuestion.DeleteQuestion(id)
+    ctrler.delete_question()
     return ctrler.render()
 
 @app.route("/answer",methods=['POST'])
