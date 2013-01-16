@@ -5,7 +5,7 @@
 
 from flask import Flask, request, render_template, g
 from lti import LTI, LTIException
-from controllers import index, answer
+from controllers import index, answer, modifytags
 
 app = Flask(__name__)
 app.debug = True
@@ -47,7 +47,7 @@ def launch():
     ctrler = index.Index(request)
     return ctrler.render()
 
-@app.route("/managetags",methods=['GET'])
+@app.route("/managetags",methods=['POST'])
 def managetags():
     ctrler = modifytags.ModifyTags()
     return ctrler.render()
