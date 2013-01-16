@@ -8,4 +8,3 @@ Session = sessionmaker()
 Session.configure(bind=engine)
 session = Session()
 Base = declarative_base()
-
