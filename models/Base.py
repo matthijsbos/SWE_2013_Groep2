@@ -17,7 +17,7 @@ class BaseEntity(object):
 
     @classmethod
     def by_id(cls, id):
-        return session.query(cls).filter(self.id == id).one()
+        return session.query(cls).filter(cls.id == id).one()
 
 
     @classmethod
