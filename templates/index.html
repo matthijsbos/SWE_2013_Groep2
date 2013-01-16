@@ -1,7 +1,6 @@
 <html>
 <head><title>Groep 2</title></head>
 <body>
-    <!--GET-requests are not allowed (since no authentication is possible) --!>
     <a href="http://localhost:5000/answer">Post an answer</a>
     <a href="http://localhost:5000/filteranswers">Show answers</a>
 
@@ -9,6 +8,7 @@
     LTI data:<br />
     <pre>{{ lti_dump }}</pre>
     
+    <!-- we only want post requests --!>
     <a href="#" onclick="document.mtags.submit(); return false;">Manage the tags</a>
     <form action="http://localhost:5000/managetags" method="post" name="mtags">
     </form>
