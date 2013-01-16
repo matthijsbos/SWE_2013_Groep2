@@ -8,7 +8,7 @@ class Answer():
     def render(self):
         #dummy shit, get some real data
         qText = 'wat is het antwoord op deze dummy vraag?'
-        uID = -1
+        uID = 1
         qID = -1
 
         if self.request.form.has_key('answerText'):
