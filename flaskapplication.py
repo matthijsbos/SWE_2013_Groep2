@@ -57,6 +57,8 @@ def ask_question():
 
 @app.route("/handleQuestion",methods=['POST'])
 def handle_question():
+    if g.lti.is_instructor() == False:
+      return render_template("access_restricted.html")
     ctrler = question.HandleQuestion()
     ctrler.create_question(request.form['question'],g.lti.get_user_id(),g.lti.get_course_id(),request.form['time'])
     return ctrler.render()
