@@ -1,0 +1,2 @@
+class ModelIndex():
+    pass

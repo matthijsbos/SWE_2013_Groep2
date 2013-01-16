@@ -1,0 +1,13 @@
+#counter {
+transition:All 1s ease-in-out;
+-webkit-transition:All 1s ease-in-out;
+-moz-transition:All 1s ease-in-out;
+-o-transition:All 1s ease-in-out;
+}
+#counter:hover{
+transform: rotate(360deg) scale(1.5) skew(180deg) translate(41px);
+-webkit-transform: rotate(360deg) scale(1.5) skew(180deg) translate(41px);
+-moz-transform: rotate(360deg) scale(1.5) skew(180deg) translate(41px);
+-o-transform: rotate(360deg) scale(1.5) skew(180deg) translate(41px);
+-ms-transform: rotate(360deg) scale(1.5) skew(180deg) translate(41px);
+}
