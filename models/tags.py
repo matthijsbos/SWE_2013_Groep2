@@ -42,7 +42,7 @@ class Tag(Base):
             session.delete(tag)
 
 
-class AnswerTag(Base, BaseEntity):
+class AnswerTag(Base):
     __tablename__ = 'AnswerTags'
     
     answer_id = Column(Integer, ForeignKey('answer.id', ondelete='CASCADE'), primary_key=True)
@@ -54,5 +54,9 @@ class AnswerTag(Base, BaseEntity):
         
     def __repr__(self):
         return "<AnswerTag('%d', '%d')>" % (self.answer_id, self.tag_id)
+        
+    @staticmethod
+    def get_all():
+        return session.query(AnswerTag).filter().all()
 
 Base.metadata.create_all(engine)
