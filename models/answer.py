@@ -1,7 +1,7 @@
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import *
 from dbconnection import engine, session
-from Base import BaseEntity
+from base import BaseEntity
 
 Base = declarative_base()
 
@@ -18,7 +18,7 @@ class AnswerModel(Base,BaseEntity):
 
     def __str__(self):
         return self.text
-        
+
     @staticmethod
     def get_answers(question_id):
         return session.query(AnswerModel).filter(AnswerModel.questionID==question_id)
