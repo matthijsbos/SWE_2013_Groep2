@@ -18,6 +18,10 @@ class AnswerModel(Base,BaseEntity):
 
     def __str__(self):
         return self.text
+        
+    @staticmethod
+    def get_answers(question_id):
+        return session.query(AnswerModel).filter(AnswerModel.questionID==question_id)
 
     @staticmethod
     def save(questionID,userID,answerText):
