@@ -21,17 +21,28 @@
 </head>
 
 <body>
+{% if go == "true" %}
+    <div id="counter"></div>
+    <div class="desc">
+        <div>Minutes</div>
+        <div>Seconds</div>
+    </div>
     <div>
         <form action="/answer" id="answerform" method="post">
             <br>
-            <div id="question">{{questionText}}</div>
+            {{questionText}}
             <input type="hidden"  name="questionID" value="{{questionID}}" />
             <input type="hidden" name="userID" value="{{userID}}" />
             <br>
-            Your answer: <br><textarea name="answerText" cols=50 rows=10></textarea>
+            Answer: <br><textarea name="answerText" cols=50 rows=10></textarea>
             <br>
-            <input type="submit" class="submit-answer" value="submit answer"/>     <div id="counter"></div>
+            <input type="submit" value="go"/>
+            {{answerID}}
         </form>
     </div>
 </body>
+{% else %}
+<p>You have already answered this question.</p>
+{% endif %}
 </html>
+
