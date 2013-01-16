@@ -10,11 +10,11 @@ class questionController():
         for model in session.query(Question):
             break
         else:
-            session.add(Question("teacher1", "bla", "q1?", False))
-            session.add(Question("teacher1", "bla", "Hoe gaat het?", False))
-            session.add(Question("teacher1", "bla", "Hoe oud ben je?", False))
-            session.add(Question("teacher1", "bla", "Hoe heet je?", False))
-            session.add(Question("teacher1", "bla", "1337?", False))
+            session.add(Question("teacher1", "bla", "q1?", False, 0))
+            session.add(Question("teacher1", "bla", "Hoe gaat het?", False, 0))
+            session.add(Question("teacher1", "bla", "Hoe oud ben je?", False, 0))
+            session.add(Question("teacher1", "bla", "Hoe heet je?", False, 0))
+            session.add(Question("teacher1", "bla", "1337?", False, 0))
             session.commit()
 
     #function that updates the question in the db
@@ -41,7 +41,7 @@ class questionController():
     def delete_question(qid):
         question = Question.by_id(int(qid))
         if g.lti.is_instructor():
-            session.expunge(question)
+            session.delete(question)
             session.commit()
             return render_template('deleteQuestion.html',
                     question = question,
@@ -52,25 +52,15 @@ class questionController():
                     permission = False)
 
     @staticmethod
-    def ask_question(self, instructor):
-        return render_template('askQuestion.html',instr=self.instructor)
+    def ask_question(instructor):
+        return render_template('askQuestion.html',instr=instructor)
 
 
-class HandleQuestion():
-    question = ""
-    time = 0
-
-    def __init__(self):
-        self.question = ""
-
-    def add_question(self,question):
-        self.question = question
-        session.add(Question("teacher1", "", question, False))
+    @staticmethod
+    def create_question(question, instructor, course, time):
+        if not isinstance(time, (int, long)):
+            time = 0
+        session.add(Question(instructor, course, question, False, time))
         session.commit()
 
-    def set_time(self,time):
-        if isinstance(time,(int,long)):
-          self.time = time
-
-    def render(self):
-        return render_template('handleQuestion.html',question=self.question)
+        return render_template('handleQuestion.html',question=question)

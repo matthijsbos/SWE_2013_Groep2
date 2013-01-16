@@ -3,7 +3,9 @@
 # Changes:
 # Comment:
 
+import yaml
 from flask import Flask, Response, request, render_template, g
+
 from lti import LTI, LTIException
 from controllers import index, answer, question
 
@@ -49,18 +51,16 @@ def launch():
 
 @app.route("/question",methods=['POST'])
 def ask_question():
-    ctrler = question.AskQuestion()
-    ctrler.set_instructor(g.lti.get_user_id())
-    return ctrler.render()
+    if g.lti.is_instructor() == False:
+      return render_template("access_restricted.html")
+
+    return question.questionController.ask_question(g.lti.get_user_id())
 
 @app.route("/handleQuestion",methods=['POST'])
 def handle_question():
-    quest = request.form['question']
-    time = request.form['time']
-    ctrler = question.HandleQuestion()
-    ctrler.set_time(time)
-    ctrler.add_question(quest)
-    return ctrler.render()
+    if g.lti.is_instructor() == False:
+      return render_template("access_restricted.html")
+    return question.questionController.create_question(request.form['question'],g.lti.get_user_id(),g.lti.get_course_id(),request.form['time'])
 
 
 @app.route("/deleteQuestion/<id>", methods=['POST'])
@@ -71,6 +71,7 @@ def delete_question(id):
 def question_export():
     exp = question.questionController.exportCourse(g.lti.get_course_id())
     print exp
+    exp = yaml.dump(exp, default_flow_style=False)
     return Response(exp,
             mimetype="text/plain",
             headers={"Content-Disposition":
