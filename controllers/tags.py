@@ -42,4 +42,4 @@ class AssignTags():
     
     def render(self):
         return render_template('showanswers.html', answers=AnswerTag.get_all(),
-                               tags=Tags.get_all())
+                               tags=Tag.get_all())
