@@ -5,18 +5,6 @@ from flask import escape
 
 
 class questionController():
-    def __init__(self):
-        # create a few database items
-        for model in session.query(Question):
-            break
-        else:
-            session.add(Question("teacher1", "bla", "q1?", False, 0))
-            session.add(Question("teacher1", "bla", "Hoe gaat het?", False, 0))
-            session.add(Question("teacher1", "bla", "Hoe oud ben je?", False, 0))
-            session.add(Question("teacher1", "bla", "Hoe heet je?", False, 0))
-            session.add(Question("teacher1", "bla", "1337?", False, 0))
-            session.commit()
-
     #function that updates the question in the db
     @staticmethod
     def editQuestion(q_id, question, activate):
@@ -31,11 +19,8 @@ class questionController():
 
     @staticmethod
     def exportCourse(course_id):
-        return Question.by_course_id(course_id)
-
-    def render(self):
-        self.editQuestion(1, "Ben ik nu een echte vraag?", True)
-        return render_template('question.html',wordlist=self.getQuestion(4))
+        questions = Question.by_course_id(course_id)
+        return [{'question': question.question} for question in questions]
 
     @staticmethod
     def delete_question(qid):
@@ -43,18 +28,14 @@ class questionController():
         if g.lti.is_instructor():
             session.delete(question)
             session.commit()
-            return render_template('deleteQuestion.html',
-                    question = question,
-                    permission = True)
-        else:
-            return render_template('deleteQuestion.html',
-                    question = question,
-                    permission = False)
+
+        return render_template('deleteQuestion.html',
+                question = question,
+                permission = g.lti.is_instructor())
 
     @staticmethod
     def ask_question(instructor):
         return render_template('askQuestion.html',instr=instructor)
-
 
     @staticmethod
     def create_question(question, instructor, course, time):

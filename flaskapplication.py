@@ -75,7 +75,7 @@ def question_export():
     return Response(exp,
             mimetype="text/plain",
             headers={"Content-Disposition":
-                "attachment;filename=questions_%s.txt" %
+                "attachment;filename=questions_%s.yaml" %
                     g.lti.get_course_name()})
 
 
