@@ -5,11 +5,11 @@
                  it might do some weird stuff as questionID and userID combinations should 
                  be unique, which is not the case in the dummy version -->
             {% for answer in answers %}
-                {% if answer.weight==0 %}  
+                {% if answer.edit==0 %}  
                 <tr>
                     <td><a href="#" onclick="document.reviewAnswer.id.value={{answer.id}}; document.reviewAnswer.submit(); return false;">{{ answer }}</a></td>
                     {% for answer2 in answers %}
-                    {% if answer2.questionID==answer.questionID and answer2.userID==answer.userID and answer2.weight != 0 %}
+                    {% if answer2.questionID==answer.questionID and answer2.userID==answer.userID and answer2.edit != 0 %}
                         <td><a href="#" onclick="document.reviewAnswer.id.value={{answer2.id}}; document.reviewAnswer.submit(); return false;">{{ answer2 }}</a></td>
                         {% endif %}
                     {% endfor %}

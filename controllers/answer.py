@@ -23,15 +23,19 @@ class Answer():
             return render_template('showanswers.html',answers=answer.AnswerModel.get_all())
         elif self.request.form.has_key('viewanswer'):
             #show answer
-            aid = int(self.request.form['id'])
-            return render_template('editanswer.html', answer=answer.AnswerModel.by_id(aid))
+            id = int(self.request.form['id'])
+            return render_template('editanswer.html', answer=answer.AnswerModel.by_id(id))
         elif self.request.form.has_key('reviewAnswer'):
             #save review answer
             questionID = int(self.request.form['questionID'])
             userID = int(self.request.form['userID'])
             reviewAnswer = self.request.form['reviewAnswer']
-            weight = int(self.request.form['weight'])
-            answer.AnswerModel.savereview(questionID,userID,reviewAnswer,weight)
+            edit = int(self.request.form['edit'])
+            answer.AnswerModel.savereview(questionID,userID,reviewAnswer,edit)
+            return render_template('answersaved.html')
+        elif self.request.form.has_key('removeAnswer'):
+            id = int(self.request.form['id'])
+            answer.AnswerModel.remove_by_id(id)
             return render_template('answersaved.html')
         else:
             return render_template('answer.html',questionID=qID,userID=uID,questionText=qText)
