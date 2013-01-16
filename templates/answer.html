@@ -21,17 +21,16 @@
 </head>
 
 <body>
-    <div id="counter"></div>
     <div>
         <form action="/answer" id="answerform" method="post">
             <br>
-            {{questionText}}
+            <div id="question">{{questionText}}</div>
             <input type="hidden"  name="questionID" value="{{questionID}}" />
             <input type="hidden" name="userID" value="{{userID}}" />
             <br>
-            Answer: <br><textarea name="answerText" cols=50 rows=10></textarea>
+            Your answer: <br><textarea name="answerText" cols=50 rows=10></textarea>
             <br>
-            <input type="submit" value="go"/>
+            <input type="submit" class="submit-answer" value="submit answer"/>     <div id="counter"></div>
         </form>
     </div>
 </body>
