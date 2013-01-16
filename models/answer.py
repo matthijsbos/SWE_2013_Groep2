@@ -12,7 +12,7 @@ class AnswerModel(Base,BaseEntity):
     text = Column(String)
     questionID = Column(Integer)
     userID = Column(Integer)
-    weight = Column(Integer)
+    edit = Column(Integer)
 
     def __repr__(self):
         return self.text + 'Represent'
@@ -21,19 +21,19 @@ class AnswerModel(Base,BaseEntity):
         return self.text
 
     @staticmethod
-    def save(questionID,userID,answerText):
-        session.add(AnswerModel(questionID=questionID,userID=userID,text=answerText,weight=0))
+    def savereview(questionID,userID,answerText,edit):
+        session.add(AnswerModel(questionID=questionID,userID=userID,text=answerText,edit=edit+1))
         session.commit()
-        
-    @staticmethod
-    def savereview(questionID,userID,answerText,weight):
-        session.add(AnswerModel(questionID=questionID,userID=userID,text=answerText,weight=weight+1))
-        session.commit()
-    
+
     @staticmethod
     def updateAnswer(answerID, answerText):
         session.query(AnswerModel).filter_by(id = answerID).update({"text":answerText}, synchronize_session=False)
-    
+
+    @staticmethod
+    def save(questionID,userID,answerText):
+        session.add(AnswerModel(questionID=questionID,userID=userID,text=answerText,edit=0))
+        session.commit()
+
     @staticmethod
     def getAnswerID(uID, qID):   
         if engine.dialect.has_table(engine.connect(), "answer"):
@@ -44,7 +44,7 @@ class AnswerModel(Base,BaseEntity):
                 return 0  
         else: 
             return 1
-    
+
     @staticmethod
     def checkAnswerExist(uID, qID):
         if engine.dialect.has_table(engine.connect(), "answer"):
@@ -55,11 +55,10 @@ class AnswerModel(Base,BaseEntity):
                 return 0
         else: 
             return 0
-        
-    
+
     @staticmethod
     def getTimeStamp(answerID):
         answer = session.query(AnswerModel).filter_by(id = answerID).one()
-        return answer.created   
+        return answer.created
 
 Base.metadata.create_all(engine)

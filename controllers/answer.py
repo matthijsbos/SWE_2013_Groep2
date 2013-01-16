@@ -48,8 +48,12 @@ class Answer():
             questionID = int(self.request.form['questionID'])
             userID = self.request.form['userID']
             reviewAnswer = self.request.form['reviewAnswer']
-            weight = int(self.request.form['weight'])
-            answer.AnswerModel.savereview(questionID,userID,reviewAnswer,weight)
+            edit = int(self.request.form['edit'])
+            answer.AnswerModel.savereview(questionID,userID,reviewAnswer,edit)
+            return render_template('answersaved.html')
+        elif self.request.form.has_key('removeAnswer'):
+            id = int(self.request.form['id'])
+            answer.AnswerModel.remove_by_id(id)
             return render_template('answersaved.html')
         else:
             if answer.AnswerModel.checkAnswerExist(uID, qID):
