@@ -24,6 +24,9 @@ class AnswerModel(Base, BaseEntity):
                     userID=userID, text=answerText, edit=edit + 1))
         session.commit()
 
+    def get_question_answers(question_id):
+        return session.query(AnswerModel).filter(AnswerModel.questionID==question_id)
+
     @staticmethod
     def updateAnswer(answerID, answerText):
         session.query(AnswerModel).filter_by(id=answerID).update(

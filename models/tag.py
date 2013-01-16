@@ -27,11 +27,15 @@ class Tag(Base, BaseEntity):
             return "<Tag('%d', '%s')>" % (self.id, self.name)
 
     @staticmethod
+    def get_all():
+        return session.query(Tag).filter().all()
+
+    @staticmethod
     def add_tag(name):
         if session.query(Tag.name).filter(Tag.name == name).first() is None:
             session.add(Tag(name))
             session.commit()
-
+            
     @staticmethod
     def remove_tag(tag_id):
         for tag in session.query(Tag).filter(Tag.id == tag_id):
@@ -50,5 +54,9 @@ class AnswerTag(Base):
 
     def __repr__(self):
         return "<AnswerTag('%d', '%d')>" % (self.answer_id, self.tag_id)
+        
+    @staticmethod
+    def get_all():
+        return session.query(AnswerTag).filter().all()
 
 Base.metadata.create_all(engine)
