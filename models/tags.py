@@ -25,6 +25,10 @@ class Tag(Base):
         else:
             return "<Tag('%d', '%s')>" % (self.id, self.name)
             
+    @staticmethod
+    def get_all():
+        return session.query(Tag).filter().all()
+            
     @staticmethod 
     def add_tag(name):
         if session.query(Tag.name).filter(Tag.name==name).first() is None:
