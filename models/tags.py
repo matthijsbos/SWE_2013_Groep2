@@ -9,6 +9,7 @@ from sqlalchemy.ext.declarative import declarative_base
 
 from dbconnection import engine, session
 from models.answer import AnswerModel, Base
+from Base import BaseEntity
 
 class Tag(Base):
     __tablename__ = 'Tags'
@@ -41,7 +42,7 @@ class Tag(Base):
             session.delete(tag)
 
 
-class AnswerTag(Base):
+class AnswerTag(Base, BaseEntity):
     __tablename__ = 'AnswerTags'
     
     answer_id = Column(Integer, ForeignKey('answer.id', ondelete='CASCADE'), primary_key=True)
