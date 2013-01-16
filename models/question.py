@@ -1,9 +1,7 @@
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import Column, String, Boolean
-from dbconnection import engine, session
-from Base import BaseEntity
-
-Base = declarative_base()
+from dbconnection import engine, session, Base
+from base import BaseEntity
 
 class Question(Base, BaseEntity):
     __tablename__ = 'questions'
