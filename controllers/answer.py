@@ -1,6 +1,7 @@
-from models import answer
+from models import answer, question
 from flask import render_template,g
 import datetime
+import sqlalchemy.orm.exc as sqlalchemyExp
 
 class Answer():
     def __init__(self,request):
@@ -8,15 +9,20 @@ class Answer():
 
     def render(self):
         #dummy shit, get some real data
-        #qText = 'wat is het antwoord op deze dummy vraag?'
-        uID = g.lti.get_user_id()
-        #qID = -1        
+        qText = 'wat is het antwoord op deze dummy vraag?'
+        uID = 23455#g.lti.get_user_id()
+        qID = -1        
         timerD = 10
         
         #Post should be real data
-        if self.request.method == 'POST':
-            qID = int(request.form['questionID'])
-            qText = Question.Question.by_id(qID).question        
+        if self.request.method == 'POST' and self.request.form.has_key('questionID'):
+            try:
+                qID = int(self.request.form['questionID'])
+                qText = question.Question.by_id(qID).question
+            except(sqlalchemyExp.NoResultFound):
+                pass
+            except Exception as e:
+                return e
         
         if self.request.form.has_key('answerText'):
             #save answer
@@ -24,7 +30,7 @@ class Answer():
             aID = answer.AnswerModel.getAnswerID(uID, qID)
             
             succes = "false"
-            if self.timeLeft(aID, timerD):            
+            if self.timeLeft(aID, timerD, 0):            
                 answer.AnswerModel.updateAnswer(aID, answerText)
                 succes = "true"
                 
@@ -85,3 +91,7 @@ class Answer():
                 args["id"] = postdata["id"]
 
         return render_template('answerfilter.html',answers=answer.AnswerModel.get_filtered(**args))
+
+    def render_all(self):
+        #Render all
+        return render_template('showanswers.html',answers=answer.AnswerModel.get_all())
