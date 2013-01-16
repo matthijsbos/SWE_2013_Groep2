@@ -1,0 +1,31 @@
+<html>
+    <body>
+        <form method="POST">
+            Filter by:<br\>
+            ID: <input type="text" name="id"/>
+            UserID: <input type="text" name="userID"/>
+            QuestionID: <input type="text" name="questionID"/>
+            <input type="submit" value="Go"/>
+        </form>
+        <table>
+            <tr>
+                <td>id</td>
+                <td>questionID</td>
+                <td>userID</td>
+                <td>text</td>
+                <td>created on</td>
+                <td>modified on</td>
+            </tr>
+            {% for answer in answers %}
+                <tr>
+                    <td>{{ answer.id }}</td>
+                    <td>{{ answer.questionID }}</td>
+                    <td>{{ answer.userID }}</td>
+                    <td>{{ answer.text }}</td>
+                    <td>{{ answer.created }}</td>
+                    <td>{{ answer.modified }}</td>
+                </tr>
+            {% endfor %}
+        </table>
+    </body>
+</html>

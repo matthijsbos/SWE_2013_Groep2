@@ -17,7 +17,7 @@ class BaseEntity(object):
 
     @classmethod
     def by_id(cls, id):
-        return session.query(cls).filter(self.id == id).one()
+        return session.query(cls).filter(cls.id == id).one()
 
 
     @classmethod
@@ -26,3 +26,10 @@ class BaseEntity(object):
             return []
 
         return session.query(cls).filter(cls.id.in_(ids)).all()
+
+    @classmethod
+    def get_filtered(cls,**kws):
+        if len(kws) > 0:
+            return session.query(cls).filter_by(**kws).all()
+
+        return cls.get_all()

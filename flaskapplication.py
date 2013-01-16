@@ -47,10 +47,15 @@ def launch():
     ctrler = index.Index(request)
     return ctrler.render()
 
-@app.route("/answer",methods=['POST'])
+@app.route("/answer",methods=['POST','GET'])
 def answerForm():
     ctrler = answer.Answer(request)
     return ctrler.render()
+
+@app.route("/filteranswers",methods=['POST','GET'])
+def answerForm():
+    ctrler = answer.Answer(request)
+    return ctrler.render_filtered()
 
 @app.route("/logout")
 def logout():
