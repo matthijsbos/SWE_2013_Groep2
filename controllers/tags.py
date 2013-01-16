@@ -1,4 +1,4 @@
-# Author : Victor Azizi
+# Authors : Victor Azizi & David Schoorisse & Mustafa Karaalioglu
 # Descrp : Controls the creation and deletion of tags
 # Changes:
 # Comment:
@@ -24,3 +24,6 @@ class Modifytags():
             self.taglist.append(tag)
 
         return render_template('modifytags.html',tags=self.taglist)
+
+class AssignTag():
+    pass
