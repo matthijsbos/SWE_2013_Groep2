@@ -7,9 +7,10 @@ Created on Mon Jan 14 14:01:46 2013
 from sqlalchemy import Column, Integer, Sequence, String, ForeignKey
 from sqlalchemy.ext.declarative import declarative_base
 
-from dbconnection import engine, session
-from models.answer import AnswerModel, Base
-from base import BaseEntity
+from dbconnection import engine, session, Base
+from models.answer import AnswerModel
+from basemodel import BaseEntity
+
 
 class Tag(Base, BaseEntity):
     __tablename__ = 'Tags'
@@ -27,13 +28,13 @@ class Tag(Base, BaseEntity):
 
     @staticmethod
     def add_tag(name):
-        if session.query(Tag.name).filter(Tag.name==name).first() is None:
+        if session.query(Tag.name).filter(Tag.name == name).first() is None:
             session.add(Tag(name))
             session.commit()
 
     @staticmethod
     def remove_tag(tag_id):
-        for tag in session.query(Tag).filter(Tag.id==tag_id):
+        for tag in session.query(Tag).filter(Tag.id == tag_id):
             session.delete(tag)
 
 
