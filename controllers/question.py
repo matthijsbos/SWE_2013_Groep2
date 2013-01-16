@@ -1,26 +1,33 @@
-from flask import render_template, g
-from models.Question import Question
+import json
+from flask import escape, render_template, g
+
 from dbconnection import session
-from flask import escape
+from models.Question import Question
 
 
-class questionController():
+class QuestionController():
     #function that updates the question in the db
     @staticmethod
-    def editQuestion(q_id, question, activate):
+    def edit_question(q_id, question, activate):
         escaped_question = escape(question)
         Question.by_id(q_id).question = question
         Question.by_id(q_id).available = activate
 
     #function to get the first n questions
     @staticmethod
-    def getQuestion(n):
+    def get_questions(n=1):
         return session.query(Question).order_by(Question.modified.desc())[:n]
 
     @staticmethod
-    def exportCourse(course_id):
+    def export_course(course_id):
         questions = Question.by_course_id(course_id)
         return [{'question': question.question} for question in questions]
+
+    @staticmethod
+    def get_list():
+        # TODO: pagination, etc..... same goes for get_questions
+        return render_template('question_list.html',
+                questions=QuestionController.get_questions(30))
 
     @staticmethod
     def delete_question(qid):
@@ -29,9 +36,10 @@ class questionController():
             session.delete(question)
             session.commit()
 
-        return render_template('deleteQuestion.html',
-                question = question,
-                permission = g.lti.is_instructor())
+        #return render_template('deleteQuestion.html',
+        #        question = question,
+        #        permission = g.lti.is_instructor())
+        return json.dumps({'deleted': g.lti.is_instructor()})
 
     @staticmethod
     def ask_question(instructor):

@@ -7,11 +7,13 @@ import yaml
 from flask import Flask, Response, request, render_template, g
 
 from lti import LTI, LTIException
-from controllers import index, answer, question
+from controllers.index import Index
+from controllers.answer import Answer
+from controllers.question import QuestionController as Question
 
 app = Flask(__name__)
 app.debug = True
-app.secret_key = "Hurdygurdy"
+app.secret_key = "Hurdygurdy" # Used for Flask sessions, TODO: config?
 
 @app.before_request
 def init_lti():
@@ -37,43 +39,42 @@ def init_lti():
 # define the routes for our application
 @app.route("/",methods=['GET', 'POST'])
 def home():
-    ctrler = index.Index(request)
+    ctrler = Index(request)
     return ctrler.render()
-
-@app.route("/test",methods=['POST'])
-def test():
-    return "You posted it didn't you?"
 
 @app.route("/launch",methods=['POST'])
 def launch():
-    ctrler = index.Index(request)
+    ctrler = Index(request)
     return ctrler.render()
 
 # this route is used to ask a question to students
-@app.route("/question",methods=['POST'])
+@app.route("/question",methods=['GET', 'POST'])
 def ask_question():
     if g.lti.is_instructor() == False:
-      return render_template("access_restricted.html")
+        return render_template("access_restricted.html")
 
-    return question.questionController.ask_question(g.lti.get_user_id())
+    return Question.ask_question(g.lti.get_user_id())
 
-# this route is used for the feedback from inserting the question into the database,
-# it also inserts the question into the database
-@app.route("/handleQuestion",methods=['POST'])
+# this route is used for the feedback from inserting the question into the
+# database, it also inserts the question into the database
+@app.route("/handle_question",methods=['POST'])
 def handle_question():
     if g.lti.is_instructor() == False:
       return render_template("access_restricted.html")
-    return question.questionController.create_question(request.form['question'],g.lti.get_user_id(),g.lti.get_course_id(),request.form['time'])
+    return Question.create_question(request.form['question'],
+            g.lti.get_user_id(),g.lti.get_course_id(),request.form['time'])
 
+@app.route("/question_list", methods=['GET', 'POST'])
+def list_questions():
+    return Question.get_list()
 
-@app.route("/deleteQuestion/<id>", methods=['POST'])
+@app.route("/delete_question/<id>", methods=['GET', 'POST'])
 def delete_question(id):
-    return question.questionController.delete_question(id)
+    return Question.delete_question(id)
 
 @app.route("/question_export", methods=['GET', 'POST'])
 def question_export():
-    exp = question.questionController.exportCourse(g.lti.get_course_id())
-    print exp
+    exp = Question.export_course(g.lti.get_course_id())
     exp = yaml.dump(exp, default_flow_style=False)
     return Response(exp,
             mimetype="text/plain",
@@ -82,9 +83,9 @@ def question_export():
                     g.lti.get_course_name()})
 
 
-@app.route("/answer",methods=['POST'])
+@app.route("/answer",methods=['GET', 'POST'])
 def answerForm():
-    ctrler = answer.Answer(request)
+    ctrler = Answer(request)
     return ctrler.render()
 
 @app.route("/logout")

@@ -19,14 +19,17 @@
       $('#text_'+id).html(data.text);
     });
   }
-  
-  function delete_question(id){
-    $.getJSON("/delete_question",{id:id},
-    function(data){
-      $('#row_'+id).remove();
-    });
-  }
-  
+
+    function delete_question(id){
+        $.getJSON("/delete_question/"+id,{},
+            function(data){
+                if (data.deleted)
+                    $('#row_'+id).remove();
+                else
+                    $('#error').html("Error while deleting question.");
+            });
+    }
+
   function activate_question(id){
     $.getJSON("/activate_question",{id:id},
     function(data){
@@ -43,6 +46,7 @@
 
 <body>
 {%block body%}
+<div id="error" style="background-color: #a33; color: white;"></div>
     <table border=1>
     <tr>
       <td>id</td>
@@ -63,5 +67,6 @@
         </tr>
       {%endfor%}
     </table>
+    <a href="/">Back</a>
 {%endblock%}
 </body>
