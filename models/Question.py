@@ -9,7 +9,7 @@ class Question(Base, BaseEntity):
     __tablename__ = 'questions'
 
     teacher_id = Column(String)
-    course_id = Column(String)
+    course_id = COlumn(String)
     question = Column(String)
     available = Column(Boolean)
 
@@ -21,10 +21,9 @@ class Question(Base, BaseEntity):
         self.available = available
 
     def __repr__(self):
-        return "<Question ('%s','%s','%s')>" % (self.question,
-                                                self.teacher_id,
+        return "<Question ('%s','%s','%s')>" % (self.teacher_id,
+                                                self.question,
                                                 self.available)
-
 
 
 Base.metadata.create_all(engine)
