@@ -8,9 +8,7 @@ from sqlalchemy import Column, Integer, Sequence, String, ForeignKey
 from sqlalchemy.ext.declarative import declarative_base
 
 from dbconnection import engine, session
-
-
-Base = declarative_base()
+from models.answer import AnswerModel, Base
 
 class Tag(Base):
     __tablename__ = 'Tags'
@@ -27,33 +25,22 @@ class Tag(Base):
         else:
             return "<Tag('%d', '%s')>" % (self.id, self.name)
             
+    @staticmethod 
+    def add_tag(name):
+        if session.query(Tag.name).filter(Tag.name==name).first() is None:
+            session.add(Tag(name))
+            session.commit()
 
-def add_tag(tag):
-    if session.query(Tag.name).filter(Tag.name==tag.name).first() is None:
-        session.add(tag)
-        
-def remove_tag(tag_id):
-    for tag in session.query(Tag).filter(Tag.id==tag_id):
-        session.delete(tag)
-
-
-class Answer(Base):
-    __tablename__ = 'Answers'
-    
-    id = Column(Integer, primary_key=True)
-    answer = Column(String(96))
-    
-    def __init__(self, answer):
-        self.answer = answer
-        
-    def __repr__(self):
-        return "<Answer('%s')>" % (self.answer)
+    @staticmethod 
+    def remove_tag(tag_id):
+        for tag in session.query(Tag).filter(Tag.id==tag_id):
+            session.delete(tag)
 
 
 class AnswerTag(Base):
     __tablename__ = 'AnswerTags'
     
-    answer_id = Column(Integer, ForeignKey('Answers.id'), primary_key=True)
+    answer_id = Column(Integer, ForeignKey('answer.id'), primary_key=True)
     tag_id = Column(Integer, ForeignKey('Tags.id'), primary_key=True)
     
     def __init__(self, answer_id, tag_id):

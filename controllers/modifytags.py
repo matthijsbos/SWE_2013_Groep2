@@ -7,28 +7,20 @@ from flask import render_template
 from models.tags import Tag
 from dbconnection import session
 
-class ModifyTags():
+class Modifytags():
     def __init__(self):
+        pass
+    
+    def addtag(self, request):
+        Tag.add_tag(request.form['newTag'])
+
+    def deletetag(self, request):
+        for tid in request.form.getlist('tags'):
+            Tag.remove_tag(tid)
+
+    def render(self):
         self.taglist = []
         for tag in session.query(Tag):
             self.taglist.append(tag)
 
-    def render(self):
-        return render_template('modifyTags.html',tags=self.taglist)
-
-class AddTag():
-    def __init__(self, request):
-        for tag in session.query(Tag):
-            if tag.name == request.form['newTag']:
-                break
-        else:
-            session.add(Tag(request.form['newTag']))
-            session.commit()
-
-
-        self.taglist = []
-        for tag in session.query(Tag):
-            self.taglist.append(tag)
-
-    def render(self):
-        return render_template('modifyTags.html',tags=self.taglist)
+        return render_template('modifytags.html',tags=self.taglist)
