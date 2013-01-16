@@ -33,6 +33,7 @@ class questionController():
         self.editQuestion(1, "Ben ik nu een echte vraag?", True)
         return render_template('question.html',wordlist=self.getQuestion(4))
 
+# class to handle the page where an instructor can ask a question to a student
 class AskQuestion():
     instructor = ""
     
@@ -46,25 +47,21 @@ class AskQuestion():
     def render(self):
         return render_template('askQuestion.html',instr=self.instructor)
 
+# class to handle the page where the asked question gets inserted into the database
+# and the asked question is shown to the instructor as a confirmation
 class HandleQuestion():
     question = ""
-    instructor = ""
-    course = ""
     time = 0
     
     def __init__(self):
         self.question = ""
         self.time = 0
-        self.instuctor = ""
-        self.course = ""
         
     def create_question(self,question,instructor,course,time):
         if isinstance(time,(int,long)):
             self.time = time
         self.question = question
-        self.course = course
-        self.instructor = instructor
-        session.add(Question(self.instructor, self.course, question, False, self.time))
+        session.add(Question(instructor, course, question, False, self.time))
         session.commit()
     
     def render(self):
