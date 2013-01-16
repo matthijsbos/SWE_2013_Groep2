@@ -11,7 +11,7 @@
     $(function(){
         $('#counter').countdown({
             image: '../static/img/digits.png',
-            startTime: '00:30',
+            startTime: '{{timerDuration}}',
             timerEnd: function(){ formSubmit(); },
             format: 'mm:ss'
         });
@@ -21,12 +21,7 @@
 </head>
 
 <body>
-{% if go == "true" %}
-    <div id="counter"></div>
-    <div class="desc">
-        <div>Minutes</div>
-        <div>Seconds</div>
-    </div>
+{% if go == "true" %}   
     <div>
         <form action="/answer" id="answerform" method="post">
             <br>
@@ -39,6 +34,11 @@
             <input type="submit" value="go"/>
             {{answerID}}
         </form>
+        <div id="counter"></div>
+        <div class="desc">
+            <div>Minutes</div>
+            <div>Seconds</div>
+        </div>
     </div>
 </body>
 {% else %}
