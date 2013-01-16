@@ -2,7 +2,7 @@ from models import answer
 from flask import render_template
 
 class Answer():
-    def __init__(self,request):
+    def __init__(self,request, questionID=None):
         self.request = request
 
     def render(self):
@@ -20,8 +20,11 @@ class Answer():
             answer.AnswerModel.save(questionID,userID,answerText)
             return render_template('answersaved.html')
 
+        #Show all answers
         elif self.request.form.has_key('showall'):
             #Render all
             return render_template('showanswers.html',answers=answer.AnswerModel.get_all())
+        
+        #Show answer interface
         else:
             return render_template('answer.html',questionID=qID,userID=uID,questionText=qText)
