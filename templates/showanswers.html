@@ -1,12 +1,19 @@
 <html>
     <body>
-        <table>
+        
             {% for answer in answers%}
-            <tr>
-                <td>{{ answer.id }}</td>
-                <td>{{ answer }}</td>
-            </tr>
+                {{ answer.id }}
+                {{ answer }}
+                <form>
+                  <fieldset>
+                    <legend>Assign tags:</legend>
+                    <input type="checkbox" name="vehicle" value="Bike">I have a bike</input>
+                  
+                  </fieldset>
+                </form>
+                <hr>
+                
             {% endfor %}            
-        </table>
+        
     </body>
 </html>
