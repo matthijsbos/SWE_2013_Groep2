@@ -58,6 +58,8 @@ def handle_question():
     quest = request.form['question']
     time = request.form['time']
     ctrler = question.HandleQuestion()
+    ctrler.set_instructor(g.lti.get_user_id())
+    ctrler.set_course(g.lti.get_course_id())
     ctrler.set_time(time)
     ctrler.add_question(quest)
     return ctrler.render()

@@ -1,5 +1,5 @@
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy import Column, String, Boolean
+from sqlalchemy import Column, String, Boolean, Integer
 from dbconnection import engine, session
 from Base import BaseEntity
 
@@ -12,13 +12,15 @@ class Question(Base, BaseEntity):
     course_id = Column(String)
     question = Column(String)
     available = Column(Boolean)
+    time = Column(Integer)
 
 
-    def __init__(self, teacher_id, course_id, question, available):
+    def __init__(self, teacher_id, course_id, question, available, time):
         self.teacher_id = teacher_id
         self.course_id = course_id
         self.question = question
         self.available = available
+        self.time = time
 
     def __repr__(self):
         return "<Question ('%s','%s','%s')>" % (self.teacher_id,

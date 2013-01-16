@@ -10,11 +10,11 @@ class questionController():
         for model in session.query(Question):
             break
         else:
-            session.add(Question("teacher1", "bla", "q1?", False))
-            session.add(Question("teacher1", "bla", "Hoe gaat het?", False))
-            session.add(Question("teacher1", "bla", "Hoe oud ben je?", False))
-            session.add(Question("teacher1", "bla", "Hoe heet je?", False))
-            session.add(Question("teacher1", "bla", "1337?", False))
+            session.add(Question("teacher1", "bla", "q1?", False, 0))
+            session.add(Question("teacher1", "bla", "Hoe gaat het?", False, 0))
+            session.add(Question("teacher1", "bla", "Hoe oud ben je?", False, 0))
+            session.add(Question("teacher1", "bla", "Hoe heet je?", False, 0))
+            session.add(Question("teacher1", "bla", "1337?", False, 0))
             session.commit()
             
     #function that updates the question in the db
@@ -48,19 +48,30 @@ class AskQuestion():
 
 class HandleQuestion():
     question = ""
+    instructor = ""
+    course = ""
     time = 0
     
     def __init__(self):
         self.question = ""
+        self.time = 0
+        self.instuctor = ""
+        self.course = ""
 
     def add_question(self,question):
         self.question = question
-        session.add(Question("teacher1", "", question, False))
+        session.add(Question(self.instructor, self.course, question, False, self.time))
         session.commit()
         
     def set_time(self,time):
         if isinstance(time,(int,long)):
-          self.time = time
+            self.time = time
+          
+    def set_course(self,course):
+        self.course = course
+        
+    def set_instructor(self,instructor):
+        self.instructor = instructor
     
     def render(self):
         return render_template('handleQuestion.html',question=self.question)
