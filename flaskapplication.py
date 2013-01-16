@@ -56,7 +56,9 @@ def question():
 @app.route("/handleQuestion",methods=['POST'])
 def handle_Question():
     question = request.form['question']
+    time = request.form['time']
     ctrler = handleQuestion.HandleQuestion()
+    ctrler.set_time(time)
     ctrler.add_question(question)
     return ctrler.render()
 

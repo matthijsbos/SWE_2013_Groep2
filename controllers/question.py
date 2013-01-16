@@ -32,3 +32,35 @@ class questionController():
     def render(self):
         self.editQuestion(1, "Ben ik nu een echte vraag?", True)
         return render_template('question.html',wordlist=self.getQuestion(4))
+
+class AskQuestion():
+    instructor = ""
+    
+    def __init__(self):
+        self.instructor = ""
+        
+    def set_instructor(self,instr):
+        self.instructor = instr
+
+
+    def render(self):
+        return render_template('askQuestion.html',instr=self.instructor)
+
+class HandleQuestion():
+    question = ""
+    time = 0
+    
+    def __init__(self):
+        self.question = ""
+
+    def add_question(self,question):
+        self.question = question
+        session.add(Question("teacher1", "", question, False))
+        session.commit()
+        
+    def set_time(self,time):
+        if isinstance(time,(int,long)):
+          self.time = time
+    
+    def render(self):
+        return render_template('handleQuestion.html',question=self.question)

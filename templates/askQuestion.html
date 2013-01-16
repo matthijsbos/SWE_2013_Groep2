@@ -2,7 +2,9 @@
 <head><title>Ask a question</title></head>
 Hello {{ instr }}, enter a question in the field below.
 <form action="handleQuestion" method="POST">
-  <textarea name="question" cols=80 rows=10></textarea>
+  <textarea name="question" cols=80 rows=10></textarea><br>
+  Insert time for question:
+  <input type="number" name="time">
   <input type="submit" value="Submit">
 </form>
 </html>
