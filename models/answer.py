@@ -1,9 +1,8 @@
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import *
-from dbconnection import engine, session
+from dbconnection import engine, session,Base
 from base import BaseEntity
 
-Base = declarative_base()
 
 class AnswerModel(Base,BaseEntity):
     __tablename__ = 'answer'

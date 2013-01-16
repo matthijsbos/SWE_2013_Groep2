@@ -4,7 +4,7 @@
 # Comment:
 
 from flask import render_template
-from models.Question import Question
+from models.question import Question
 from models.answer import AnswerModel
 from models import answer
 from dbconnection import session
@@ -18,4 +18,4 @@ class Answerchoice():
 		session.commit()
 
     def render(self):
-        return render_template('choice.html',questions=Question.by_id(1), answers=AnswerModel.get_answers(1))
+        return render_template('choice.html',questions=Question.by_id(1), answers=AnswerModel.by_id(1))
