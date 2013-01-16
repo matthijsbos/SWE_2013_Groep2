@@ -5,7 +5,7 @@
 
 from flask import Flask, request, render_template, g
 from lti import LTI, LTIException
-from controllers import index, answer
+from controllers import index, answer, askQuestion, handleQuestion
 
 app = Flask(__name__)
 app.debug = True
@@ -45,6 +45,19 @@ def test():
 @app.route("/launch",methods=['POST'])
 def launch():
     ctrler = index.Index(request)
+    return ctrler.render()
+    
+@app.route("/question",methods=['POST'])
+def question():
+    ctrler = askQuestion.AskQuestion()
+    ctrler.set_instructor('Test_Instructor')
+    return ctrler.render()
+    
+@app.route("/handleQuestion",methods=['POST'])
+def handle_Question():
+    question = request.form['question']
+    ctrler = handleQuestion.HandleQuestion()
+    ctrler.add_question(question)
     return ctrler.render()
 
 @app.route("/answer",methods=['POST'])
