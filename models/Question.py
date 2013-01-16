@@ -9,7 +9,7 @@ class Question(Base, BaseEntity):
     __tablename__ = 'questions'
 
     teacher_id = Column(String)
-    course_id = COlumn(String)
+    course_id = Column(String)
     question = Column(String)
     available = Column(Boolean)
 
