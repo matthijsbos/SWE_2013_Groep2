@@ -2,13 +2,12 @@ from models import answers
 from flask import render_template
 from dbconnection import engine, session
 
-Base = declarative_base()
-
 class Rating(Base):
 	__tablename__ = 'Ratings'
 	
 	id = Column(Integer, Sequence('id'), primary_key=True, unique=True)
 	rating = Column(Integer)
+    #TODO: ForeignKey
 	userID = Column(Integer)
 	
 	def __init__(self, rating, userID):
