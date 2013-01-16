@@ -3,6 +3,8 @@
 # Changes:
 # Comment:
 
+import models
+from dbconnection import Base, engine
 from flask import Flask, request, render_template, g
 from lti import LTI, LTIException
 from controllers import index, answer, modifytags, answerchoice
@@ -80,4 +82,5 @@ def logout():
     return "Logged out..."
 
 if __name__ == '__main__':
-        app.run()
+    Base.metadata.create_all(engine)
+    app.run()

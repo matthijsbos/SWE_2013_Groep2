@@ -25,4 +25,3 @@ class Question(Base, BaseEntity):
 
 
 
-Base.metadata.create_all(engine)

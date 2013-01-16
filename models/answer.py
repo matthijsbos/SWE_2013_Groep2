@@ -29,4 +29,3 @@ class AnswerModel(Base,BaseEntity):
         session.add(AnswerModel(questionID=questionID,userID=userID,text=answerText,weight=0))
         session.commit()
 
-Base.metadata.create_all(engine)
