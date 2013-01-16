@@ -1,13 +1,17 @@
 <html>
     <body>
-        
-            {% for answer in answers%}
+        <h1>AssignTags</h1>
+            {% for answer in answers %}
                 {{ answer.id }}
-                {{ answer }}
+                {{ answer }}<br>
+                
                 <form>
                   <fieldset>
                     <legend>Assign tags:</legend>
-                    <input type="checkbox" name="vehicle" value="Bike">I have a bike</input>
+                    
+                    {% for tag in tags %}
+                      <input type="checkbox" name="tag" value="{{tag}}">Tag {{tag}}</input>
+                    {% endfor %}
                   
                   </fieldset>
                 </form>
