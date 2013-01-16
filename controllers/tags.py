@@ -4,7 +4,7 @@
 # Comment:
 
 from flask import render_template
-from models.tags import Tag, AnswerTag
+from models.tag import Tag, AnswerTag
 from models.answer import AnswerModel
 from dbconnection import session
 
