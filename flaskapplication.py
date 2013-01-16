@@ -68,6 +68,11 @@ def removetags():
 def answerForm():
     ctrler = answer.Answer(request)
     return ctrler.render()
+    
+@app.route("/assigntags",methods=['POST'])
+def assign_tags():
+    ctrler = tags.AssignTags(1)
+    return ctrler.render()
 
 @app.route("/logout")
 def logout():
