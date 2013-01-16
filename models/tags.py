@@ -25,6 +25,10 @@ class Tag(Base):
         else:
             return "<Tag('%d', '%s')>" % (self.id, self.name)
             
+    @staticmethod
+    def get_all():
+        return session.query(Tag).filter().all()
+            
     @staticmethod 
     def add_tag(name):
         if session.query(Tag.name).filter(Tag.name==name).first() is None:
@@ -40,8 +44,8 @@ class Tag(Base):
 class AnswerTag(Base):
     __tablename__ = 'AnswerTags'
     
-    answer_id = Column(Integer, ForeignKey('answer.id'), primary_key=True)
-    tag_id = Column(Integer, ForeignKey('Tags.id'), primary_key=True)
+    answer_id = Column(Integer, ForeignKey('answer.id', ondelete='CASCADE'), primary_key=True)
+    tag_id = Column(Integer, ForeignKey('Tags.id', ondelete='CASCADE'), primary_key=True)
     
     def __init__(self, answer_id, tag_id):
         self.answer_id = answer_id

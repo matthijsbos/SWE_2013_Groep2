@@ -20,7 +20,7 @@ class AnswerModel(Base,BaseEntity):
         return self.text
         
     @staticmethod
-    def get_answers(question_id):
+    def get_question_answers(question_id):
         return session.query(AnswerModel).filter(AnswerModel.questionID==question_id)
 
     @staticmethod
