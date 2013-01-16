@@ -57,21 +57,15 @@ class HandleQuestion():
         self.time = 0
         self.instuctor = ""
         self.course = ""
-
-    def add_question(self,question):
-        self.question = question
-        session.add(Question(self.instructor, self.course, question, False, self.time))
-        session.commit()
         
-    def set_time(self,time):
+    def create_question(self,question,instructor,course,time):
         if isinstance(time,(int,long)):
             self.time = time
-          
-    def set_course(self,course):
+        self.question = question
         self.course = course
-        
-    def set_instructor(self,instructor):
         self.instructor = instructor
+        session.add(Question(self.instructor, self.course, question, False, self.time))
+        session.commit()
     
     def render(self):
         return render_template('handleQuestion.html',question=self.question)

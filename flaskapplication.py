@@ -49,19 +49,16 @@ def launch():
 
 @app.route("/question",methods=['POST'])
 def ask_question():
+    if g.lti.is_instructor() == False:
+      return render_template("access_restricted.html")
     ctrler = question.AskQuestion()
     ctrler.set_instructor(g.lti.get_user_id())
     return ctrler.render()
 
 @app.route("/handleQuestion",methods=['POST'])
 def handle_question():
-    quest = request.form['question']
-    time = request.form['time']
     ctrler = question.HandleQuestion()
-    ctrler.set_instructor(g.lti.get_user_id())
-    ctrler.set_course(g.lti.get_course_id())
-    ctrler.set_time(time)
-    ctrler.add_question(quest)
+    ctrler.create_question(request.form['question'],g.lti.get_user_id(),g.lti.get_course_id(),request.form['time'])
     return ctrler.render()
 
 
