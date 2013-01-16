@@ -11,9 +11,10 @@ class Answer():
     def render(self):
         # dummy shit, get some real data
         qText = 'wat is het antwoord op deze dummy vraag?'
-        uID = g.lti.get_user_id()
+        uID = 19#g.lti.get_user_id()
         qID = -1
         timerD = 10
+        timerDstr = "00:10"
 
         # Post should be real data
         if self.request.method == 'POST' and 'questionID' in self.request.form:
@@ -30,12 +31,12 @@ class Answer():
             answerText = self.request.form['answerText']
             aID = answer.AnswerModel.getAnswerID(uID, qID)
 
-            succes = "false"
+            flag = "false"
             if self.timeLeft(aID, timerD, 0):
                 answer.AnswerModel.updateAnswer(aID, answerText)
-                succes = "true"
+                flag = "true"
 
-            return render_template('answersaved.html', succes=succes)
+            return render_template('answersaved.html', flag=flag)
 
         elif 'showall' in self.request.form:
             # Render all
@@ -52,21 +53,21 @@ class Answer():
             edit = int(self.request.form['edit'])
             answer.AnswerModel.savereview(
                 questionID, userID, reviewAnswer, edit)
-            return render_template('answersaved.html')
+            return render_template('answersaved.html', flag='true')
         elif 'removeAnswer' in self.request.form:
             id = int(self.request.form['id'])
             answer.AnswerModel.remove_by_id(id)
-            return render_template('answersaved.html')
+            return render_template('answersaved.html', flag='removed')
         else:
             if answer.AnswerModel.checkAnswerExist(uID, qID):
                 aID = answer.AnswerModel.getAnswerID(uID, qID)
                 if self.timeLeft(aID, timerD, 0):
                     return render_template('answer.html', questionID=qID, userID=uID, questionText=qText, timerDuration=self.timeLeft(aID, timerD, 1), go="true", answerID=aID)
                 else:
-                    return render_template('answer.html', questionID=qID, userID=uID, questionText=qText, timerDuration=timerD, go="false")
+                    return render_template('answer.html', questionID=qID, userID=uID, questionText=qText, timerDuration= timerDstr, go="false")
             else:
                 answer.AnswerModel.save(qID, uID, "")
-                return render_template('answer.html', questionID=qID, userID=uID, questionText=qText, timerDuration=timerD, go="true")
+                return render_template('answer.html', questionID=qID, userID=uID, questionText=qText, timerDuration= timerDstr, go="true")
 
     def timeLeft(self, aID, timerD, giveTime):
         currentTime = datetime.datetime.now()
@@ -76,8 +77,16 @@ class Answer():
 
         if giveTime == 1:
             minutes = int((timerD - seconds) / 60)
-            seconds = (timerD - seconds) % 60
-            return "" + str(minutes) + ":" + str(seconds)
+            seconds = int((timerD - seconds) % 60)
+            if minutes < 10:
+                minutes = str("0"+str(minutes))
+            else:
+                minutes = str(minutes)
+            if seconds < 10:
+                seconds = str("0"+str(seconds))
+            else:
+                seconds = str(seconds)
+            return minutes + ":" + seconds
 
         if seconds < timerD + 2:
             return True
