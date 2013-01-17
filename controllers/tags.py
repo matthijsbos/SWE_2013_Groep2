@@ -41,5 +41,5 @@ class AssignTags():
                     session.add(answer_tag)
     
     def render(self):
-        return render_template('showanswers.html', answers=AnswerTag.get_all(),
+        return render_template('showanswers.html', answers=AnswerModel.get_all(),
                                tags=Tag.get_all())
