@@ -6,20 +6,42 @@ from models.question import Question
 
 
 class QuestionController():
-    #function that updates the question in the db
+    @staticmethod
+    def toggle_question(q_id):
+        available = Question.by_id(q_id).available
+        if g.lti.is_instructor():
+            if available == True:
+                Question.by_id(q_id).available = False
+                return json.dumps({"toggle":False,"check": True})
+            else:
+                Question.by_id(q_id).available = True
+                return json.dumps({"toggle": True,"check": True})
+        else:
+          return json.dumps({"toggle": True,"check": False})
+                
     @staticmethod
     def edit_question(q_id, question, activate):
-        if question != None:
-          escaped_question = escape(question)
-          Question.by_id(q_id).question = question
+        """Updates a question with given contents and activation status."""
+        if g.lti.is_instructor():
+            if question != None:
+                escaped_question = escape(question)
+                Question.by_id(q_id).question = question
+            else:
+                escaped_question = None
+            Question.by_id(q_id).available = activate
+            return json.dumps({"id": q_id,
+                               "text": escaped_question,
+                               "available": activate,
+                               "check": g.lti.is_instructor()})
         else:
-          escaped_question = None
-        Question.by_id(q_id).available = activate
-        return json.dumps({"id":q_id,"text":escaped_question,"available":activate})
+            return json.dumps({"id": q_id,
+                               "text": question,
+                               "available": activate,
+                               "check": g.lti.is_instructor()})
 
-    #function to get the first n questions
     @staticmethod
     def get_questions(n):
+        """Retrieves the first n questions, sorted by date available."""
         return session.query(Question).order_by(Question.available.desc())[:n]
 
     @staticmethod
@@ -30,8 +52,9 @@ class QuestionController():
     @staticmethod
     def get_list():
         # TODO: pagination, etc..... same goes for get_questions
+        session.commit()
         return render_template('question_list.html',
-                questions=QuestionController.get_questions(30))
+                               questions=session.query(Question).order_by(Question.available.desc()))
 
     @staticmethod
     def delete_question(qid):
@@ -44,13 +67,15 @@ class QuestionController():
 
     @staticmethod
     def ask_question(instructor):
-        return render_template('askQuestion.html',instr=instructor)
+        return render_template('askQuestion.html', instr=instructor)
 
     @staticmethod
     def create_question(question, instructor, course, time):
-        if not isinstance(time, (int, long)):
+        try:
+            time = int(time)
+        except ValueError:
             time = 0
         session.add(Question(instructor, course, question, False, time))
         session.commit()
 
-        return render_template('handleQuestion.html',question=question)
+        return render_template('handleQuestion.html', question=question)

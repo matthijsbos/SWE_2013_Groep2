@@ -18,15 +18,12 @@ class Answer():
         # Post should be real data
         if self.request.method == 'POST' and 'questionID' in self.request.form:
             qID = int(self.request.form['questionID'])
-            try:
-                q = question.Question.by_id(qID)
+            q = question.Question.by_id(qID)
+            if q is not None:
                 qText = q.question
-
                 #Found out q.time was not ment this way
                 #timerD = q.time
-            except(sqlalchemyExp.NoResultFound):
-                pass
-             
+
         if 'answerText' in self.request.form:
             return self.saveAnswer(uID, qID, timerD)
         elif 'showall' in self.request.form:
@@ -41,8 +38,8 @@ class Answer():
         elif 'removeAnswer' in self.request.form:
             return self.removeAnswer()
         else:
-            return self.answerQuestion(uID, qID, qText, timerD)            
-            
+            return self.answerQuestion(uID, qID, qText, timerD)
+
     def saveAnswer(self, uID, qID, timerD):
         # save answer
         answerText = self.request.form['answerText']
@@ -54,11 +51,11 @@ class Answer():
             flag = "true"
 
         return render_template('answersaved.html', flag=flag)
-    
+
     def viewAnswer(self):
         aid = int(self.request.form['id'])
         return render_template('editanswer.html', answer=answer.AnswerModel.by_id(aid))
-        
+
     def saveReviewAnswer(self):
         questionID = int(self.request.form['questionID'])
         userID = self.request.form['userID']
@@ -67,22 +64,22 @@ class Answer():
         answer.AnswerModel.savereview(
             questionID, userID, reviewAnswer, edit)
         return render_template('answersaved.html', flag='true')
-        
+
     def removeAnswer(self):
         id = int(self.request.form['id'])
         answer.AnswerModel.remove_by_id(id)
         return render_template('answersaved.html', flag='removed')
-        
+
     def answerQuestion(self, uID, qID, qText, timerD):
         if answer.AnswerModel.checkAnswerExist(uID, qID):
             aID = answer.AnswerModel.getAnswerID(uID, qID)
             if self.timeLeft(aID, timerD, 0):
                 return render_template('answer.html', questionID=qID, userID=uID, questionText=qText, timerDuration=self.timeLeft(aID, timerD, 1), go="true", answerID=aID)
             else:
-                return render_template('answer.html', questionID=qID, userID=uID, questionText=qText, timerDuration=timerD, go="false")
+                return render_template('answer.html', questionID=qID, userID=uID, questionText=qText, timerDuration=self.timerSyntax(timerD), go="false")
         else:
             answer.AnswerModel.save(qID, uID, "")
-            return render_template('answer.html', questionID=qID, userID=uID, questionText=qText, timerDuration=timerD, go="true")   
+            return render_template('answer.html', questionID=qID, userID=uID, questionText=qText, timerDuration=self.timerSyntax(timerD), go="true")
 
     def timeLeft(self, aID, timerD, giveTime):
         currentTime = datetime.datetime.now()
@@ -90,14 +87,27 @@ class Answer():
         difference = currentTime - timeAnswered
         seconds = difference.days * 86400 + difference.seconds
 
-        if giveTime == 1:            
-            return timerD - seconds
+        if giveTime == 1:
+            return self.timerSyntax(timerD - seconds)
 
         if seconds < timerD + 2:
             return True
         else:
             return False
-        
+
+    def timerSyntax(self, seconds):
+        minutes = int((seconds) / 60)
+        seconds = int((seconds) % 60)
+        if minutes < 10:
+            minutes = str("0"+str(minutes))
+        else:
+            minutes = str(minutes)
+        if seconds < 10:
+            seconds = str("0"+str(seconds))
+        else:
+            seconds = str(seconds)
+        return minutes + ":" + seconds
+
     def render_filtered(self):
         postdata = self.request.form
 
@@ -115,7 +125,7 @@ class Answer():
     def render_all(self):
         # Render all
         return render_template('showanswers.html', answers=answer.AnswerModel.get_all())
-        
+
     def render_filtered_by_questionid(self,questionid):
         postdata = self.request.form
         args = {"questionID": questionid}

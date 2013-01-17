@@ -6,12 +6,12 @@
 
 import yaml
 from flask import Flask, Response, request, render_template, g
-
 from lti import LTI, LTIException
 from controllers.index import Index
 from controllers.answer import Answer
 from controllers.question import QuestionController as Question
-from controllers.modifytags import Modifytags
+from controllers.tags import Modifytags, AssignTags
+from controllers.ratings import AssignRatings
 
 app = Flask(__name__)
 app.debug = True
@@ -58,9 +58,10 @@ def edit_question():
                              request.args['text'],
                              False)
                       
-@app.route("/activate_question",methods=['GET','POST'])
-def activate_question():
-  return Question.edit_question(request.args['id'], None, True)
+
+@app.route("/toggle_question",methods=['GET','POST'])
+def toggle_question():
+  return Question.toggle_question(request.args['id'])
     
 # this route is used to ask a question to students
 @app.route("/question",methods=['GET', 'POST'])
@@ -122,6 +123,30 @@ def removetags():
 def answerForm():
     ctrler = Answer(request)
     return ctrler.render()
+    
+
+@app.route("/assigntags",methods=['POST', 'GET'])
+def assign_tags():
+    ctrler = AssignTags(1)
+    return ctrler.render()
+
+
+@app.route("/assigntags_done",methods=['POST'])
+def handle_assign_tags():
+    ctrler = AssignTags.assign(request)
+    return "<a href='/'>back to main</a>"
+
+
+@app.route("/assignratings", methods=['POST', 'GET'])
+def assign_ratings():
+    ctrler = AssignRatings(1)
+    return ctrler.render()
+
+
+@app.route("/assignratings_done",methods=['POST'])
+def handle_assign_ratings():
+    ctrler = AssignRatings.assign(request)
+    return "<a href='/'>back to main</a>"
 
 
 @app.route("/filteranswers", methods=['POST', 'GET'])
