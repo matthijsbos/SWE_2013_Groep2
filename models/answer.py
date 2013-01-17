@@ -37,14 +37,22 @@ class AnswerModel(Base, BaseEntity):
 
     @staticmethod
     def getAnswerID(uID, qID):
-        answer = session.query(AnswerModel).filter_by(questionID=qID, userID=uID, edit=0).one()
-        return answer.id
+        if engine.dialect.has_table(engine.connect(), "answer"):
+            try:
+                answer = session.query(AnswerModel).filter_by(
+                    questionID=qID, userID=uID).one()
+                return answer.id
+            except exc.InvalidRequestError:
+                return 0
+        else:
+            return 1
 
     @staticmethod
     def checkAnswerExist(uID, qID):
         if engine.dialect.has_table(engine.connect(), "answer"):
             try:
-                answer = session.query(AnswerModel).filter_by(questionID=qID, userID=uID, edit=0).one()
+                answer = session.query(AnswerModel).filter_by(
+                    questionID=qID, userID=uID).one()
                 return 1
             except exc.InvalidRequestError:
                 return 0
@@ -56,3 +64,4 @@ class AnswerModel(Base, BaseEntity):
         answer = session.query(AnswerModel).filter_by(id=answerID).one()
         return answer.created
 
+Base.metadata.create_all(engine)

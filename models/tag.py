@@ -51,3 +51,4 @@ class AnswerTag(Base):
     def __repr__(self):
         return "<AnswerTag('%d', '%d')>" % (self.answer_id, self.tag_id)
 
+Base.metadata.create_all(engine)
