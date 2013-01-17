@@ -11,7 +11,7 @@ class Answer():
     def render(self):
         # dummy shit, get some real data
         qText = 'wat is het antwoord op deze dummy vraag?'
-        uID = 7#g.lti.get_user_id()
+        uID = 1#g.lti.get_user_id()
         qID = -1
         timerD = 15       
 
@@ -20,13 +20,13 @@ class Answer():
             qID = int(self.request.form['questionID'])
             try:
                 q = question.Question.by_id(qID).question
+                qText = q.question
+                timerD = q.time
             except(sqlalchemyExp.NoResultFound):
                 pass
             except Exception as e:
                 return e
-            qText = q.question
-            timerD = q.time
-
+             
         if 'answerText' in self.request.form:
             return self.saveAnswer(uID, qID, timerD)
         elif 'showall' in self.request.form:
