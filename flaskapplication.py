@@ -1,7 +1,8 @@
 # Author : Dexter Drupsteen
-# Descrp : Contains routing and calling of the controllers
+# Descrp : Contains routing and calling of the constrollers
 # Changes:
-# Comment:
+# Comment: MultiDict with isinstructor,consumerkey,coursekey and coursename in
+#          the request.form field.
 
 import yaml
 from flask import Flask, Response, request, render_template, g
@@ -10,10 +11,12 @@ from lti import LTI, LTIException
 from controllers.index import Index
 from controllers.answer import Answer
 from controllers.question import QuestionController as Question
+from controllers.modifytags import Modifytags
 
 app = Flask(__name__)
 app.debug = True
 app.secret_key = "Hurdygurdy" # Used for Flask sessions, TODO: config?
+
 
 @app.before_request
 def init_lti():
@@ -31,18 +34,20 @@ def init_lti():
         g.lti = LTI(request.url, params, dict(request.headers))
     except LTIException as error:
         ret = "Error getting LTI data. Did you run this tool via a " + \
-                "consumer such as Sakai?"
+            "consumer such as Sakai?"
         if app.debug:
             ret += "<hr>Debug info:<br/>%s" % str(error)
         return ret
 
+
 # define the routes for our application
-@app.route("/",methods=['GET', 'POST'])
+@app.route("/", methods=['GET', 'POST'])
 def home():
     ctrler = Index(request)
     return ctrler.render()
 
-@app.route("/launch",methods=['POST'])
+
+@app.route("/launch", methods=['POST'])
 def launch():
     ctrler = Index(request)
     return ctrler.render()
@@ -95,10 +100,37 @@ def question_export():
                     g.lti.get_course_name()})
 
 
-@app.route("/answer",methods=['GET', 'POST'])
+@app.route("/managetags", methods=['GET', 'POST'])
+def managetags():
+    ctrler = Modifytags()
+    return ctrler.render()
+
+
+@app.route("/addtag", methods=['POST'])
+def addtags():
+    ctrler = Modifytags()
+    ctrler.addtag(request)
+    return ctrler.render()
+
+
+@app.route("/removetag", methods=['POST'])
+def removetags():
+    ctrler = Modifytags()
+    ctrler.deletetag(request)
+    return ctrler.render()
+
+
+@app.route("/answer", methods=['GET', 'POST'])
 def answerForm():
     ctrler = Answer(request)
     return ctrler.render()
+
+
+@app.route("/filteranswers", methods=['POST', 'GET'])
+def answerFilter():
+    ctrler = Answer(request)
+    return ctrler.render_filtered()
+
 
 @app.route("/logout")
 def logout():
@@ -107,4 +139,3 @@ def logout():
 
 if __name__ == '__main__':
         app.run()
-
