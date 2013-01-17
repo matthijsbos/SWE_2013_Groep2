@@ -11,7 +11,7 @@ class Answer():
     def render(self):
         # dummy shit, get some real data
         qText = 'wat is het antwoord op deze dummy vraag?'
-        uID = 18#g.lti.get_user_id()
+        uID = g.lti.get_user_id()
         qID = -1
         timerD = 25       
 
@@ -21,7 +21,9 @@ class Answer():
             try:
                 q = question.Question.by_id(qID)
                 qText = q.question
-                timerD = q.time
+
+                #Found out q.time was not ment this way
+                #timerD = q.time
             except(sqlalchemyExp.NoResultFound):
                 pass
              
