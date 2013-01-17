@@ -20,12 +20,12 @@ class Answer():
             qID = int(self.request.form['questionID'])
             try:
                 q = question.Question.by_id(qID).question
+                qText = q.question
+                timerD = q.time
             except(sqlalchemyExp.NoResultFound):
                 pass
             except Exception as e:
                 return e
-            qText = q.question
-            timerD = q.time
 
         if 'answerText' in self.request.form:
             return self.saveAnswer(uID, qID, timerD)
