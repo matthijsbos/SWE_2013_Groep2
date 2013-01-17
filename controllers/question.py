@@ -12,21 +12,13 @@ class QuestionController():
         if g.lti.is_instructor():
             if available == True:
                 Question.by_id(q_id).available = False
+                return json.dump({"toggle": Frue,"check": True})
             else:
                 Question.by_id(q_id).available = True
-            return json.dump({"toggle": true})
+                return json.dump({"toggle": True,"check": True})
         else:
-<<<<<<< HEAD
-          Question.by_id(q_id).available = True
-        return json.dumps({"toggle":True})
-      else:
-        return json.dumps({"toggle":False})
-    
-    #function that updates the question in the db
-=======
-            return json.dump({"toggle": true})
-
->>>>>>> 50422d40b15a15b6388d8291de10aac544eae6a7
+          return json.dump({"toggle": True,"check": False})
+                
     @staticmethod
     def edit_question(q_id, question, activate):
         """Updates a question with given contents and activation status."""
