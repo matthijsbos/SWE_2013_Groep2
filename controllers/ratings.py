@@ -5,9 +5,8 @@ from flask import render_template, session as fsession
 
 class AssignRatings():
     def __init__(self, answer_id):
-        try:
-            self.answer = AnswerModel.by_id(answer_id)
-        except: 
+        self.answer = AnswerModel.by_id(answer_id)
+        if self.answer == None:
             self.answer = "Error no answer found"
 
         fsession['assignrating'] = str(answer_id)
