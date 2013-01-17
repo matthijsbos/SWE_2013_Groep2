@@ -6,6 +6,7 @@
 from flask import render_template, g, request
 from models.question import Question
 from models.answer import AnswerModel
+from models.answerchoice import AnswerChoiceModel
 from models import answer
 from dbconnection import session
 
@@ -26,29 +27,43 @@ class Answerchoice():
         try:
             answer0 = int(request.values['answerzero'])
         except KeyError:
-            #TODO 
-            return ''
+            return 404
+        except ValueError:
+            return 404
 
         try:
             answer1 = int(request.values['answerone'])
         except KeyError:
-            #TODO
-            return ''
+            return 404
+        except ValueError:
+            return 404
         
         try:
             bestanswer = int(request.values['bestanswer'])
         except KeyError:
-            #TODO
-            return ''
+            return 404
+        except ValueError:
+            return 404
+
+        print userid
 
         if answer0 == bestanswer:
-            #session.add(AnswerChoiceModel(userid,answer0,answer1))
-            #TODO
-            pass
+            best = answer0
+            other = answer1
         elif answer1 == bestanswer:
-            #session.add(AnswerChoiceModel(userid,answer1,answer0))
-            #TODO
-            pass
+            best = answer1
+            other = answer0
         else:
-            #TODO 
-            pass
+            return 404
+        
+        print best
+        print other
+
+        #try:
+        session.add(AnswerChoiceModel(userid,best,other))
+        session.commit()
+        #except:
+        #    print 'error in SQL'
+        #    session.rollback()
+
+        return str(len(AnswerChoiceModel.get_all()))
