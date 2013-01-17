@@ -27,22 +27,27 @@ class Tag(Base, BaseEntity):
             return "<Tag('%d', '%s')>" % (self.id, self.name)
 
     @staticmethod
+    def get_all():
+        return session.query(Tag).filter().all()
+
+    @staticmethod
     def add_tag(name):
         if session.query(Tag.name).filter(Tag.name == name).first() is None:
             session.add(Tag(name))
             session.commit()
-
+            
     @staticmethod
     def remove_tag(tag_id):
         for tag in session.query(Tag).filter(Tag.id == tag_id):
             session.delete(tag)
+            session.commit()
 
 
 class AnswerTag(Base):
     __tablename__ = 'AnswerTags'
-
-    answer_id = Column(Integer, ForeignKey('answer.id'), primary_key=True)
-    tag_id = Column(Integer, ForeignKey('Tags.id'), primary_key=True)
+    
+    answer_id = Column(Integer, ForeignKey('answer.id', ondelete='CASCADE'), primary_key=True)
+    tag_id = Column(Integer, ForeignKey('Tags.id', ondelete='CASCADE'), primary_key=True)
 
     def __init__(self, answer_id, tag_id):
         self.answer_id = answer_id
@@ -50,5 +55,22 @@ class AnswerTag(Base):
 
     def __repr__(self):
         return "<AnswerTag('%d', '%d')>" % (self.answer_id, self.tag_id)
+        
+    @staticmethod
+    def get_all():
+        return session.query(AnswerTag).filter().all()
+
+    @staticmethod
+    def add_answertag(aid, tid):
+        if session.query(AnswerTag).filter(
+                    AnswerTag.answer_id==aid,
+                    AnswerTag.tag_id==tid).first() is None:
+                session.add(AnswerTag(aid, tid))
+                session.commit()
+
+    @staticmethod
+    def get_tag_ids(answerID):
+        tlist = session.query(AnswerTag).filter(AnswerTag.answer_id==answerID)
+        return tlist
 
 Base.metadata.create_all(engine)
