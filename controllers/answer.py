@@ -11,19 +11,18 @@ class Answer():
     def render(self):
         # dummy shit, get some real data
         qText = 'wat is het antwoord op deze dummy vraag?'
-        uID = 1#g.lti.get_user_id()
+        uID = g.lti.get_user_id()
         qID = -1
-        timerD = 15
+        timerD = 25       
 
         # Post should be real data
         if self.request.method == 'POST' and 'questionID' in self.request.form:
             qID = int(self.request.form['questionID'])
-            try:
-                q = question.Question.by_id(qID)
+            q = question.Question.by_id(qID)
+            if q is not None:
                 qText = q.question
-                timerD = q.time
-            except(sqlalchemyExp.NoResultFound):
-                pass
+                #Found out q.time was not ment this way
+                #timerD = q.time
 
         if 'answerText' in self.request.form:
             return self.saveAnswer(uID, qID, timerD)
