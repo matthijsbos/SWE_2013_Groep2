@@ -58,7 +58,7 @@ def edit_question():
                              request.args['text'],
                              False)
                       
-
+# this route is called to toggle a question's availability
 @app.route("/toggle_question",methods=['GET','POST'])
 def toggle_question():
   return Question.toggle_question(request.args['id'])

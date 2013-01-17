@@ -8,6 +8,7 @@ from models.question import Question
 class QuestionController():
     @staticmethod
     def toggle_question(q_id):
+        '''toggles a question between available and not available'''
         available = Question.by_id(q_id).available
         if g.lti.is_instructor():
             if available == True:
@@ -58,6 +59,7 @@ class QuestionController():
 
     @staticmethod
     def delete_question(qid):
+        '''removes the question with the provided id from the database'''
         question = Question.by_id(int(qid))
         if g.lti.is_instructor():
             session.delete(question)
@@ -67,10 +69,12 @@ class QuestionController():
 
     @staticmethod
     def ask_question(instructor):
+        '''passes the name of the course instructor to the ask question module and calls the screen to ask a question'''
         return render_template('askQuestion.html', instr=instructor)
 
     @staticmethod
     def create_question(question, instructor, course, time):
+        '''formats a question for database insertion and inserts it, calls a result screen afterwards'''
         try:
             time = int(time)
         except ValueError:
