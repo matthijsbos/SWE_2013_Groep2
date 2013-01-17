@@ -56,4 +56,3 @@ class AnswerModel(Base, BaseEntity):
         answer = session.query(AnswerModel).filter_by(id=answerID).one()
         return answer.created
 
-Base.metadata.create_all(engine)

@@ -24,4 +24,3 @@ class Question(Base, BaseEntity):
                                                 self.available)
 
 
-Base.metadata.create_all(engine)

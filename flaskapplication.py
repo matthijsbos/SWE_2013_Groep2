@@ -6,7 +6,8 @@
 
 from flask import Flask, request, render_template, g
 from lti import LTI, LTIException
-from controllers import index, answer, modifytags
+from controllers import index,answer,modifytags
+from dbconnection import Base,engine
 
 app = Flask(__name__)
 app.debug = True
@@ -91,4 +92,5 @@ def logout():
     return "Logged out..."
 
 if __name__ == '__main__':
-        app.run()
+    Base.metadata.create_all(engine)
+    app.run()
