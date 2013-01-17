@@ -40,6 +40,7 @@ class Tag(Base, BaseEntity):
     def remove_tag(tag_id):
         for tag in session.query(Tag).filter(Tag.id == tag_id):
             session.delete(tag)
+            session.commit()
 
 
 class AnswerTag(Base):
@@ -65,5 +66,11 @@ class AnswerTag(Base):
                     AnswerTag.answer_id==aid,
                     AnswerTag.tag_id==tid).first() is None:
                 session.add(AnswerTag(aid, tid))
+                session.commit()
+
+    @staticmethod
+    def get_tag_ids(answerID):
+        tlist = session.query(AnswerTag).filter(AnswerTag.answer_id==answerID)
+        return tlist
 
 Base.metadata.create_all(engine)
