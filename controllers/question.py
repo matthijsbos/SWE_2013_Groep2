@@ -13,7 +13,7 @@ class QuestionController():
         if g.lti.is_instructor():
             if available == True:
                 Question.by_id(q_id).available = False
-                return json.dumps({"toggle": Frue,"check": True})
+                return json.dumps({"toggle": False,"check": True})
             else:
                 Question.by_id(q_id).available = True
                 return json.dumps({"toggle": True,"check": True})
