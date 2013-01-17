@@ -1,7 +1,6 @@
-<html>
-<head><title>Groep 2</title></head>
-<body>
-    <!-- Just support GET damnit :P -->
+{% extends "_base.html" %}
+{% block content %}
+    <p>Debug options:</p>
     <ul>
         <li><a href="/question_list">Question list</a></li>
         <li><a href="/question">Ask a question</a></li>
@@ -20,5 +19,4 @@
     <hr />
     LTI data:<br />
     <pre>{{ lti_dump }}</pre>
-</body>
-</html>
+{% endblock %}
