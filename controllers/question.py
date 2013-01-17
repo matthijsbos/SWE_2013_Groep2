@@ -9,8 +9,11 @@ class QuestionController():
     #function that updates the question in the db
     @staticmethod
     def edit_question(q_id, question, activate):
-        escaped_question = escape(question)
-        Question.by_id(q_id).question = question
+        if question != None:
+          escaped_question = escape(question)
+          Question.by_id(q_id).question = question
+        else:
+          escaped_question = None
         Question.by_id(q_id).available = activate
         return json.dumps({"id":q_id,"text":escaped_question,"available":activate})
 
