@@ -9,14 +9,16 @@ class QuestionController():
     #function that updates the question in the db
     @staticmethod
     def edit_question(q_id, question, activate):
+      if g.lti.is_instructor():
         if question != None:
           escaped_question = escape(question)
           Question.by_id(q_id).question = question
         else:
           escaped_question = None
         Question.by_id(q_id).available = activate
-        return json.dumps({"id":q_id,"text":escaped_question,"available":activate})
-
+        return json.dumps({"id":q_id,"text":escaped_question,"available":activate,"check":g.lti.is_instructor()})
+      else:
+        return json.dumps({"id":q_id,"text":question,"available":activate,"check":g.lti.is_instructor()})
     #function to get the first n questions
     @staticmethod
     def get_questions(n):

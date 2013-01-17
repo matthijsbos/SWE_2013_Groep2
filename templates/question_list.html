@@ -9,14 +9,19 @@
   function edit_question(id,text){
     $.getJSON("/edit_question",{id:id,text:text},
     function(data){
-      if(!data.available){
-        temp="False"
+      if(data.check){
+        if(!data.available){
+          temp="False"
+        }
+        else{
+          temp="True"
+        }
+        $('#available_'+id).html(temp);
+        $('#question_'+id).html(data.text);
       }
       else{
-        temp="True"
+        $('#error').html("Error while editing question question.");
       }
-      $('#available_'+id).html(temp);
-      $('#question_'+id).html(data.text);
     });
   }
 
@@ -33,13 +38,18 @@
   function activate_question(id){
     $.getJSON("/activate_question",{id:id},
     function(data){
-      if(!data.available){
-        temp="False"
+      if(data.check){
+        if(!data.available){
+          temp="False"
+        }
+        else{
+          temp="True"
+        }
+        $('#available_'+id).html(temp);
       }
       else{
-        temp="True"
+        $('#error').html("Error while activating question question.");
       }
-      $('#available_'+id).html(temp);
     });
   }
 </script>
