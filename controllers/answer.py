@@ -3,7 +3,6 @@ from flask import render_template, g
 import datetime
 import sqlalchemy.orm.exc as sqlalchemyExp
 
-
 class Answer():
     def __init__(self, request):
         self.request = request
@@ -79,7 +78,7 @@ class Answer():
             seconds = (timerD - seconds) % 60
             return "" + str(minutes) + ":" + str(seconds)
 
-        if seconds < timerD:
+        if seconds < timerD + 2:
             return True
         else:
             return False
@@ -97,6 +96,18 @@ class Answer():
                 args["id"] = postdata["id"]
 
         return render_template('answerfilter.html', answers=answer.AnswerModel.get_filtered(**args))
+
+    def render_filtered_by_questionid(self,questionid):
+        postdata = self.request.form
+        args = {"questionID": questionid}
+
+        if self.request.method == "POST":
+            if "userID" in postdata and len(postdata["userID"]) > 0:
+                args["userID"] = postdata["userID"]
+            if "id" in postdata and len(postdata["id"]) > 0:
+                args["id"] = postdata["id"]
+
+        return render_template('answerfilter_by_questionid.html', answers=answer.AnswerModel.get_filtered(**args))
 
     def render_all(self):
         # Render all
