@@ -76,7 +76,7 @@
             <td id="available_{{question.id}}">{{question.available}}</td>
             <td id="time_{{question.id}}">{{question.time}}</td>
             <td><button value="edit" onclick=edit_question({{question.id}},"edited_text") />edit</td>
-            <td><button value="activate" onclick=activate_question({{question.id}}) />activate</td>
+            <td><button value="toggle" onclick=toggle_question({{question.id}}) />toggle</td>
             <td><button value="delete" onclick=delete_question({{question.id}}) />delete</td>
         </tr>
     {% endfor %}

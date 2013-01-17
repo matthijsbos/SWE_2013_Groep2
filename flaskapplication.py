@@ -59,7 +59,7 @@ def edit_question():
                              False)
                       
 @app.route("/activate_question",methods=['GET','POST'])
-def activate_question():
+def toggle_question():
   return Question.toggle_question(request.args['id'])
     
 # this route is used to ask a question to students

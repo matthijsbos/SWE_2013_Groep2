@@ -12,12 +12,12 @@ class QuestionController():
         if g.lti.is_instructor():
             if available == True:
                 Question.by_id(q_id).available = False
-                return json.dump({"toggle": Frue,"check": True})
+                return json.dumps({"toggle": True,"check": True})
             else:
                 Question.by_id(q_id).available = True
-                return json.dump({"toggle": True,"check": True})
+                return json.dumps({"toggle": True,"check": True})
         else:
-          return json.dump({"toggle": True,"check": False})
+          return json.dumps({"toggle": True,"check": False})
                 
     @staticmethod
     def edit_question(q_id, question, activate):
