@@ -25,24 +25,19 @@
     <div>
         <form action="/answer" id="answerform" method="post">
             <br>
-            {{questionText}}
+            <div id="question">{{questionText}}</div>
             <input type="hidden"  name="questionID" value="{{questionID}}" />
             <input type="text" name="userID" value="{{userID}}" />
             <br>
             Answer: <br><textarea name="answerText" cols=50 rows=10></textarea>
             <br>
-            <input type="submit" value="go"/>
-            {{answerID}}
+            <input type="submit" value="go" class="submit-answer"/>
         </form>
         <div id="counter"></div>
-        <div class="desc">
-            <div>Minutes</div>
-            <div>Seconds</div>
-        </div>
     </div>
-</body>
 {% else %}
 <p>You have already answered this question.</p>
 {% endif %}
+</body>
 </html>
 
