@@ -100,7 +100,7 @@ class LTI():
         session_data = ['consumer', 'user_id', 'course_id', 'course_name',
                         'role', 'real_name']
         for s in session_data:
-            flask.session.pop(s,  None)
+            flask.session.pop(s, None)
 
     def get_consumer(self):
         return flask.session['consumer']
@@ -120,7 +120,7 @@ class LTI():
 
     def is_instructor(self):
         return flask.session['role'] in ("Instructor", "Administrator",
-                "Mentor")
+                                         "Mentor")
 
     def dump_all(self):
         ret = ""

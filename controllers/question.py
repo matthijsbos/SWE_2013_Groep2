@@ -8,32 +8,39 @@ from models.question import Question
 class QuestionController():
     @staticmethod
     def toggle_question(q_id):
-      available = Question.by_id(q_id).available
-      if g.lti.is_instructor():
-        if available == True:
-          Question.by_id(q_id).available = False
+        available = Question.by_id(q_id).available
+        if g.lti.is_instructor():
+            if available == True:
+                Question.by_id(q_id).available = False
+            else:
+                Question.by_id(q_id).available = True
+            return json.dump({"toggle": true})
         else:
-          Question.by_id(q_id).available = True
-        return json.dump({"toggle":true})
-      else:
-        return json.dump({"toggle":true})
-    
-    #function that updates the question in the db
+            return json.dump({"toggle": true})
+
     @staticmethod
     def edit_question(q_id, question, activate):
-      if g.lti.is_instructor():
-        if question != None:
-          escaped_question = escape(question)
-          Question.by_id(q_id).question = question
+        """Updates a question with given contents and activation status."""
+        if g.lti.is_instructor():
+            if question != None:
+                escaped_question = escape(question)
+                Question.by_id(q_id).question = question
+            else:
+                escaped_question = None
+            Question.by_id(q_id).available = activate
+            return json.dumps({"id": q_id,
+                               "text": escaped_question,
+                               "available": activate,
+                               "check": g.lti.is_instructor()})
         else:
-          escaped_question = None
-        Question.by_id(q_id).available = activate
-        return json.dumps({"id":q_id,"text":escaped_question,"available":activate,"check":g.lti.is_instructor()})
-      else:
-        return json.dumps({"id":q_id,"text":question,"available":activate,"check":g.lti.is_instructor()})
-    #function to get the first n questions
+            return json.dumps({"id": q_id,
+                               "text": question,
+                               "available": activate,
+                               "check": g.lti.is_instructor()})
+
     @staticmethod
     def get_questions(n):
+        """Retrieves the first n questions, sorted by date available."""
         return session.query(Question).order_by(Question.available.desc())[:n]
 
     @staticmethod
@@ -45,7 +52,7 @@ class QuestionController():
     def get_list():
         # TODO: pagination, etc..... same goes for get_questions
         return render_template('question_list.html',
-                questions=QuestionController.get_questions(30))
+                               questions=QuestionController.get_questions(30))
 
     @staticmethod
     def delete_question(qid):
@@ -58,7 +65,7 @@ class QuestionController():
 
     @staticmethod
     def ask_question(instructor):
-        return render_template('askQuestion.html',instr=instructor)
+        return render_template('askQuestion.html', instr=instructor)
 
     @staticmethod
     def create_question(question, instructor, course, time):
@@ -69,4 +76,4 @@ class QuestionController():
         session.add(Question(instructor, course, question, False, time))
         session.commit()
 
-        return render_template('handleQuestion.html',question=question)
+        return render_template('handleQuestion.html', question=question)
