@@ -4,7 +4,6 @@
             Filter by:<br\>
             ID: <input type="text" name="id"/>
             UserID: <input type="text" name="userID"/>
-            QuestionID <input type="text" name="questionID"/>
             <input type="submit" value="Go"/>
         </form>
         <table style="border:1px solid black;">
@@ -18,12 +17,12 @@
             </tr>
             {% for answer in answers %}
                 <tr>
-                    <td>{{ answer.id }}</td>
-                    <td>{{ answer.questionID }}</td>
-                    <td>{{ answer.userID }}</td>
-                    <td>{{ answer.text }}</td>
-                    <td>{{ answer.created }}</td>
-                    <td>{{ answer.modified }}</td>
+                    <td style="border:1px solid black;">{{ answer.id }}</td>
+                    <td style="border:1px solid black;">{{ answer.questionID }}</td>
+                    <td style="border:1px solid black;">{{ answer.userID }}</td>
+                    <td style="border:1px solid black;">{{ answer.text }}</td>
+                    <td style="border:1px solid black;">{{ answer.created }}</td>
+                    <td style="border:1px solid black;">{{ answer.modified }}</td>
                 </tr>
             {% endfor %}
         </table>
