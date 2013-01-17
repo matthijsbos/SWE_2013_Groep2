@@ -6,7 +6,7 @@
 
 from flask import Flask, request, render_template, g
 from lti import LTI, LTIException
-from controllers import index, answer, tags
+from controllers import index, answer, tags, ratings
 
 app = Flask(__name__)
 app.debug = True
@@ -88,6 +88,18 @@ def assign_tags():
 @app.route("/assigntags_done",methods=['POST'])
 def handle_assign_tags():
     ctrler = tags.AssignTags.assign(request)
+    return "NEE"
+
+
+@app.route("/assignratings", methods=['POST'])
+def assign_ratings():
+    ctrler = ratings.AssignRatings(1)
+    return ctrler.render()
+
+
+@app.route("/assignratings_done",methods=['POST'])
+def handle_assign_ratings():
+    ctrler = tags.AssignRatings.assign(request)
     return "NEE"
 
 
