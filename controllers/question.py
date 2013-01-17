@@ -9,14 +9,16 @@ class QuestionController():
     #function that updates the question in the db
     @staticmethod
     def edit_question(q_id, question, activate):
+      if g.lti.is_instructor():
         if question != None:
           escaped_question = escape(question)
           Question.by_id(q_id).question = question
         else:
           escaped_question = None
         Question.by_id(q_id).available = activate
-        return json.dumps({"id":q_id,"text":escaped_question,"available":activate})
-
+        return json.dumps({"id":q_id,"text":escaped_question,"available":activate,"check":g.lti.is_instructor()})
+      else:
+        return json.dumps({"id":q_id,"text":question,"available":activate,"check":g.lti.is_instructor()})
     #function to get the first n questions
     @staticmethod
     def get_questions(n):
@@ -30,12 +32,6 @@ class QuestionController():
     @staticmethod
     def get_list():
         # TODO: pagination, etc..... same goes for get_questions
-        session.add(Question("teacher1", "bla", "q1?", False,30))
-        session.add(Question("teacher1", "bla", "q2?", False,30))
-        session.add(Question("teacher1", "bla", "q3?", False,30))
-        session.add(Question("teacher1", "bla", "q4?", False,30))
-        session.add(Question("teacher1", "bla", "q5?", False,30))
-        session.add(Question("teacher1", "bla", "q6?", False,30))
         return render_template('question_list.html',
                 questions=QuestionController.get_questions(30))
 
@@ -46,9 +42,6 @@ class QuestionController():
             session.delete(question)
             session.commit()
 
-        #return render_template('deleteQuestion.html',
-        #        question = question,
-        #        permission = g.lti.is_instructor())
         return json.dumps({'deleted': g.lti.is_instructor()})
 
     @staticmethod
