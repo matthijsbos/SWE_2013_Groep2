@@ -1,7 +1,8 @@
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy import Column, String, Boolean
+from sqlalchemy import Column, String, Boolean, Integer
 from dbconnection import engine, session, Base
-from base import BaseEntity
+from basemodel import BaseEntity
+
 
 class Question(Base, BaseEntity):
     __tablename__ = 'questions'
@@ -10,19 +11,22 @@ class Question(Base, BaseEntity):
     course_id = Column(String)
     question = Column(String)
     available = Column(Boolean)
+    time = Column(Integer)
 
-
-    def __init__(self, teacher_id, course_id, question, available):
+    def __init__(self, teacher_id, course_id, question, available, time):
         self.teacher_id = teacher_id
         self.course_id = course_id
         self.question = question
         self.available = available
+        self.time = time
 
     def __repr__(self):
-        return "<Question ('%s','%s','%s')>" % (self.question,
-                                                self.teacher_id,
+        return "<Question ('%s','%s','%s')>" % (self.teacher_id,
+                                                self.question,
                                                 self.available)
 
-
+    @classmethod
+    def by_course_id(cls, course_id):
+        return session.query(cls).filter(cls.course_id == course_id).all()
 
 Base.metadata.create_all(engine)
