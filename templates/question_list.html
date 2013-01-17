@@ -9,7 +9,7 @@
   function edit_question(id,text){
     $.getJSON("/edit_question",{id:id,text:text},
     function(data){
-      if(data.check){
+      if(data.check){ 
         if(!data.available){
           temp="False"
         }
@@ -35,11 +35,11 @@
             });
     }
 
-  function activate_question(id){
+  function toggle_question(id){
     $.getJSON("/activate_question",{id:id},
     function(data){
-      if(data.check){
-        if(!data.available){
+      if(data.toggle){
+        if(!data.toggle){
           temp="False"
         }
         else{
@@ -48,7 +48,7 @@
         $('#available_'+id).html(temp);
       }
       else{
-        $('#error').html("Error while activating question question.");
+        $('#error').html("Error while toggle'ing question question.");
       }
     });
   }
@@ -74,7 +74,7 @@
           <td id="available_{{question.id}}">{{question.available}}</td>
           <td id="time_{{question.id}}">{{question.time}}</td>
           <td><button value="edit" onclick=edit_question({{question.id}},"edited_text") />edit</td>
-          <td><button value="activate" onclick=activate_question({{question.id}}) />activate</td>
+          <td><button value="toggle" onclick=toggle_question({{question.id}}) />toggle</td>
           <td><button value="delete" onclick=delete_question({{question.id}}) />delete</td>
         </tr>
       {%endfor%}

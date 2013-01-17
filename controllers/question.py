@@ -14,9 +14,9 @@ class QuestionController():
           Question.by_id(q_id).available = False
         else:
           Question.by_id(q_id).available = True
-        return json.dump({"toggle":true})
+        return json.dumps({"toggle":True})
       else:
-        return json.dump({"toggle":true})
+        return json.dumps({"toggle":False})
     
     #function that updates the question in the db
     @staticmethod
@@ -44,6 +44,8 @@ class QuestionController():
     @staticmethod
     def get_list():
         # TODO: pagination, etc..... same goes for get_questions
+        session.add(Question("teacher1", "bla", "q1?", False,30))
+        session.commit()
         return render_template('question_list.html',
                 questions=QuestionController.get_questions(30))
 
