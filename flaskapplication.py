@@ -54,15 +54,13 @@ def launch():
 
 @app.route("/edit_question",methods=['GET','POST'])
 def edit_question():
-  ctrler=question.questionController()
-  return ctrler.editQuestion(request.args['id'],
+  return Question.edit_question(request.args['id'],
                              request.args['text'],
                              False)
                       
 @app.route("/activate_question",methods=['GET','POST'])
 def activate_question():
-  ctrler=question.questionController()
-  return ctrler.editQuestion(request.args['id'], None, True)
+  return Question.edit_question(request.args['id'], None, True)
     
 # this route is used to ask a question to students
 @app.route("/question",methods=['GET', 'POST'])
