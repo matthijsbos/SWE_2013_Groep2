@@ -1,7 +1,8 @@
 # Author : Dexter Drupsteen
-# Descrp : Contains routing and calling of the controllers
+# Descrp : Contains routing and calling of the constrollers
 # Changes:
-# Comment:
+# Comment: MultiDict with isinstructor,consumerkey,coursekey and coursename in
+#          the request.form field.
 
 from flask import Flask, request, render_template, g
 from lti import LTI, LTIException
@@ -10,6 +11,7 @@ from controllers import index, answer, tags
 app = Flask(__name__)
 app.debug = True
 app.secret_key = "Hurdygurdy"
+
 
 @app.before_request
 def init_lti():
@@ -27,52 +29,73 @@ def init_lti():
         g.lti = LTI(request.url, params, dict(request.headers))
     except LTIException as error:
         ret = "Error getting LTI data. Did you run this tool via a " + \
-                "consumer such as Sakai?"
+            "consumer such as Sakai?"
         if app.debug:
             ret += "<hr>Debug info:<br/>%s" % str(error)
         return ret
 
+
 # define the routes for our application
-@app.route("/",methods=['GET', 'POST'])
+@app.route("/", methods=['GET', 'POST'])
 def home():
     ctrler = index.Index(request)
     return ctrler.render()
 
-@app.route("/test",methods=['POST'])
+
+@app.route("/test", methods=['POST'])
 def test():
     return "You posted it didn't you?"
 
-@app.route("/launch",methods=['POST'])
+
+@app.route("/launch", methods=['POST'])
 def launch():
     ctrler = index.Index(request)
     return ctrler.render()
 
-@app.route("/managetags",methods=['POST'])
+
+@app.route("/managetags", methods=['POST'])
 def managetags():
     ctrler = tags.Modifytags()
     return ctrler.render()
 
-@app.route("/addtag",methods=['POST'])
+
+@app.route("/addtag", methods=['POST'])
 def addtags():
     ctrler = tags.Modifytags()
     ctrler.addtag(request)
     return ctrler.render()
 
-@app.route("/removetag",methods=['POST'])
+
+@app.route("/removetag", methods=['POST'])
 def removetags():
     ctrler = tags.Modifytags()
     ctrler.deletetag(request)
     return ctrler.render()
-    
-@app.route("/answer",methods=['POST'])
+
+
+@app.route("/answer", methods=['POST', 'GET'])
 def answerForm():
     ctrler = answer.Answer(request)
     return ctrler.render()
     
+
 @app.route("/assigntags",methods=['POST'])
 def assign_tags():
     ctrler = tags.AssignTags(1)
     return ctrler.render()
+
+
+@app.route("/assigntags_done",methods=['POST'])
+def handle_assign_tags():
+    ctrler = tags.AssignTags.assign(request)
+    return "NEE"
+
+
+@app.route("/filteranswers", methods=['POST', 'GET'])
+def answerFilter():
+    ctrler = answer.Answer(request)
+    return ctrler.render_filtered()
+
 
 @app.route("/logout")
 def logout():
