@@ -7,14 +7,14 @@
             <input type="submit" value="Go"/>
         </form>
         <table style="border:1px solid black;">
-            <th>
-                <td>id</td>
-                <td>questionID</td>
-                <td>userID</td>
-                <td>text</td>
-                <td>created on</td>
-                <td>modified on</td>
-            </th>
+            <tr>
+                <th>id</td>
+                <th>questionID</td>
+                <th>userID</td>
+                <th>text</td>
+                <th>created on</td>
+                <th>modified on</td>
+            </tr>
             {% for answer in answers %}
                 <tr>
                     <td style="border:1px solid black;">{{ answer.id }}</td>
