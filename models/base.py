@@ -3,8 +3,6 @@ from sqlalchemy import Column, Integer, DateTime
 from dbconnection import engine,session
 from datetime import datetime
 
-Base = declarative_base()
-
 class BaseEntity(object):
     id = Column(Integer, primary_key=True)
     created = Column(DateTime, default=datetime.now)
