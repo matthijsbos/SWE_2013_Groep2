@@ -4,14 +4,18 @@
 # Comment: MultiDict with isinstructor,consumerkey,coursekey and coursename in
 #          the request.form field.
 
-from flask import Flask, request, render_template, g
+import yaml
+from flask import Flask, Response, request, render_template, g
+
 from lti import LTI, LTIException
-from controllers import index,answer,modifytags
-from dbconnection import Base,engine
+from controllers.index import Index
+from controllers.answer import Answer
+from controllers.question import QuestionController as Question
+from controllers.modifytags import Modifytags
 
 app = Flask(__name__)
 app.debug = True
-app.secret_key = "Hurdygurdy"
+app.secret_key = "Hurdygurdy" # Used for Flask sessions, TODO: config?
 
 
 @app.before_request
@@ -39,52 +43,97 @@ def init_lti():
 # define the routes for our application
 @app.route("/", methods=['GET', 'POST'])
 def home():
-    ctrler = index.Index(request)
+    ctrler = Index(request)
     return ctrler.render()
-
-
-@app.route("/test", methods=['POST'])
-def test():
-    return "You posted it didn't you?"
 
 
 @app.route("/launch", methods=['POST'])
 def launch():
-    ctrler = index.Index(request)
+    ctrler = Index(request)
     return ctrler.render()
 
+@app.route("/edit_question",methods=['GET','POST'])
+def edit_question():
+  return Question.edit_question(request.args['id'],
+                             request.args['text'],
+                             False)
+                      
+@app.route("/activate_question",methods=['GET','POST'])
+def activate_question():
+  return Question.edit_question(request.args['id'], None, True)
+    
+# this route is used to ask a question to students
+@app.route("/question",methods=['GET', 'POST'])
+def ask_question():
+    if g.lti.is_instructor() == False:
+        return render_template("access_restricted.html")
 
-@app.route("/managetags", methods=['POST'])
+    return Question.ask_question(g.lti.get_user_id())
+
+# this route is used for the feedback from inserting the question into the
+# database, it also inserts the question into the database
+@app.route("/handle_question",methods=['POST'])
+def handle_question():
+    if g.lti.is_instructor() == False:
+      return render_template("access_restricted.html")
+    return Question.create_question(request.form['question'],
+            g.lti.get_user_id(),g.lti.get_course_id(),request.form['time'])
+
+@app.route("/question_list", methods=['GET', 'POST'])
+def list_questions():
+    return Question.get_list()
+
+@app.route("/delete_question/<id>", methods=['GET', 'POST'])
+def delete_question(id):
+    return Question.delete_question(id)
+
+@app.route("/question_export", methods=['GET', 'POST'])
+def question_export():
+    exp = Question.export_course(g.lti.get_course_id())
+    exp = yaml.dump(exp, default_flow_style=False)
+    return Response(exp,
+            mimetype="text/plain",
+            headers={"Content-Disposition":
+                "attachment;filename=questions_%s.yaml" %
+                    g.lti.get_course_name()})
+
+
+@app.route("/managetags", methods=['GET', 'POST'])
 def managetags():
-    ctrler = modifytags.Modifytags()
+    ctrler = Modifytags()
     return ctrler.render()
 
 
 @app.route("/addtag", methods=['POST'])
 def addtags():
-    ctrler = modifytags.Modifytags()
+    ctrler = Modifytags()
     ctrler.addtag(request)
     return ctrler.render()
 
 
 @app.route("/removetag", methods=['POST'])
 def removetags():
-    ctrler = modifytags.Modifytags()
+    ctrler = Modifytags()
     ctrler.deletetag(request)
     return ctrler.render()
 
 
-@app.route("/answer", methods=['POST', 'GET'])
+@app.route("/answer", methods=['GET', 'POST'])
 def answerForm():
-    ctrler = answer.Answer(request)
+    ctrler = Answer(request)
     return ctrler.render()
 
 
 @app.route("/filteranswers", methods=['POST', 'GET'])
 def answerFilter():
-    ctrler = answer.Answer(request)
+    ctrler = Answer(request)
     return ctrler.render_filtered()
 
+
+@app.route("/filteranswers/<questionid>", methods=['POST','GET'])
+def answerFilterByQuestionID(questionid):
+    ctrler = Answer(request)
+    return ctrler.render_filtered_by_questionid(questionid)
 
 @app.route("/logout")
 def logout():
@@ -92,5 +141,4 @@ def logout():
     return "Logged out..."
 
 if __name__ == '__main__':
-    Base.metadata.create_all(engine)
-    app.run()
+        app.run()
