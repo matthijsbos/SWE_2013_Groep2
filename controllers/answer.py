@@ -11,9 +11,9 @@ class Answer():
     def render(self):
         # dummy shit, get some real data
         qText = 'wat is het antwoord op deze dummy vraag?'
-        uID = 1#g.lti.get_user_id()
+        uID = 18#g.lti.get_user_id()
         qID = -1
-        timerD = 15       
+        timerD = 25       
 
         # Post should be real data
         if self.request.method == 'POST' and 'questionID' in self.request.form:
@@ -77,10 +77,10 @@ class Answer():
             if self.timeLeft(aID, timerD, 0):
                 return render_template('answer.html', questionID=qID, userID=uID, questionText=qText, timerDuration=self.timeLeft(aID, timerD, 1), go="true", answerID=aID)
             else:
-                return render_template('answer.html', questionID=qID, userID=uID, questionText=qText, timerDuration=self.timerSyntax(timerD), go="false")
+                return render_template('answer.html', questionID=qID, userID=uID, questionText=qText, timerDuration=timerD, go="false")
         else:
             answer.AnswerModel.save(qID, uID, "")
-            return render_template('answer.html', questionID=qID, userID=uID, questionText=qText, timerDuration=self.timerSyntax(timerD), go="true")   
+            return render_template('answer.html', questionID=qID, userID=uID, questionText=qText, timerDuration=timerD, go="true")   
 
     def timeLeft(self, aID, timerD, giveTime):
         currentTime = datetime.datetime.now()
@@ -89,25 +89,12 @@ class Answer():
         seconds = difference.days * 86400 + difference.seconds
 
         if giveTime == 1:            
-            return self.timerSyntax(timerD - seconds)
+            return timerD - seconds
 
         if seconds < timerD + 2:
             return True
         else:
             return False
-
-    def timerSyntax(self, seconds):
-        minutes = int((seconds) / 60)
-        seconds = int((seconds) % 60)
-        if minutes < 10:
-            minutes = str("0"+str(minutes))
-        else:
-            minutes = str(minutes)
-        if seconds < 10:
-            seconds = str("0"+str(seconds))
-        else:
-            seconds = str(seconds)
-        return minutes + ":" + seconds
         
     def render_filtered(self):
         postdata = self.request.form
