@@ -80,14 +80,14 @@ def answerForm():
     ctrler = answer.Answer(request)
     return ctrler.render()
 	
-@app.route("/answerchoice",methods=['POST', 'GET'])
+@app.route("/answerchoice",methods=['GET'])
 def answerChoice():
     ctrler = answerchoice.Answerchoice(request)
     return ctrler.render()
 
-@app.route("/saveanswerchoice",methods=['POST'])
+@app.route("/answerchoice",methods=['POST'])
 def answerChoice():
-    ctrler = saveanswerchoice.SaveAnswerchoice(request)
+    ctrler = answerchoice.Answerchoice(request)
     return ctrler.process()
 
 @app.route("/filteranswers", methods=['POST', 'GET'])
