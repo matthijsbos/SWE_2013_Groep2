@@ -6,6 +6,24 @@
 <body>
 
 <script language="javascript" type="text/javascript">
+    function edit_field(id){
+        var elem = $('#question_' + id);
+        if (elem.hasClass('activated')){
+            return;
+        }
+        var text = elem.text();
+        elem.addClass('activated');
+        elem.text('');
+        var edit_field = $('<input type="text" size="50"/>').val(text);
+        edit_field.on('blur', function(){
+            edit_question(id, $(this).val());
+            var newText = elem.val();
+            $(this).parent().text(newText).removeClass('activated');
+            $(this).remove();
+        });
+        edit_field.appendTo(elem).focus();
+    }
+
   function edit_question(id,text){
     $.getJSON("/edit_question",{id:id,text:text},
     function(data){
@@ -17,7 +35,7 @@
           temp="True"
         }
         $('#available_'+id).html(temp);
-        $('#question_'+id).html(data.text);
+        $('#question_'+id).html('<a href=\"/filteranswer/'+data.text+'\">'+data.text+'</a>');
       }
       else{
         $('#error').html("Error while editing question question.");
@@ -75,7 +93,7 @@
             </td>
             <td id="available_{{question.id}}">{{question.available}}</td>
             <td id="time_{{question.id}}">{{question.time}}</td>
-            <td><button value="edit" onclick=edit_question({{question.id}},"edited_text") />edit</td>
+            <td><button value="edit" onclick=edit_field({{question.id}}) />edit</td>
             <td><button value="toggle" onclick=toggle_question({{question.id}}) />toggle</td>
             <td><button value="delete" onclick=delete_question({{question.id}}) />delete</td>
         </tr>

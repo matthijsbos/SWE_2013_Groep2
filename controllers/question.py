@@ -13,7 +13,7 @@ class QuestionController():
         if g.lti.is_instructor():
             if available == True:
                 Question.by_id(q_id).available = False
-                return json.dumps({"toggle": False,"check": True})
+                return json.dumps({"toggle":False,"check": True})
             else:
                 Question.by_id(q_id).available = True
                 return json.dumps({"toggle": True,"check": True})
@@ -55,7 +55,7 @@ class QuestionController():
         # TODO: pagination, etc..... same goes for get_questions
         session.commit()
         return render_template('question_list.html',
-                               questions=QuestionController.get_questions(30))
+                               questions=session.query(Question).order_by(Question.available.desc()))
 
     @staticmethod
     def delete_question(qid):

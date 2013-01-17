@@ -58,6 +58,7 @@ def edit_question():
                              request.args['text'],
                              False)
                       
+
 @app.route("/toggle_question",methods=['GET','POST'])
 def toggle_question():
   return Question.toggle_question(request.args['id'])
