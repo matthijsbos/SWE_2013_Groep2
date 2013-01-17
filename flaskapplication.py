@@ -8,7 +8,7 @@ from models import *
 from dbconnection import Base, engine
 from flask import Flask, request, render_template, g
 from lti import LTI, LTIException
-from controllers import index, answer, modifytags, answerchoice
+from controllers import index, answer, modifytags, answerchoice, saveanswerchoice
 
 app = Flask(__name__)
 app.debug = True
@@ -80,11 +80,15 @@ def answerForm():
     ctrler = answer.Answer(request)
     return ctrler.render()
 	
-@app.route("/answerchoice",methods=['POST'])
+@app.route("/answerchoice",methods=['POST', 'GET'])
 def answerChoice():
     ctrler = answerchoice.Answerchoice(request)
     return ctrler.render()
 
+@app.route("/saveanswerchoice",methods=['POST'])
+def answerChoice():
+    ctrler = saveanswerchoice.SaveAnswerchoice(request)
+    return ctrler.process()
 
 @app.route("/filteranswers", methods=['POST', 'GET'])
 def answerFilter():
