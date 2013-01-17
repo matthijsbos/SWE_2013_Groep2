@@ -6,6 +6,18 @@ from models.question import Question
 
 
 class QuestionController():
+    @staticmethod
+    def toggle_question(q_id):
+      available = Question.by_id(q_id).available
+      if g.lti.is_instructor():
+        if available == True:
+          Question.by_id(q_id).available = False
+        else:
+          Question.by_id(q_id).available = True
+        return json.dump({"toggle":true})
+      else:
+        return json.dump({"toggle":true})
+    
     #function that updates the question in the db
     @staticmethod
     def edit_question(q_id, question, activate):
