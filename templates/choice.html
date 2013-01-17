@@ -12,7 +12,7 @@
                 {{ questions.question }}
             </div>
 			
-			<form action="/saveanswerchoice" method="post">
+			<form action="/answerchoice" method="post">
 				<input type="hidden" name="answerzero" id="answerzero" value="{{ answers.id }}">
 				<input type="hidden" name="answerone" id="answerone" value="{{ answers.id }}">
 				<button type="submit" name="bestanswer" value="{{ answers.id }}">{{ answers.text }}</button>
