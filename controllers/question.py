@@ -9,7 +9,6 @@ class QuestionController():
     @staticmethod
     def toggle_question(q_id):
         available = Question.by_id(q_id).available
-        print available
         if g.lti.is_instructor():
             if available == True:
                 Question.by_id(q_id).available = False
