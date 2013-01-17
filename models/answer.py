@@ -39,22 +39,14 @@ class AnswerModel(Base, BaseEntity):
 
     @staticmethod
     def getAnswerID(uID, qID):
-        if engine.dialect.has_table(engine.connect(), "answer"):
-            try:
-                answer = session.query(AnswerModel).filter_by(
-                    questionID=qID, userID=uID).one()
-                return answer.id
-            except exc.InvalidRequestError:
-                return 0
-        else:
-            return 1
+        answer = session.query(AnswerModel).filter_by(questionID=qID, userID=uID, edit=0).one()
+        return answer.id
 
     @staticmethod
     def checkAnswerExist(uID, qID):
         if engine.dialect.has_table(engine.connect(), "answer"):
             try:
-                answer = session.query(AnswerModel).filter_by(
-                    questionID=qID, userID=uID).one()
+                answer = session.query(AnswerModel).filter_by(questionID=qID, userID=uID, edit=0).one()
                 return 1
             except exc.InvalidRequestError:
                 return 0

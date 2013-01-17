@@ -9,7 +9,7 @@
   function edit_question(id,text){
     $.getJSON("/edit_question",{id:id,text:text},
     function(data){
-      if(data.check){ 
+      if(data.check){
         if(!data.available){
           temp="False"
         }
@@ -71,7 +71,7 @@
         <tr id="row_{{question.id}}">
             <!--<td id="id_{{question.id}}">{{question.id}}</td>-->
             <td id="question_{{question.id}}">
-                <a href="/filteranswer/{{question.id}}">{{question.question}}</a>
+                <a href="/filteranswers/{{question.id}}">{{question.question}}</a>
             </td>
             <td id="available_{{question.id}}">{{question.available}}</td>
             <td id="time_{{question.id}}">{{question.time}}</td>
