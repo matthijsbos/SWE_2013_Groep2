@@ -1,6 +1,7 @@
 from sqlalchemy import *
 from dbconnection import engine, session, Base, exc
 from basemodel import BaseEntity
+from question import Question
 
 
 class AnswerModel(Base, BaseEntity):
@@ -50,6 +51,17 @@ class AnswerModel(Base, BaseEntity):
                 return 0
         else:
             return 0
+
+    @staticmethod
+    def get_unanswered_questions(userid,courseid):
+        anssub = session.query(AnswerModel).filter(AnswerModel.userID == userid).\
+            subquery()
+
+        # Need to use the old Alias.c.[columname] when using subquery!
+        return session.query(Question).\
+                outerjoin(anssub, anssub.c.questionID == Question.id).\
+                filter(Question.course_id == courseid).\
+                filter(anssub.c.id == None).all()
 
     @staticmethod
     def getTimeStamp(answerID):
