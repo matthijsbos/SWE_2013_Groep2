@@ -138,13 +138,13 @@ def handle_assign_tags():
 
 @app.route("/assignratings", methods=['POST'])
 def assign_ratings():
-    ctrler = ratings.AssignRatings(1)
+    ctrler = AssignRatings(1)
     return ctrler.render()
 
 
 @app.route("/assignratings_done",methods=['POST'])
 def handle_assign_ratings():
-    ctrler = tags.AssignRatings.assign(request)
+    ctrler = AssignRatings.assign(request)
     return "NEE"
 
 
