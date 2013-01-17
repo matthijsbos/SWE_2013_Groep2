@@ -130,6 +130,11 @@ def answerFilter():
     return ctrler.render_filtered()
 
 
+@app.route("/filteranswers/<questionid>", methods=['POST','GET'])
+def answerFilterByQuestionID(questionid):
+    ctrler = Answer(request)
+    return ctrler.render_filtered_by_questionid(questionid)
+
 @app.route("/logout")
 def logout():
     g.lti.destroy()

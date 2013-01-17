@@ -97,6 +97,18 @@ class Answer():
 
         return render_template('answerfilter.html', answers=answer.AnswerModel.get_filtered(**args))
 
+    def render_filtered_by_questionid(self,questionid):
+        postdata = self.request.form
+        args = {"questionID": questionid}
+
+        if self.request.method == "POST":
+            if "userID" in postdata and len(postdata["userID"]) > 0:
+                args["userID"] = postdata["userID"]
+            if "id" in postdata and len(postdata["id"]) > 0:
+                args["id"] = postdata["id"]
+
+        return render_template('answerfilter_by_questionid.html', answers=answer.AnswerModel.get_filtered(**args))
+
     def render_all(self):
         # Render all
         return render_template('showanswers.html', answers=answer.AnswerModel.get_all())
