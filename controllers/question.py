@@ -55,7 +55,7 @@ class QuestionController():
         # TODO: pagination, etc..... same goes for get_questions
         session.commit()
         return render_template('question_list.html',
-                               questions=QuestionController.get_questions(30))
+                               questions=session.query(Question).order_by(Question.available.desc()))
 
     @staticmethod
     def delete_question(qid):
