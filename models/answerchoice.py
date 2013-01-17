@@ -4,7 +4,7 @@ from dbconnection import engine, session, Base
 from datetime import datetime
 from base import BaseEntity
 
-class AnswerChoice(Base,BaseEntity):
+class AnswerChoiceModel(Base,BaseEntity):
     __tablename__ = 'answerchoice'
 
     user_id = Column(String,nullable=False)

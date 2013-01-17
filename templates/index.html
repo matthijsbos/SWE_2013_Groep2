@@ -8,11 +8,11 @@
 	<a href="#" onclick="document.answerchoiceForm.submit(); return false;">Rank it</a>
     <form action="http://localhost:5000/answerchoice" method="post" name="answerchoiceForm">
     </form>
-
     <hr />
     LTI data:<br />
     <pre>{{ lti_dump }}</pre>
     
+    <!-- we only want post requests --!>
     <a href="#" onclick="document.mtags.submit(); return false;">Manage the tags</a>
     <form action="http://localhost:5000/managetags" method="post" name="mtags">
     </form>
