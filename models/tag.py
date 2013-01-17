@@ -70,7 +70,12 @@ class AnswerTag(Base):
 
     @staticmethod
     def get_tag_ids(answerID):
-        tlist = session.query(AnswerTag).filter(AnswerTag.answer_id==answerID)
-        return tlist
+        tlist = session.query(AnswerTag.tag_id).filter(
+                AnswerTag.answer_id==answerID).all()
+        map(list, tlist)
+        endlist = []
+        for x in tlist:
+            endlist.append(x[0])
+        return endlist 
 
 Base.metadata.create_all(engine)
