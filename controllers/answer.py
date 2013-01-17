@@ -24,7 +24,6 @@ class Answer():
                 pass
             except Exception as e:
                 return e
-
             qText = q.question
             timerD = q.time
 
