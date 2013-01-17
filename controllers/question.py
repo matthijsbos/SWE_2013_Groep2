@@ -2,7 +2,7 @@ import json
 from flask import escape, render_template, g
 
 from dbconnection import session
-from models.Question import Question
+from models.question import Question
 
 
 class QuestionController():
@@ -15,8 +15,8 @@ class QuestionController():
 
     #function to get the first n questions
     @staticmethod
-    def get_questions(n=1):
-        return session.query(Question).order_by(Question.modified.desc())[:n]
+    def get_questions(n):
+        return session.query(Question).order_by(Question.available.desc())[:n]
 
     @staticmethod
     def export_course(course_id):
