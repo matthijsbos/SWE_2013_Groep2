@@ -38,7 +38,7 @@
   function toggle_question(id){
     $.getJSON("/activate_question",{id:id},
     function(data){
-      if(data.toggle){
+      if(data.check){
         if(!data.toggle){
           temp="False"
         }
@@ -57,27 +57,29 @@
 <body>
 {%block body%}
 <div id="error" style="background-color: #a33; color: white;"></div>
-    <table border=1>
+<table border=1>
     <tr>
-      <td>id</td>
-      <td>vragen</td>
-      <td>available</td>
-      <td>time</td>
-      <td>edit</td>
-      <td>activate</td>
-      <td>delete</td>
+        <!--<th>id</th>-->
+        <th>Question</th>
+        <th>Active</th>
+        <th>Time</th>
+        <th>Edit</th>
+        <th>Activate</th>
+        <th>Delete</th>
     </tr>
-      {%for question in questions%}
+    {% for question in questions %}
         <tr id="row_{{question.id}}">
-          <td id="id_{{question.id}}">{{question.id}}</td>
-          <td id="question_{{question.id}}">{{question.question}}</td>
-          <td id="available_{{question.id}}">{{question.available}}</td>
-          <td id="time_{{question.id}}">{{question.time}}</td>
-          <td><button value="edit" onclick=edit_question({{question.id}},"edited_text") />edit</td>
-          <td><button value="toggle" onclick=toggle_question({{question.id}}) />toggle</td>
-          <td><button value="delete" onclick=delete_question({{question.id}}) />delete</td>
+            <!--<td id="id_{{question.id}}">{{question.id}}</td>-->
+            <td id="question_{{question.id}}">
+                <a href="/filteranswer/{{question.id}}">{{question.question}}</a>
+            </td>
+            <td id="available_{{question.id}}">{{question.available}}</td>
+            <td id="time_{{question.id}}">{{question.time}}</td>
+            <td><button value="edit" onclick=edit_question({{question.id}},"edited_text") />edit</td>
+            <td><button value="activate" onclick=activate_question({{question.id}}) />activate</td>
+            <td><button value="delete" onclick=delete_question({{question.id}}) />delete</td>
         </tr>
-      {%endfor%}
+    {% endfor %}
     </table>
     <a href="/">Back</a>
 {%endblock%}
