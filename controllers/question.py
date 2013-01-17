@@ -57,7 +57,9 @@ class QuestionController():
 
     @staticmethod
     def create_question(question, instructor, course, time):
-        if not isinstance(time, (int, long)):
+        try:
+            time = int(time)
+        except ValueError:
             time = 0
         session.add(Question(instructor, course, question, False, time))
         session.commit()

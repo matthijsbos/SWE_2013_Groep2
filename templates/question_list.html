@@ -52,6 +52,7 @@
       <td>id</td>
       <td>vragen</td>
       <td>available</td>
+      <td>time</td>
       <td>edit</td>
       <td>activate</td>
       <td>delete</td>
@@ -61,6 +62,7 @@
           <td id="id_{{question.id}}">{{question.id}}</td>
           <td id="question_{{question.id}}">{{question.question}}</td>
           <td id="available_{{question.id}}">{{question.available}}</td>
+          <td id="time_{{question.id}}">{{question.time}}</td>
           <td><button value="edit" onclick=edit_question({{question.id}},"edited_text") />edit</td>
           <td><button value="activate" onclick=activate_question({{question.id}}) />activate</td>
           <td><button value="delete" onclick=delete_question({{question.id}}) />delete</td>
