@@ -9,17 +9,12 @@
                         {% if tag.id in enabledtags %}
                             {{ tag.name }}
                         {% endif %}
-                        {{tag.name}}
                     {% endfor %}
                 <form action="/assigntags_done" method="POST">
                     <legend>Assign tags:</legend>
                     
                     {% for tag in tags %}
-                      <input type="checkbox" name="tags" value="{{tag.id}}"
-                        {% if tag.id in enabledtags %}
-                            checked="true" 
-                        {% endif %}
-                      >
+                      <input type="checkbox" name="tags" value="{{tag.id}}">
                         {{tag.name}}
                       </input>
                     {% endfor %}
