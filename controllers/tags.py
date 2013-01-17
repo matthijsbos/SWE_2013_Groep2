@@ -26,7 +26,11 @@ class Modifytags():
 
 class AssignTags():
     def __init__(self, answer_id):
-        self.answer = AnswerModel.by_id(answer_id)
+        self.answer_id = answer_id
+        try:
+            self.answer = AnswerModel.by_id(answer_id)
+        except:
+            self.answer = "Error, Answer not found"
         fsession['assigntag'] = str(answer_id)
     
     @staticmethod
@@ -35,5 +39,6 @@ class AssignTags():
             AnswerTag.add_answertag(fsession['assigntag'], tag_id)
               
     def render(self):
+        enabledtags = AnswerTag.get_tag_ids(self.answer_id)
         return render_template('assigntag.html', answer=self.answer,
-                               tags=Tag.get_all())
+                               tags=Tag.get_all(), enabledtags=enabledtags)

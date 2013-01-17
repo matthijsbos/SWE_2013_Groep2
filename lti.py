@@ -85,6 +85,12 @@ class LTI():
             flask.session['course_id'] = params['context_id']
             flask.session['course_name'] = params['context_title']
             flask.session['role'] = params['roles']
+
+            # Full name is optional
+            if 'lis_person_name_full' in params:
+                flask.session['real_name'] = params['lis_person_name_full']
+            else:
+                flask.session['real_name'] = None
         else:
             # Resume old session, or error.
             if 'consumer' not in flask.session:
@@ -92,7 +98,7 @@ class LTI():
 
     def destroy(self):
         session_data = ['consumer', 'user_id', 'course_id', 'course_name',
-                        'role']
+                        'role', 'real_name']
         for s in session_data:
             flask.session.pop(s,  None)
 
@@ -102,6 +108,9 @@ class LTI():
     def get_user_id(self):
         return "%s:%s" % (flask.session['consumer'], flask.session['user_id'])
 
+    def get_user_name(self):
+        return flask.session['real_name'] or None
+
     def get_course_id(self):
         return "%s:%s" % (flask.session['consumer'],
                           flask.session['course_id'])
@@ -110,12 +119,14 @@ class LTI():
         return flask.session['course_name']
 
     def is_instructor(self):
-        return flask.session['role'] == "Instructor"
+        return flask.session['role'] in ("Instructor", "Administrator",
+                "Mentor")
 
     def dump_all(self):
         ret = ""
         ret += "get_consumer = %s\n" % self.get_consumer()
         ret += "get_user_id = %s\n" % self.get_user_id()
+        ret += "get_user_name = %s\n" % self.get_user_name()
         ret += "get_course_id = %s\n" % self.get_course_id()
         ret += "get_course_name = %s\n" % self.get_course_name()
         ret += "is_instructor = %s\n" % self.is_instructor()
