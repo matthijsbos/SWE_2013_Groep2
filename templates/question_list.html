@@ -36,7 +36,7 @@
     }
 
   function toggle_question(id){
-    $.getJSON("/activate_question",{id:id},
+    $.getJSON("/toggle_question",{id:id},
     function(data){
       if(data.check){
         if(!data.toggle){
