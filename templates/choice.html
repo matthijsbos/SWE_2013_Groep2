@@ -2,28 +2,21 @@
         <html xmlns="http://www.w3.org/1999/xhtml">
         <head>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-        <LINK href="/static/style.css" rel="stylesheet" type="text/css">
+        <LINK href="/static/css/style.css" rel="stylesheet" type="text/css">
         <title>Rating</title>
         </head>
         <body>
-        
-        
-        <div id="container">
+		
+		<!-- Call the questions and answers from the database -->
             <div id="quest">
                 {{ questions.question }}
             </div>
-            
-            <a href="#">
-            <div id="answleft">
-                {{ answers.text }}
-            </div>
-            </a>
-            
-            <a href="#">
-            <div id="answright">
-                {{ answers.text }}
-            </div>
-            </a>
-        </div>
+			
+			<form action="/saveanswerchoice" method="post">
+				<input type="hidden" name="answerzero" id="answerzero" value="{{ answers.id }}">
+				<input type="hidden" name="answerone" id="answerone" value="{{ answers.id }}">
+				<button type="submit" name="bestanswer" value="{{ answers.id }}">{{ answers.text }}</button>
+				<button type="submit" name="bestanswer" value="{{ answers.id }}">{{ answers.text }}</button>
+			</form>
         </body>
         </html>
