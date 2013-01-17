@@ -20,14 +20,10 @@ br { clear: both; }
     color: #000;
 }
 #counter{
-transform: scale(0.6) translate(-450px, 0px);
--webkit-transform: scale(0.4);
 float: right;
-margin-right: 140px;
-margin-top: -57px;
-
--o-transform: scale(0.6) translate(-450px, 0px);
--ms-transform: scale(0.6) translate(-450px, 0px);
+margin-right: 250px;
+margin-top: -48px;
+font-size: 25px;
 }
 textarea{
     border: 2px dotted #009DCE;
