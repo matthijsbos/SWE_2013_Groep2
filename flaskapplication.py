@@ -85,10 +85,10 @@ def answerChoice():
     ctrler = answerchoice.Answerchoice(request)
     return ctrler.render()
 
-@app.route("/answerchoice",methods=['POST'])
-def answerChoice():
-    ctrler = answerchoice.Answerchoice(request)
-    return ctrler.process()
+#@app.route("/answerchoice",methods=['POST'])
+#def answerChoice():
+#    ctrler = answerchoice.Answerchoice(request)
+#    return ctrler.process()
 
 @app.route("/filteranswers", methods=['POST', 'GET'])
 def answerFilter():

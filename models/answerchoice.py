@@ -9,9 +9,9 @@ class AnswerChoiceModel(Base,BaseEntity):
 
     user_id = Column(String,nullable=False)
     best_answer_id = Column(Integer, ForeignKey('answer.id'),nullable=False)
-    best_answer = relationship('Answer', foreign_keys=[best_answer_id])
+    #best_answer = relationship('AnswerModel', foreign_keys=[best_answer_id])
     other_answer_id = Column(Integer,ForeignKey('answer.id'),nullable=False)
-    other_answer = relationship('Answer', foreign_keys=[other_answer_id])
+    #other_answer = relationship('AnswerModel', foreign_keys=[other_answer_id])
 
     def __init__(self, user_id, best_answer_id, other_answer_id):
         self.user_id = user_id

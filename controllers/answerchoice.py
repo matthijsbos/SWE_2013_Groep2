@@ -3,7 +3,7 @@
 # Changes:
 # Comment:
 
-from flask import render_template
+from flask import render_template, g, request
 from models.question import Question
 from models.answer import AnswerModel
 from models import answer
@@ -18,6 +18,7 @@ class Answerchoice():
 		session.commit()
 
     def render(self):
+        print 'render'
         return render_template('choice.html',questions=Question.by_id(1), answers=answer.AnswerModel.by_id(1))
 
     def process(self):
@@ -26,26 +27,26 @@ class Answerchoice():
             answer0 = int(request.values['answerzero'])
         except KeyError:
             #TODO 
-            pass
+            return ''
 
         try:
             answer1 = int(request.values['answerone'])
         except KeyError:
             #TODO
-            pass
+            return ''
         
         try:
             bestanswer = int(request.values['bestanswer'])
         except KeyError:
             #TODO
-            pass
+            return ''
 
         if answer0 == bestanswer:
-            session.add(AnswerChoiceModel(userid,answer0,answer1))
+            #session.add(AnswerChoiceModel(userid,answer0,answer1))
             #TODO
             pass
         elif answer1 == bestanswer:
-            session.add(AnswerChoiceModel(userid,answer1,answer0))
+            #session.add(AnswerChoiceModel(userid,answer1,answer0))
             #TODO
             pass
         else:
