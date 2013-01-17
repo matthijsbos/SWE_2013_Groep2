@@ -134,7 +134,11 @@ def assign_tags():
 def handle_assign_tags():
     ctrler = AssignTags.assign(request)
     return "<a href='/'>back to main</a>"
-
+    
+@app.route("/removetags_done",methods=['POST'])
+def handle_assign_tags():
+    ctrler = AssignTags.remove(request)
+    return "<a href='/'>back to main</a>"
 
 @app.route("/assignratings", methods=['POST', 'GET'])
 def assign_ratings():
