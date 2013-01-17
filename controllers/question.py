@@ -6,17 +6,31 @@ from models.question import Question
 
 
 class QuestionController():
+    @staticmethod
+    def toggle_question(q_id):
+      available = Question.by_id(q_id).available
+      if g.lti.is_instructor():
+        if available == True:
+          Question.by_id(q_id).available = False
+        else:
+          Question.by_id(q_id).available = True
+        return json.dump({"toggle":true})
+      else:
+        return json.dump({"toggle":true})
+    
     #function that updates the question in the db
     @staticmethod
     def edit_question(q_id, question, activate):
+      if g.lti.is_instructor():
         if question != None:
           escaped_question = escape(question)
           Question.by_id(q_id).question = question
         else:
           escaped_question = None
         Question.by_id(q_id).available = activate
-        return json.dumps({"id":q_id,"text":escaped_question,"available":activate})
-
+        return json.dumps({"id":q_id,"text":escaped_question,"available":activate,"check":g.lti.is_instructor()})
+      else:
+        return json.dumps({"id":q_id,"text":question,"available":activate,"check":g.lti.is_instructor()})
     #function to get the first n questions
     @staticmethod
     def get_questions(n):
@@ -48,7 +62,9 @@ class QuestionController():
 
     @staticmethod
     def create_question(question, instructor, course, time):
-        if not isinstance(time, (int, long)):
+        try:
+            time = int(time)
+        except ValueError:
             time = 0
         session.add(Question(instructor, course, question, False, time))
         session.commit()

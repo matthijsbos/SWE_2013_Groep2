@@ -60,7 +60,7 @@ def edit_question():
                       
 @app.route("/activate_question",methods=['GET','POST'])
 def activate_question():
-  return Question.edit_question(request.args['id'], None, True)
+  return Question.toggle_question(request.args['id'])
     
 # this route is used to ask a question to students
 @app.route("/question",methods=['GET', 'POST'])
