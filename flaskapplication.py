@@ -136,7 +136,7 @@ def handle_assign_tags():
     return "<a href='/'>back to main</a>"
 
 
-@app.route("/assignratings", methods=['POST'])
+@app.route("/assignratings", methods=['POST', 'GET'])
 def assign_ratings():
     ctrler = AssignRatings(1)
     return ctrler.render()
@@ -145,7 +145,7 @@ def assign_ratings():
 @app.route("/assignratings_done",methods=['POST'])
 def handle_assign_ratings():
     ctrler = AssignRatings.assign(request)
-    return "NEE"
+    return "<a href='/'>back to main</a>"
 
 
 @app.route("/filteranswers", methods=['POST', 'GET'])
