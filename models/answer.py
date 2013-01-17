@@ -2,7 +2,6 @@ from sqlalchemy import *
 from dbconnection import engine, session, Base, exc
 from basemodel import BaseEntity
 
-
 class AnswerModel(Base, BaseEntity):
     __tablename__ = 'answer'
     __table_args__ = {'sqlite_autoincrement': True}
@@ -66,5 +65,6 @@ class AnswerModel(Base, BaseEntity):
     def getTimeStamp(answerID):
         answer = session.query(AnswerModel).filter_by(id=answerID).one()
         return answer.created
+
 
 Base.metadata.create_all(engine)

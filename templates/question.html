@@ -1,0 +1,29 @@
+<html>
+<head>
+    <title>Question</title>
+    <script src="http://code.jquery.com/jquery-latest.js"></script>
+</head>
+<body>
+
+<table id="questions">
+    {% for word in wordlist %}
+    <tr>
+        <td width="300">{{ word.question }}</td>
+        <td><input type="submit" value="Edit" /></td>
+    </tr>
+    {% endfor %}
+</table>
+<script type="text/javascript">
+    $('td').click(function(){
+        var text = $(this).text();
+        $(this).text('');
+        $('<input type="text" size="50"/>').appendTo($(this)).val(text).select().blur(function(){
+            var newText = $(this).val();
+            $(this).parent().text(newText).find('input:text').remove();
+        });
+    });
+</script>
+</body>
+</html>
+
+
