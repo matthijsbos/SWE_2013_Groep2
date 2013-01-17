@@ -37,8 +37,8 @@ class AnswerModel(Base, BaseEntity):
 
     @staticmethod
     def getAnswerID(uID, qID):
-+        answer = session.query(AnswerModel).filter_by(questionID=qID, userID=uID, edit=0).one()
-+        return answer.id
+        answer = session.query(AnswerModel).filter_by(questionID=qID, userID=uID, edit=0).one()
+        return answer.id
 
     @staticmethod
     def checkAnswerExist(uID, qID):
