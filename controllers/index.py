@@ -1,4 +1,8 @@
+import json
 from flask import render_template, g
+
+from models.answer import AnswerModel
+from controllers.answer import Answer
 
 
 class Index():
@@ -18,10 +22,21 @@ class Index():
         if g.lti.is_instructor():
             return json.dumps({'has_new': False})
 
-        # TODO: call function from question controller/model
-        ids = Question.get_unanswered()
-        question = Answer.get_id(ids[0])
-        # TODO: send first unanswered
+        answers = AnswerModel()
+        question = answers.get_unanswered_questions(g.lti.get_user_id(),
+                                                    g.lti.get_course_id())
+
+        if not len(question):
+            return json.dumps({'has_new': False})
+
+        question = question[0]
+
+        # HACK: call answerQuestion to generate an empty record, so saving
+        # itself doesn't crash... TODO?
+        answer_ctrler = Answer(None)
+        answer_ctrler.answerQuestion(g.lti.get_user_id(), question.id,
+                question.question, question.time)
+
         return json.dumps({'has_new': True,
                            'question_id': question.id,
                            'question_text': question.question,

@@ -13,7 +13,7 @@ class Answer():
         qText = 'wat is het antwoord op deze dummy vraag?'
         uID = g.lti.get_user_id()
         qID = -1
-        timerD = 25       
+        timerD = 25
 
         # Post should be real data
         if self.request.method == 'POST' and 'questionID' in self.request.form:
@@ -42,13 +42,17 @@ class Answer():
 
     def saveAnswer(self, uID, qID, timerD):
         # save answer
+        print "ANSW", uID, qID, timerD
         answerText = self.request.form['answerText']
         aID = answer.AnswerModel.getAnswerID(uID, qID)
 
         flag = "false"
         if self.timeLeft(aID, timerD, 0):
             answer.AnswerModel.updateAnswer(aID, answerText)
+            print "UPDATED", aID, "to", answerText
             flag = "true"
+        else:
+            print "NO TIME LEFT!!"
 
         return render_template('answersaved.html', flag=flag)
 

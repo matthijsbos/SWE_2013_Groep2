@@ -59,9 +59,11 @@ class AnswerModel(Base, BaseEntity):
         anssub = session.query(AnswerModel).filter(AnswerModel.userID == userid).\
             subquery()
 
+
         # Need to use the old Alias.c.[columname] when using subquery!
         return session.query(Question).\
                 outerjoin(anssub, anssub.c.questionID == Question.id).\
+                filter(Question.available == True).\
                 filter(Question.course_id == courseid).\
                 filter(anssub.c.id == None).all()
 

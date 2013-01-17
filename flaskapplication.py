@@ -173,6 +173,11 @@ def answerFilterByQuestionID(questionid):
     return ctrler.render_filtered_by_questionid(questionid)
 
 
+@app.route("/has_new_question", methods=['GET', 'POST'])
+def has_new_question():
+    ctrler = Index()
+    return ctrler.has_new_question()
+
 @app.route("/logout")
 def logout():
     g.lti.destroy()
