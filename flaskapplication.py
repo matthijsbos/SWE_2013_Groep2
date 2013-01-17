@@ -11,7 +11,7 @@ from lti import LTI, LTIException
 from controllers.index import Index
 from controllers.answer import Answer
 from controllers.question import QuestionController as Question
-from controllers.modifytags import Modifytags
+from controllers.tags import Modifytags, AssignTags
 
 app = Flask(__name__)
 app.debug = True
@@ -122,6 +122,18 @@ def removetags():
 def answerForm():
     ctrler = Answer(request)
     return ctrler.render()
+    
+
+@app.route("/assigntags",methods=['POST', 'GET'])
+def assign_tags():
+    ctrler = AssignTags(1)
+    return ctrler.render()
+
+
+@app.route("/assigntags_done",methods=['POST'])
+def handle_assign_tags():
+    ctrler = AssignTags.assign(request)
+    return "<a href='/'>back to main</a>"
 
 
 @app.route("/filteranswers", methods=['POST', 'GET'])
