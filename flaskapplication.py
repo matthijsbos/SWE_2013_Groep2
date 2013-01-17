@@ -6,12 +6,12 @@
 
 import yaml
 from flask import Flask, Response, request, render_template, g
-
 from lti import LTI, LTIException
 from controllers.index import Index
 from controllers.answer import Answer
 from controllers.question import QuestionController as Question
 from controllers.tags import Modifytags, AssignTags
+from controllers.ratings import AssignRatings
 
 app = Flask(__name__)
 app.debug = True
@@ -134,6 +134,18 @@ def assign_tags():
 @app.route("/assigntags_done",methods=['POST'])
 def handle_assign_tags():
     ctrler = AssignTags.assign(request)
+    return "<a href='/'>back to main</a>"
+
+
+@app.route("/assignratings", methods=['POST', 'GET'])
+def assign_ratings():
+    ctrler = AssignRatings(1)
+    return ctrler.render()
+
+
+@app.route("/assignratings_done",methods=['POST'])
+def handle_assign_ratings():
+    ctrler = AssignRatings.assign(request)
     return "<a href='/'>back to main</a>"
 
 
