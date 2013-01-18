@@ -14,6 +14,10 @@ var query_interval_id;
 $(function() {
     $("#answerform").submit(submit_answer);
     query_new_question();
+
+	$('#answerform #counter').countdown({until: new Date(),
+                                         compact: true,
+                                         onExpiry: submit_answer});
     if (!has_active_question)
         query_interval_id = setInterval(query_new_question, query_interval);
 });
@@ -33,9 +37,16 @@ function query_new_question() {
 }
 
 function show_question(id, question, time_remaining) {
+    console.log("GOT QUESTION", id, question, time_remaining);
     clearInterval(query_interval_id);
     has_active_question = true;
     active_question_id = id;
+	var austDay = new Date();
+	austDay.setSeconds(austDay.getSeconds() + time_remaining);
+    console.log(austDay);
+	$('#answerform #counter').countdown('option', {until: austDay,
+                                         compact: true,
+                                         onExpiry: submit_answer});
 
     $('#pleasewait').hide();
     $('#answerform #question').text(question);
@@ -44,6 +55,7 @@ function show_question(id, question, time_remaining) {
 }
 
 function submit_answer() {
+    console.log("SUBMIT");
     has_active_question = false;
     $('#pleasewait').show();
     $('#answerform').hide();

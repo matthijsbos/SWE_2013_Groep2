@@ -2,30 +2,23 @@
 <head>
     <script type="text/javascript" src="../static/js/jquery.min.js"></script>
     <script type="text/javascript" src="../static/js/jquery.timer.js"></script>
+
+<script type="text/javascript" src="../static/jquery.countdown.js"></script>
 <link rel="stylesheet" type="text/css" href="../static/css/style.css" media="screen" />
 	<script type="text/javascript">	
-var countdownTimer, countdownCurrent = {{timerDuration}}*100; //number of seconds * 100
-$(document).ready(function() {
-	countdownTimer = $.timer(function() {
-		var min = parseInt(countdownCurrent/6000);
-		var sec = parseInt(countdownCurrent/100)-(min*60);
-		var micro = pad(countdownCurrent-(sec*100)-(min*6000),2);
-		var output = "00"; if(min > 0) {output = pad(min,2);}
-		$('.countdowntime').html(output+":"+pad(sec,2)+":"+micro);
-		if(countdownCurrent == 0) {
-			countdownTimer.stop();
-			document.getElementById("answerform").submit();
-		} else {
-			countdownCurrent-=7;
-			if(countdownCurrent < 0) {countdownCurrent=0;}
-		}
-	}, 70, true);
+var countdownCurrent = {{timerDuration}} //number of seconds
+
+
+$(function () {
+	var austDay = new Date("{{date}}");
+	austDay.setSeconds(austDay.getSeconds() + countdownCurrent);
+	$('#counter').countdown({until: austDay, compact: true, onExpiry: submitForm});
+
+
+
 });
-// Padding function
-function pad(number, length) {
-	var str = '' + number;
-	while (str.length < length) {str = '0' + str;}
-	return str;
+function submitForm() { 
+    document.getElementById("answerform").submit(); 
 }
 	</script>
 </head>
