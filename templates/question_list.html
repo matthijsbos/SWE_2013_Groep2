@@ -1,9 +1,5 @@
-<html>
-<head>
-  <title>Test</title>
-  <script src="http://code.jquery.com/jquery-latest.js"></script>
-</head>
-<body>
+{% extends "_base.html" %}
+{% block content %}
 
 <script language="javascript" type="text/javascript">
     function edit_field(id){
@@ -72,8 +68,6 @@
   }
 </script>
 
-<body>
-{%block body%}
 <div id="error" style="background-color: #a33; color: white;"></div>
 <table border=1>
     <tr>
@@ -89,7 +83,7 @@
         <tr id="row_{{question.id}}">
             <!--<td id="id_{{question.id}}">{{question.id}}</td>-->
             <td id="question_{{question.id}}">
-                <a href="/filteranswers/{{question.id}}">{{question.question}}</a>
+                <a href="/filteranswers/{{question.id}}" class="blue">{{question.question}}</a>
             </td>
             <td id="available_{{question.id}}">{{question.available}}</td>
             <td id="time_{{question.id}}">{{question.time}}</td>
@@ -98,7 +92,6 @@
             <td><button value="delete" onclick=delete_question({{question.id}}) />delete</td>
         </tr>
     {% endfor %}
-    </table>
-    <a href="/">Back</a>
-{%endblock%}
-</body>
+</table>
+<a href="/" class="blue">Back</a>
+{% endblock %}

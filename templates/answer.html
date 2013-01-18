@@ -1,11 +1,10 @@
 <html>
 <head>
     <script type="text/javascript" src="../static/js/jquery.min.js"></script>
-    <script type="text/javascript" src="../static/js/jquery.timer.js"></script>
 
 <script type="text/javascript" src="../static/jquery.countdown.js"></script>
 <link rel="stylesheet" type="text/css" href="../static/css/style.css" media="screen" />
-	<script type="text/javascript">	
+	<script type="text/javascript">
 var countdownCurrent = {{timerDuration}} //number of seconds
 
 
@@ -17,14 +16,14 @@ $(function () {
 
 
 });
-function submitForm() { 
-    document.getElementById("answerform").submit(); 
+function submitForm() {
+    document.getElementById("answerform").submit();
 }
 	</script>
 </head>
 
 <body>
-{% if go == "true" %}   
+{% if go == "true" %}
     <div>
         <form action="/answer" id="answerform" method="post">
             <br>
