@@ -3,13 +3,13 @@ import models
 import os
 from dbconnection import Base, engine
 from tests.answerunittest import AnswerUnittest
+from tests.baseunittest import BaseUnittest
 
 
 directory_separator = ('/' if os.name == "posix" else '\\')
 
 def setUp():
     # backup db file
-    print "hello test"
     src = os.getcwd()+directory_separator+"db.sqlite"
     dst = os.getcwd()+directory_separator+"db_backup.sqlite"
     if os.path.exists(src):
@@ -32,9 +32,16 @@ def tearDown():
             os.rename(src, dst)
 
 if __name__ == '__main__':
+    # tests dont take eachother in account, for now just rebuild the db for each test
 
     setUp()
-    suite = unittest.TestLoader().loadTestsFromTestCase(AnswerUnittest)
-    unittest.TextTestRunner(verbosity=2).run(suite)
+    base_test = unittest.TestLoader().loadTestsFromTestCase(BaseUnittest)
+    unittest.TextTestRunner(verbosity=2).run(base_test)
     tearDown()
+ 
+    setUp()
+    answer_test = unittest.TestLoader().loadTestsFromTestCase(AnswerUnittest)
+    unittest.TextTestRunner(verbosity=2).run(answer_test)
+    tearDown()    
+
 
