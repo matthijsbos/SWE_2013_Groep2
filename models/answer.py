@@ -1,3 +1,4 @@
+from datetime import datetime, timedelta
 from sqlalchemy import *
 from dbconnection import engine, session, Base, exc
 from basemodel import BaseEntity
@@ -5,7 +6,6 @@ from question import Question
 
 class AnswerModel(Base, BaseEntity):
     __tablename__ = 'answer'
-    __table_args__ = {'sqlite_autoincrement': True}
 
     text = Column(String)
     questionID = Column(Integer)
@@ -13,7 +13,9 @@ class AnswerModel(Base, BaseEntity):
     edit = Column(Integer)
 
     def __repr__(self):
-        return self.text + 'Represent'
+        return "<Answer('%s','%s','%s')>" % (self.id,
+                                                self.questionID,
+                                                self.userID)
 
     def __str__(self):
         return self.text
@@ -59,13 +61,26 @@ class AnswerModel(Base, BaseEntity):
         anssub = session.query(AnswerModel).filter(AnswerModel.userID == userid).\
             subquery()
 
+        # HACK: I can't figure out how to do timedelta stuff inside a filter,
+        #       so that is done after pulling all data... Slow!
 
         # Need to use the old Alias.c.[columname] when using subquery!
-        return session.query(Question).\
+        tmp = session.query(Question).\
                 outerjoin(anssub, anssub.c.questionID == Question.id).\
                 filter(Question.available == True).\
                 filter(Question.course_id == courseid).\
                 filter(anssub.c.id == None).all()
+
+        print tmp
+        print [(x.modified + timedelta(seconds=x.time), datetime.now()) for x in tmp]
+
+
+
+
+        return [x for x in tmp if x.modified + timedelta(seconds=x.time) >
+                datetime.now()]
+
+
 
     @staticmethod
     def getTimeStamp(answerID):

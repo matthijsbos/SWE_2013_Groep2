@@ -1,4 +1,6 @@
 import json
+import time
+from datetime import datetime, timedelta
 from flask import render_template, g
 
 from models.answer import AnswerModel
@@ -31,13 +33,12 @@ class Index():
 
         question = question[0]
 
-        # HACK: call answerQuestion to generate an empty record, so saving
-        # itself doesn't crash... TODO?
-        answer_ctrler = Answer(None)
-        answer_ctrler.answerQuestion(g.lti.get_user_id(), question.id,
-                question.question, question.time)
+        time_remaining = datetime.now() - (question.modified +
+                timedelta(seconds=question.time))
+        time_remaining = time_remaining.seconds + time_remaining.days * 86400
+        time_remaining = -time_remaining
 
         return json.dumps({'has_new': True,
                            'question_id': question.id,
                            'question_text': question.question,
-                           'time_remaining': question.time})
+                           'time_remaining': time_remaining})
