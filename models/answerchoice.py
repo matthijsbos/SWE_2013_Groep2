@@ -2,7 +2,7 @@ from sqlalchemy import Column, String, Integer, Boolean, DateTime, ForeignKey
 from sqlalchemy.orm import relationship
 from dbconnection import engine, session, Base
 from datetime import datetime
-from base import BaseEntity
+from basemodel import BaseEntity
 
 class AnswerChoiceModel(Base,BaseEntity):
     __tablename__ = 'answerchoice'
