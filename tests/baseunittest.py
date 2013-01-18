@@ -15,7 +15,7 @@ class BaseUnittest(unittest.TestCase):
             obj = AnswerModel().get_all()
         except:
             pass
-        self.assertTrue(obj is not None) 
+        self.assertTrue(obj is not None)
 
     def test_2by_id(self):
         obj = None
@@ -23,7 +23,7 @@ class BaseUnittest(unittest.TestCase):
             obj = AnswerModel().by_id(1)
         except:
             pass
-        self.assertTrue(obj is not None) 
+        self.assertTrue(obj is not None)
 
     def test_3by_ids(self):
         AnswerModel.save(101,1234,'TEST')
@@ -33,8 +33,8 @@ class BaseUnittest(unittest.TestCase):
             obj = AnswerModel().by_ids(ids)
         except:
             pass
-        self.assertTrue(obj is not None) 
-        
+        self.assertTrue(obj is not None)
+
     def test_4remove_by_id(self):
         AnswerModel.remove_by_id(1)
         obj = None
@@ -51,15 +51,15 @@ class BaseUnittest(unittest.TestCase):
         except:
             pass
         self.assertTrue(obj is not None)
-        
+
         obj = None
         try:
             obj = AnswerModel().get_filtered(id = 2)
         except:
             pass
         self.assertTrue(obj is not None)
-        
 
-        
+
+
 if __name__ == '__main__':
     unittest.main()
