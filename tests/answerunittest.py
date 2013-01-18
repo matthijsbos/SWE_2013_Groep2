@@ -1,13 +1,14 @@
 import unittest
 import sqlalchemy.orm.exc as alchexc
 from models.answer import AnswerModel
-#from basemodels.basemodel import BaseEntity
 from dbconnection import session
 import os
+from models.basemodel import BaseEntity
 
 class AnswerUnittest(unittest.TestCase):
+    #do not change method names as tests are executed in alphabetical order
 
-    # answer model tests, do not change name as tests are executed in alphabetical order
+    # test answermodel methods
     def test_1empty(self):
         with self.assertRaises(alchexc.NoResultFound):
             session.query(AnswerModel).filter_by(questionID=101,userID=1234).one()
@@ -55,16 +56,21 @@ class AnswerUnittest(unittest.TestCase):
             pass
         self.assertTrue(bool is 1)
 
-    def test_7getTimeStamp(self):
+    def test_7get_unanswered_questions(self):
+        obj = None
+        try:
+            obj = AnswerModel.get_unanswered_questions(1,1)
+        except:
+            pass
+        self.assertTrue(obj is not None)        
+
+    def test_8getTimeStamp(self):
         date = None
         try:
             date = AnswerModel.getTimeStamp(1)
         except:
             pass
-        self.assertTrue(date is not None)
+        self.assertTrue(date is not None)       
         
-    #def testFilter(self):
-    #def testDelete(self):  
-    
 if __name__ == '__main__':
     unittest.main()
