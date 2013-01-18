@@ -15,8 +15,8 @@
 			<form action="/answerchoice" method="post">
 				<input type="hidden" name="answerzero" id="answerzero" value="{{ answers.id }}">
 				<input type="hidden" name="answerone" id="answerone" value="{{ answers.id }}">
-				<button type="submit" name="bestanswer" value="{{ answers.id }}">{{ answers.text }}</button>
-				<button type="submit" name="bestanswer" value="{{ answers.id }}">{{ answers.text }}</button>
+				<button type="submit" name="bestanswer" value="{{ answers.id }}">{{ answers[0].text }}</button>
+				<button type="submit" name="bestanswer" value="{{ answers.id }}">{{ answers[1].text }}</button>
 			</form>
         </body>
         </html>

@@ -14,6 +14,12 @@ class AnswerModel(Base, BaseEntity):
     userID = Column(Integer)
     edit = Column(Integer)
 
+    def __init__(self,text,questionID,userID,edit):
+		self.text = text
+		self.questionID = questionID
+		self.userID = userID
+		self.edit = edit
+
     def __repr__(self):
         return self.text + 'Represent'
 
