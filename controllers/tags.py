@@ -32,16 +32,21 @@ class Modifytags():
 class AssignTags():
     def __init__(self, answer_id):
         self.answer_id = answer_id
-        try:
-            self.answer = AnswerModel.by_id(answer_id)
-        except:
+        self.answer = AnswerModel.by_id(answer_id)
+        if self.answer == None:
             self.answer = "Error, Answer not found"
+
         fsession['assigntag'] = str(answer_id)
     
     @staticmethod
     def assign(request):
         for tag_id in request.form.getlist('tags'):
             AnswerTag.add_answertag(fsession['assigntag'], tag_id)
+            
+    @staticmethod
+    def remove(request):
+        for tag_id in request.form.getlist('tags'):
+            AnswerTag.remove(fsession['assigntag'], tag_id)
               
     def render(self):
         enabledtags = AnswerTag.get_tag_ids(self.answer_id)

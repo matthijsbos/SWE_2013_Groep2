@@ -1,4 +1,4 @@
-<html>
+﻿<html>
 <head>
 </head>
     <body>
@@ -19,6 +19,17 @@
                       </input>
                     {% endfor %}
                       <input type="submit" value="assign"> 
+                </form>
+				
+				<form action="/removetags_done" method="POST">
+                    <legend>Remove tags:</legend>
+                    
+                    {% for tag in tags %}
+                      <input type="checkbox" name="tags" value="{{tag.id}}">
+                        {{tag.name}}
+                      </input>
+                    {% endfor %}
+                      <input type="submit" value="remove"> 
                 </form>
                 <hr>
     </body>

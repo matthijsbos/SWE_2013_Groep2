@@ -134,18 +134,22 @@ def assign_tags():
 def handle_assign_tags():
     ctrler = AssignTags.assign(request)
     return "<a href='/'>back to main</a>"
+    
+@app.route("/removetags_done",methods=['POST'])
+def handle_assign_tags():
+    ctrler = AssignTags.remove(request)
+    return "<a href='/'>back to main</a>"
 
-
-@app.route("/assignratings", methods=['POST'])
+@app.route("/assignratings", methods=['POST', 'GET'])
 def assign_ratings():
-    ctrler = ratings.AssignRatings(1)
+    ctrler = AssignRatings(1)
     return ctrler.render()
 
 
 @app.route("/assignratings_done",methods=['POST'])
 def handle_assign_ratings():
-    ctrler = tags.AssignRatings.assign(request)
-    return "NEE"
+    ctrler = AssignRatings.assign(request)
+    return "<a href='/'>back to main</a>"
 
 
 @app.route("/filteranswers", methods=['POST', 'GET'])
@@ -153,6 +157,11 @@ def answerFilter():
     ctrler = Answer(request)
     return ctrler.render_filtered()
 
+
+@app.route("/filteranswers/<questionid>", methods=['POST','GET'])
+def answerFilterByQuestionID(questionid):
+    ctrler = Answer(request)
+    return ctrler.render_filtered_by_questionid(questionid)
 
 @app.route("/logout")
 def logout():
