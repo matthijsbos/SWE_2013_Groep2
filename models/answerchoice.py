@@ -2,8 +2,9 @@ from sqlalchemy import Column, String, Integer, Boolean, DateTime, ForeignKey
 from sqlalchemy.orm import relationship
 from dbconnection import engine, session, Base
 from datetime import datetime
-from base import BaseEntity
+from basemodel import BaseEntity
 
+K = 100
 class AnswerChoiceModel(Base,BaseEntity):
     __tablename__ = 'answerchoice'
 
@@ -19,3 +20,11 @@ class AnswerChoiceModel(Base,BaseEntity):
         self.best_answer_id = best_answer_id
         self.other_answer_id = other_answer_id
 
+    def winningProbability(rating1, rating2) :
+        return 1.0 / (1.0 + (10.0**((rating2 - rating1) / 400.0)))
+
+    def newRating(winner, loser) :
+        expectedScore = winningProbability(winner, loser)
+        winnerRating = winner + K * (1 - winningProbability(winner, loser))
+        loserRating = loser + K * (0 - winningProbability(loser, winner))
+        return winnerRating, loserRating
