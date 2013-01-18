@@ -27,6 +27,29 @@ class Modifytags():
     def render(self):
         self.taglist = Tag.get_all()
         return render_template('modifytags.html',tags=self.taglist)
+        
+    @staticmethod
+    def json_get_tags():    
+       #create json file of all tags
+       data = Tag.get_all()
+
+       print data
+
+       #list of dicytionaries
+       data = [
+                   {"id":"856","name":"Ruby"},
+                   {"id":"1035","name":"Python"},
+                   {"id":"856","name":"JavaScript"},
+                   {"id":"1035","name":"ActionScript"},
+                   {"id":"856","name":"Scheme"},
+                   {"id":"1035","name":"Lisp"},
+                   {"id":"1035","name":"Visual Basic"},
+                   {"id":"856","name":"C"},
+                   {"id":"856","name":"Java"}
+       ]
+
+       #Qreturn "Test return"
+       return json.dumps(data)
 
 
 class AssignTags():
