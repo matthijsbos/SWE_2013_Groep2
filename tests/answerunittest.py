@@ -3,7 +3,6 @@ import sqlalchemy.orm.exc as alchexc
 from models.answer import AnswerModel
 from dbconnection import session
 import os
-from models.basemodel import BaseEntity
 
 class AnswerUnittest(unittest.TestCase):
     #do not change method names as tests are executed in alphabetical order
