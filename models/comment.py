@@ -16,7 +16,7 @@ class Comment(Base, BaseEntity):
     __tablename__ = 'Comments'
     
     answer_id = Column(Integer, ForeignKey('answer.id', ondelete='CASCADE'))
-    user_id = Column(Integer)
+    user_id = Column(String)
     text = Column(String)
     
     def __init__(self, answer_id, user_id, text):
@@ -25,28 +25,14 @@ class Comment(Base, BaseEntity):
         self.text = text
         
     def __repr__(self):
-        return "<Comment(aid='%d', uid='%d', '%s')" % (self.answer_id,
+        return "<Comment(aid='%d', uid='%s', '%s')" % (self.answer_id,
             self.user_id, self.text)
     
     @staticmethod        
     def add(answer_id, user_id, text):
-        session.add(Comment(answer_id, user_id, text))
-        session.commit()
-    
-    @staticmethod
-    def edit(comment_id, answer_id, user_id, text):
-        session.query(Comment).filter(Comment.id == comment_id,
-                Comment.answer_id == answer_id, 
-                Comment.user_id == user_id).update(Comment.text = text)
-        session.commit()
-                
-    # user_id is not necessary since comment id is unique. However, this allows
-    # for easy security check by passing the user id from session data.
-    @staticmethod
-    def delete(comment_id, user_id):
-        for comment in session.query(Comment).filter(Comment.id == comment_id,
-                Comment.user_id == user_id):
-            session.delete(comment)
+        if session.query(Comment).filter(Comment.answer_id == answer_id,
+                Comment.user_id == user_id).first() is not None:
+            session.add(Comment(answer_id, user_id, text))
             session.commit()
             
     @staticmethod
@@ -54,4 +40,9 @@ class Comment(Base, BaseEntity):
         for comment in session.query(Comment).filter(
                 Comment.answer_id == answer_id, Comment.user_id == user_id):
             session.delete(comment)
-        session.commit()
+            session.commit()
+        
+    @staticmethod
+    def get(answer_id, user_id):
+        return session.query(Comment).filter(Comment.answer_id == answer_id,
+            Comment.user_id == user_id).all()

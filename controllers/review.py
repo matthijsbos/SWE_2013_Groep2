@@ -7,6 +7,7 @@ from flask import render_template, session as fsession
 from models.tag import Tag, AnswerTag
 from models.answer import AnswerModel
 from models.rating import AnswerRating, Rating
+from models.comment import Comment
 from dbconnection import session
 
 class ReviewAnswer():
@@ -27,6 +28,11 @@ class ReviewAnswer():
 
         for tag_id in request.form.getlist('remove_tags'):
             AnswerTag.remove(fsession['reviewanswer'], tag_id)
+            
+        for comment in request.form.getlist('comments'):
+            if comment is not '':
+                Comment.add(fsession['reviewanswer'], fsession['user_id'], 
+                            comment)
 
         # revoke permission to review answer
         del fsession['reviewanswer']
@@ -34,6 +40,7 @@ class ReviewAnswer():
     @staticmethod
     def review(answer_id):
 
+        # one of these checks can be removed once we merge and know what's what
         try:
             answer = AnswerModel.by_id(answer_id)
         except:
