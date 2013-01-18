@@ -11,7 +11,7 @@
         elem.addClass('activated');
         elem.text('');
         var edit_field = $('<input type="text" size="50"/>').val(text);
-        edit_field.on('blur', function(){
+        edit_field.blur(function(){
             edit_question(id, $(this).val());
             var newText = elem.val();
             $(this).parent().text(newText).removeClass('activated');
