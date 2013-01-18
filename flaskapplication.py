@@ -151,6 +151,11 @@ def assign_ratings():
 def handle_assign_ratings():
     ctrler = AssignRatings.assign(request)
     return "<a href='/'>back to main</a>"
+    
+
+@app.route("/json/get_tags",methods=['POST', 'GET'])
+def json_get_tags():
+    return Modifytags.json_get_tags()
 
 """
 To review a answer, return reviewanswer.review(x) should be called from the
