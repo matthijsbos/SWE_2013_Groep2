@@ -46,7 +46,6 @@ class Answerchoice():
         def randpop(array):
             return array.pop(randrange(0,len(array)))
         
-        
         userID = g.lti.get_user_id()
         questionID = 1 # hardcoded shizzle
         allquestions = (Question.get_all())
@@ -55,7 +54,8 @@ class Answerchoice():
         for current in allanswers:
             if current.userID != userID and current.questionID == questionID:
                 validAnswers.append(current)
-        print validAnswers
+                
+        print session.query(AnswerChoiceModel).filter().all()
         return render_template('choice.html',questions=allquestions[questionID], answers=(randpop(validAnswers),randpop(validAnswers)))
 
     def process(self):
