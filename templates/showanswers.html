@@ -7,10 +7,10 @@
     {% for answer in answers %}
         {% if answer.edit==0 %}  
         <tr>
-            <td><a href="#" onclick="document.reviewAnswer.id.value={{answer.id}}; document.reviewAnswer.submit(); return false;">{{ answer }}</a></td>
+            <td><a href="#" class="blue" onclick="document.reviewAnswer.id.value={{answer.id}}; document.reviewAnswer.submit(); return false;">{{ answer }}</a></td>
             {% for answer2 in answers %}
             {% if answer2.questionID==answer.questionID and answer2.userID==answer.userID and answer2.edit != 0 %}
-                <td><a href="#" onclick="document.reviewAnswer.id.value={{answer2.id}}; document.reviewAnswer.submit(); return false;">{{ answer2 }}</a></td>
+                <td><a href="#" class="blue" onclick="document.reviewAnswer.id.value={{answer2.id}}; document.reviewAnswer.submit(); return false;">{{ answer2 }}</a></td>
                 {% endif %}
             {% endfor %}
         </tr>
