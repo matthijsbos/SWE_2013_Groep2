@@ -13,6 +13,7 @@ class AnswerModel(Base, BaseEntity):
     #question = relationship('Question')
     userID = Column(Integer)
     edit = Column(Integer)
+    ranking = Column(Float)
 
     def __init__(self,text,questionID,userID,edit):
 		self.text = text
