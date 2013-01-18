@@ -45,7 +45,6 @@ class Answerchoice():
         except ValueError:
             return 404
 
-        print userid
 
         if answer0 == bestanswer:
             best = answer0
@@ -56,14 +55,10 @@ class Answerchoice():
         else:
             return 404
         
-        print best
-        print other
+        try:
+            session.add(AnswerChoiceModel(userid,best,other))
+            session.commit()
+        except:
+            session.rollback()
 
-        #try:
-        session.add(AnswerChoiceModel(userid,best,other))
-        session.commit()
-        #except:
-        #    print 'error in SQL'
-        #    session.rollback()
-
-        return str(len(AnswerChoiceModel.get_all()))
+        return 'success' 

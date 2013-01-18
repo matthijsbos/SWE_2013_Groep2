@@ -1,4 +1,5 @@
 from sqlalchemy import *
+from sqlalchemy.orm import relationship
 from dbconnection import engine, session, Base, exc
 from basemodel import BaseEntity
 
@@ -8,7 +9,8 @@ class AnswerModel(Base, BaseEntity):
     __table_args__ = {'sqlite_autoincrement': True}
 
     text = Column(String)
-    questionID = Column(Integer)
+    questionID = Column(Integer,ForeignKey('questions.id'))
+    #question = relationship('Question')
     userID = Column(Integer)
     edit = Column(Integer)
 

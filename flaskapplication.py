@@ -4,7 +4,9 @@
 # Comment: MultiDict with isinstructor,consumerkey,coursekey and coursename in
 #          the request.form field.
 
-from models import *
+import models.question
+import models.answer
+import models.answerchoice
 from dbconnection import Base, engine
 from flask import Flask, request, render_template, g
 from lti import LTI, LTIException
