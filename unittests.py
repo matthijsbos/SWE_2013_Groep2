@@ -9,7 +9,6 @@ directory_separator = ('/' if os.name == "posix" else '\\')
 
 def setUp():
     # backup db file
-    print "hello test"
     src = os.getcwd()+directory_separator+"db.sqlite"
     dst = os.getcwd()+directory_separator+"db_backup.sqlite"
     if os.path.exists(src):
