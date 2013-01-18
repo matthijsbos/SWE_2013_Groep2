@@ -7,6 +7,8 @@
 import models.question
 import models.answer
 import models.answerchoice
+import models.tag
+import models.rating
 from dbconnection import Base, engine
 from flask import Flask, request, render_template, g
 from lti import LTI, LTIException
