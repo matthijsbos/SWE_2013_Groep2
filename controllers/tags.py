@@ -7,6 +7,11 @@ from flask import render_template, session as fsession
 from models.tag import Tag, AnswerTag
 from models.answer import AnswerModel
 from dbconnection import session
+import json
+
+#create json file of all tags
+data = Tag.get_all()
+tags = json.dumps(data)
 
 class Modifytags():
     def __init__(self):
