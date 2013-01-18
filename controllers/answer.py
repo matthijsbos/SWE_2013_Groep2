@@ -12,10 +12,10 @@ class Answer():
     def render(self):
         # dummy shit, get some real data
         qText = 'wat is het antwoord op deze dummy vraag?'
-        #questionStartTime = datetime.datetime.now();
+        questionStartTime = datetime.datetime.now();
         uID = g.lti.get_user_id()
         qID = -1
-        timerD = 5       
+        timerD = 15       
 
         # Post should be real data
         if self.request.method == 'POST' and 'questionID' in self.request.form:
