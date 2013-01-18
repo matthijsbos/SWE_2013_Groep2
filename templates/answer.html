@@ -1,18 +1,19 @@
 <html>
 <head>
     <script type="text/javascript" src="../static/js/jquery.min.js"></script>
-
-<script type="text/javascript" src="../static/jquery.countdown.js"></script>
-<link rel="stylesheet" type="text/css" href="../static/css/style.css" media="screen" />
+    <script type="text/javascript" src="../static/js/jquery.countdown.js"></script>
+    <link rel="stylesheet" type="text/css" href="../static/css/style.css" media="screen" />
 	<script type="text/javascript">
 var countdownCurrent = {{timerDuration}} //number of seconds
 
 
 $(function () {
-	var austDay = new Date("{{date}}");
-	austDay.setSeconds(austDay.getSeconds() + countdownCurrent);
-	$('#counter').countdown({until: austDay, compact: true, onExpiry: submitForm});
 
+	var austDay = new Date({{date}} * 1000);
+	austDay.setSeconds(austDay.getSeconds() + countdownCurrent);
+	$('#counter').countdown({until: austDay, compact: true, onExpiry: submitForm, format: 'MS'});
+
+    if ($('#counter').countdown('getTimes') == '0,0,0,0,0,0,0') document.getElementById("answer_form").innerHTML = "you cannot answer this question anymore";
 
 
 });
@@ -24,7 +25,7 @@ function submitForm() {
 
 <body>
 {% if go == "true" %}
-    <div>
+    <div id="answer_form">
         <form action="/answer" id="answerform" method="post">
             <br>
             <div id="question">{{questionText}}</div>

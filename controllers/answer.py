@@ -1,6 +1,7 @@
 from models import answer, question
 from flask import render_template, g
 import datetime
+import time
 import sqlalchemy.orm.exc as sqlalchemyExp
 
 
@@ -79,12 +80,12 @@ class Answer():
         if answer.AnswerModel.checkAnswerExist(uID, qID):
             aID = answer.AnswerModel.getAnswerID(uID, qID)
             if self.timeLeft(timerD, 0, questionStartTime):
-                return render_template('answer.html', questionID=qID, userID=uID, questionText=qText, timerDuration=timerD, date=questionStartTime, go="true")
+                return render_template('answer.html', questionID=qID, userID=uID, questionText=qText, timerDuration=timerD, date=time.mktime(questionStartTime.timetuple()), go="true")
             else:
-                return render_template('answer.html', questionID=qID, userID=uID, questionText=qText, timerDuration=timerD, date=questionStartTime, go="false")
+                return render_template('answer.html', questionID=qID, userID=uID, questionText=qText, timerDuration=timerD, date=time.mktime(questionStartTime.timetuple()), go="false")
         else:
             #answer.AnswerModel.save(qID, uID, "")
-            return render_template('answer.html', questionID=qID, userID=uID, questionText=qText, timerDuration=timerD, date=questionStartTime, go="true")
+            return render_template('answer.html', questionID=qID, userID=uID, questionText=qText, timerDuration=timerD, date=time.mktime(questionStartTime.timetuple()), go="true")
 
     def timeLeft(self, timerD, giveTime, questionStartTime):
         currentTime = datetime.datetime.now()
