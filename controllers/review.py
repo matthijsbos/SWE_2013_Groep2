@@ -17,7 +17,7 @@ class ReviewAnswer():
         try:
             fsession['reviewanswer']
         except:
-            return "YOU HAVE NO PERMISSION YOU FOOL"
+            return self
 
         for tag_id in request.form.getlist('assign_tags'):
             AnswerTag.add_answertag(fsession['reviewanswer'], tag_id)
