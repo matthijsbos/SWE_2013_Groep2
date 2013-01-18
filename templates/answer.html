@@ -1,23 +1,33 @@
 <html>
 <head>
-<script src="../static/js/jquery-1.8.3.min.js" type="text/javascript" charset="utf-8"></script>
-<script src="../static/js/jquery.countdown.js" type="text/javascript" charset="utf-8"></script>
+    <script type="text/javascript" src="../static/js/jquery.min.js"></script>
+    <script type="text/javascript" src="../static/js/jquery.timer.js"></script>
 <link rel="stylesheet" type="text/css" href="../static/css/style.css" media="screen" />
-<script type="text/javascript">
-    function formSubmit()
-    {
-        document.getElementById("answerform").submit();
-    }
-    $(function(){
-        $('#counter').countdown({
-            image: '../static/img/digits.png',
-            startTime: '{{timerDuration}}',
-            timerEnd: function(){ formSubmit(); },
-            format: 'mm:ss'
-        });
-    });
-		
-</script>
+	<script type="text/javascript">	
+var countdownTimer, countdownCurrent = {{timerDuration}}*100; //number of seconds * 100
+$(document).ready(function() {
+	countdownTimer = $.timer(function() {
+		var min = parseInt(countdownCurrent/6000);
+		var sec = parseInt(countdownCurrent/100)-(min*60);
+		var micro = pad(countdownCurrent-(sec*100)-(min*6000),2);
+		var output = "00"; if(min > 0) {output = pad(min,2);}
+		$('.countdowntime').html(output+":"+pad(sec,2)+":"+micro);
+		if(countdownCurrent == 0) {
+			countdownTimer.stop();
+			document.getElementById("answerform").submit();
+		} else {
+			countdownCurrent-=7;
+			if(countdownCurrent < 0) {countdownCurrent=0;}
+		}
+	}, 70, true);
+});
+// Padding function
+function pad(number, length) {
+	var str = '' + number;
+	while (str.length < length) {str = '0' + str;}
+	return str;
+}
+	</script>
 </head>
 
 <body>
@@ -25,24 +35,19 @@
     <div>
         <form action="/answer" id="answerform" method="post">
             <br>
-            {{questionText}}
+            <div id="question">{{questionText}}</div>
             <input type="hidden"  name="questionID" value="{{questionID}}" />
-            <input type="text" name="userID" value="{{userID}}" />
+            uid: <input type="text" name="userID" value="{{userID}}" />
             <br>
             Answer: <br><textarea name="answerText" cols=50 rows=10></textarea>
             <br>
-            <input type="submit" value="go"/>
-            {{answerID}}
+            <input type="submit" value="submit answer" class="submit-answer"/>
         </form>
-        <div id="counter"></div>
-        <div class="desc">
-            <div>Minutes</div>
-            <div>Seconds</div>
-        </div>
+        <div id="counter" class="countdowntime"></div>
     </div>
-</body>
 {% else %}
 <p>You have already answered this question.</p>
 {% endif %}
+</body>
 </html>
 

@@ -3,8 +3,10 @@
     <body>
         <form action='/answer' method='POST'>
             <input name='showall' type='hidden' value='1' />
-            {% if succes == "true" %}
-            Saving answer done! {{succes}}
+            {% if flag == "true" %}
+            Saving answer done!
+            {% elif flag == "removed" %}
+            Answer successfully removed!
             {% else %}
             You did not finish in time!
             {% endif %}

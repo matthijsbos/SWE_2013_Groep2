@@ -14,14 +14,18 @@ class BaseEntity(object):
 
     @classmethod
     def by_id(cls, id):
-        return session.query(cls).filter(cls.id == id).one()
+        try:
+            return session.query(cls).filter(cls.id == id).one()
+        except:
+            return None
 
     @classmethod
     def remove_by_id(cls, id):
-        entry = session.query(cls).filter(cls.id == id).one()
+        entry = cls.by_id()
+        if entry == None:
+            return
         session.delete(entry)
         session.commit()
-        return
 
     @classmethod
     def by_ids(cls, ids):
