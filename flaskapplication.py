@@ -4,7 +4,9 @@
 # Comment: MultiDict with isinstructor,consumerkey,coursekey and coursename in
 #          the request.form field.
 
-from models import *
+import models.question
+import models.answer
+import models.answerchoice
 from dbconnection import Base, engine
 from flask import Flask, request, render_template, g
 from lti import LTI, LTIException
@@ -80,11 +82,15 @@ def answerForm():
     ctrler = answer.Answer(request)
     return ctrler.render()
 	
-@app.route("/answerchoice",methods=['POST'])
+@app.route("/answerchoice",methods=['GET'])
 def answerChoice():
     ctrler = answerchoice.Answerchoice(request)
     return ctrler.render()
 
+@app.route("/answerchoice",methods=['POST'])
+def processanswerchoice():
+    ctrler = answerchoice.Answerchoice(request)
+    return ctrler.process()
 
 @app.route("/filteranswers", methods=['POST', 'GET'])
 def answerFilter():

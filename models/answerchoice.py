@@ -8,10 +8,13 @@ class AnswerChoiceModel(Base,BaseEntity):
     __tablename__ = 'answerchoice'
 
     user_id = Column(String,nullable=False)
-    answer_id0 = Column(Integer, ForeignKey('answer.id'),nullable=False)
-    answer0 = relationship('Answer', foreign_keys=[answer_id0])
-    answer_id1 = Column(Integer,ForeignKey('answer.id'),nullable=False)
-    answer1 = relationship('Answer', foreign_keys=[answer_id1])
-    choice = Column(Boolean,nullable=False)
-    
+    best_answer_id = Column(Integer,ForeignKey('answer.id'), nullable=False)
+    #best_answer = relationship('AnswerModel', foreign_keys=best_answer_id)
+    other_answer_id = Column(Integer, ForeignKey('answer.id'), nullable=False)
+    #other_answer = relationship('AnswerModel', foreign_keys=other_answer_id)
+
+    def __init__(self, user_id, best_answer_id, other_answer_id):
+        self.user_id = user_id
+        self.best_answer_id = best_answer_id
+        self.other_answer_id = other_answer_id
 
