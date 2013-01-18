@@ -37,6 +37,11 @@ class AssignTags():
     def assign(request):
         for tag_id in request.form.getlist('tags'):
             AnswerTag.add_answertag(fsession['assigntag'], tag_id)
+            
+    @staticmethod
+    def remove(request):
+        for tag_id in request.form.getlist('tags'):
+            AnswerTag.remove(fsession['assigntag'], tag_id)
               
     def render(self):
         enabledtags = AnswerTag.get_tag_ids(self.answer_id)
