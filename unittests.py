@@ -32,6 +32,7 @@ def tearDown():
             os.rename(src, dst)
 
 if __name__ == '__main__':
+    # tests dont take eachother in account, for now just rebuild the db for each test
 
     setUp()
     base_test = unittest.TestLoader().loadTestsFromTestCase(BaseUnittest)
