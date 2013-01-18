@@ -98,7 +98,11 @@ def question_export():
                 "attachment;filename=questions_%s.yaml" %
                     g.lti.get_course_name()})
 
-
+@app.route("/question_import", methods=['GET', 'POST'])
+def question_import():
+    list = yaml.load(request.args['file'])
+    print list    
+                    
 @app.route("/managetags", methods=['GET', 'POST'])
 def managetags():
     ctrler = Modifytags()
