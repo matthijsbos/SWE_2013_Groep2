@@ -93,9 +93,9 @@
             </td>
             <td id="available_{{question.id}}">{{question.available}}</td>
             <td id="time_{{question.id}}">{{question.time}}</td>
-            <td><button value="edit" onclick=edit_field({{question.id}}) />edit</td>
-            <td><button value="toggle" onclick=toggle_question({{question.id}}) />toggle</td>
-            <td><button value="delete" onclick=delete_question({{question.id}}) />delete</td>
+            <td><button value="edit" onclick=edit_field({{question.id}}) />edit</button></td>
+            <td><button value="toggle" onclick=toggle_question({{question.id}}) />toggle</button></td>
+            <td><button value="delete" onclick=delete_question({{question.id}}) />delete</button></td>
         </tr>
     {% endfor %}
     </table>
