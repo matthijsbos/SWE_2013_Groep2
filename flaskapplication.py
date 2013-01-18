@@ -15,7 +15,7 @@ from controllers.ratings import AssignRatings
 
 app = Flask(__name__)
 app.debug = True
-app.secret_key = "Hurdygurdy" # Used for Flask sessions, TODO: config?
+app.secret_key = "Hurdygurdy"  # Used for Flask sessions, TODO: config?
 
 
 @app.before_request
@@ -43,28 +43,33 @@ def init_lti():
 # define the routes for our application
 @app.route("/", methods=['GET', 'POST'])
 def home():
-    ctrler = Index(request)
+    ctrler = Index()
     return ctrler.render()
 
 
-@app.route("/launch", methods=['POST'])
+@app.route("/debug", methods=['GET', 'POST'])
 def launch():
-    ctrler = Index(request)
+    ctrler = Index(debug=True)
     return ctrler.render()
 
-@app.route("/edit_question",methods=['GET','POST'])
+
+@app.route("/edit_question", methods=['GET', 'POST'])
 def edit_question():
-  return Question.edit_question(request.args['id'],
-                             request.args['text'],
-                             False)
-                      
+    return Question.edit_question(request.args['id'],
+                                  request.args['text'],
+                                  False)
+
 # this route is called to toggle a question's availability
-@app.route("/toggle_question",methods=['GET','POST'])
+
+
+@app.route("/toggle_question", methods=['GET', 'POST'])
 def toggle_question():
-  return Question.toggle_question(request.args['id'])
-    
+    return Question.toggle_question(request.args['id'])
+
 # this route is used to ask a question to students
-@app.route("/question",methods=['GET', 'POST'])
+
+
+@app.route("/question", methods=['GET', 'POST'])
 def ask_question():
     if g.lti.is_instructor() == False:
         return render_template("access_restricted.html")
@@ -73,29 +78,36 @@ def ask_question():
 
 # this route is used for the feedback from inserting the question into the
 # database, it also inserts the question into the database
-@app.route("/handle_question",methods=['POST'])
+
+
+@app.route("/handle_question", methods=['POST'])
 def handle_question():
     if g.lti.is_instructor() == False:
-      return render_template("access_restricted.html")
+        return render_template("access_restricted.html")
     return Question.create_question(request.form['question'],
-            g.lti.get_user_id(),g.lti.get_course_id(),request.form['time'])
+                                    g.lti.get_user_id(),
+                                    g.lti.get_course_id(),
+                                    request.form['time'])
+
 
 @app.route("/question_list", methods=['GET', 'POST'])
 def list_questions():
     return Question.get_list()
 
+
 @app.route("/delete_question/<id>", methods=['GET', 'POST'])
 def delete_question(id):
     return Question.delete_question(id)
+
 
 @app.route("/question_export", methods=['GET', 'POST'])
 def question_export():
     exp = Question.export_course(g.lti.get_course_id())
     exp = yaml.dump(exp, default_flow_style=False)
     return Response(exp,
-            mimetype="text/plain",
-            headers={"Content-Disposition":
-                "attachment;filename=questions_%s.yaml" %
+                    mimetype="text/plain",
+                    headers={"Content-Disposition":
+                             "attachment;filename=questions_%s.yaml" %
                     g.lti.get_course_name()})
 
 
@@ -123,15 +135,15 @@ def removetags():
 def answerForm():
     ctrler = Answer(request)
     return ctrler.render()
-    
 
-@app.route("/assigntags",methods=['POST', 'GET'])
+
+@app.route("/assigntags", methods=['POST', 'GET'])
 def assign_tags():
     ctrler = AssignTags(1)
     return ctrler.render()
 
 
-@app.route("/assigntags_done",methods=['POST'])
+@app.route("/assigntags_done", methods=['POST'])
 def handle_assign_tags():
     ctrler = AssignTags.assign(request)
     return "<a href='/'>back to main</a>"
@@ -143,7 +155,7 @@ def assign_ratings():
     return ctrler.render()
 
 
-@app.route("/assignratings_done",methods=['POST'])
+@app.route("/assignratings_done", methods=['POST'])
 def handle_assign_ratings():
     ctrler = AssignRatings.assign(request)
     return "<a href='/'>back to main</a>"
@@ -155,10 +167,16 @@ def answerFilter():
     return ctrler.render_filtered()
 
 
-@app.route("/filteranswers/<questionid>", methods=['POST','GET'])
+@app.route("/filteranswers/<questionid>", methods=['POST', 'GET'])
 def answerFilterByQuestionID(questionid):
     ctrler = Answer(request)
     return ctrler.render_filtered_by_questionid(questionid)
+
+
+@app.route("/has_new_question", methods=['GET', 'POST'])
+def has_new_question():
+    ctrler = Index()
+    return ctrler.has_new_question()
 
 @app.route("/logout")
 def logout():
@@ -166,4 +184,4 @@ def logout():
     return "Logged out..."
 
 if __name__ == '__main__':
-        app.run()
+    app.run()

@@ -1,7 +1,6 @@
-<html>
-<head><title>Groep 2</title></head>
-<body>
-    <!-- Just support GET damnit :P -->
+{% extends "_base.html" %}
+{% block content %}
+    <p>Debug options:</p>
     <ul>
         <li><a href="/question_list">Question list</a></li>
         <li><a href="/question">Ask a question</a></li>
@@ -12,6 +11,7 @@
         <li><a href="/assignratings">Assign ratings</a></li>
         <li><a href="/question_export">Export questions for this course</a></li>
     </ul>
+    Answer a question by ID:
     <form method="post" action="/answer">
         <input type="input" name="questionID" value="3" />
         <input type="submit" />
@@ -19,5 +19,4 @@
     <hr />
     LTI data:<br />
     <pre>{{ lti_dump }}</pre>
-</body>
-</html>
+{% endblock %}

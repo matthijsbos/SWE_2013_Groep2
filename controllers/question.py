@@ -9,17 +9,13 @@ class QuestionController():
     @staticmethod
     def toggle_question(q_id):
         '''toggles a question between available and not available'''
-        available = Question.by_id(q_id).available
         if g.lti.is_instructor():
-            if available == True:
-                Question.by_id(q_id).available = False
-                return json.dumps({"toggle":False,"check": True})
-            else:
-                Question.by_id(q_id).available = True
-                return json.dumps({"toggle": True,"check": True})
+            available = Question.toggle_available(q_id)
+            return json.dumps({"toggle":available,"check": True})
+
         else:
           return json.dumps({"toggle": True,"check": False})
-                
+
     @staticmethod
     def edit_question(q_id, question, activate):
         """Updates a question with given contents and activation status."""

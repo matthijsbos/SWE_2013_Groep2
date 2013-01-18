@@ -1,0 +1,21 @@
+{% extends "_base.html" %}
+
+{% block js %}
+{{ super() }}
+<script type="text/javascript" src="/static/js/student.js"></script>
+{% endblock %}
+
+{% block content %}
+<p id="pleasewait">Please wait for your instructor to ask a question.</p>
+
+<!-- For answering a question. -->
+<form action="/answer" id="answerform" method="post" style="display:none;">
+    <br>
+    <div id="question"></div>
+    <br>
+    Answer: <br><textarea name="answerText" cols=50 rows=10></textarea>
+    <br>
+    <input type="submit" value="submit answer" class="submit-answer"/>
+    <div id="counter" class="countdowntime"></div>
+</form>
+{% endblock %}
