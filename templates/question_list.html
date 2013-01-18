@@ -83,7 +83,7 @@
         <tr id="row_{{question.id}}">
             <!--<td id="id_{{question.id}}">{{question.id}}</td>-->
             <td id="question_{{question.id}}">
-                <a href="/filteranswers/{{question.id}}">{{question.question}}</a>
+                <a href="/filteranswers/{{question.id}}" class="blue">{{question.question}}</a>
             </td>
             <td id="available_{{question.id}}">{{question.available}}</td>
             <td id="time_{{question.id}}">{{question.time}}</td>
@@ -93,5 +93,5 @@
         </tr>
     {% endfor %}
 </table>
-<a href="/">Back</a>
+<a href="/" class="blue">Back</a>
 {% endblock %}
