@@ -85,9 +85,15 @@ def ask_question():
 def handle_question():
     if g.lti.is_instructor() == False:
         return render_template("access_restricted.html")
+    try:
+        request.form['active']
+        isActive = True
+    except:
+        isActive = False
     return Question.create_question(request.form['question'],
                                     g.lti.get_user_id(),
                                     g.lti.get_course_id(),
+                                    isActive,
                                     request.form['time'])
 
 
@@ -114,8 +120,8 @@ def question_export():
 @app.route("/question_import", methods=['GET', 'POST'])
 def question_import():
     list = yaml.load(request.args['file'])
-    print list    
-                    
+    print list
+
 @app.route("/managetags", methods=['GET', 'POST'])
 def managetags():
     ctrler = Modifytags()

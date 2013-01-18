@@ -69,13 +69,13 @@ class QuestionController():
         return render_template('askQuestion.html', instr=instructor)
 
     @staticmethod
-    def create_question(question, instructor, course, time):
+    def create_question(question, instructor, course, active, time):
         '''formats a question for database insertion and inserts it, calls a result screen afterwards'''
         try:
             time = int(time)
         except ValueError:
             time = 0
-        session.add(Question(instructor, course, question, False, time))
+        session.add(Question(instructor, course, question, active, time))
         session.commit()
 
-        return render_template('handleQuestion.html', question=question)
+        return QuestionController.get_list()
