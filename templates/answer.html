@@ -1,10 +1,8 @@
 <html>
 <head>
     <script type="text/javascript" src="../static/js/jquery.min.js"></script>
-    <script type="text/javascript" src="../static/js/jquery.timer.js"></script>
-
-<script type="text/javascript" src="../static/jquery.countdown.js"></script>
-<link rel="stylesheet" type="text/css" href="../static/css/style.css" media="screen" />
+    <script type="text/javascript" src="../static/js/jquery.countdown.js"></script>
+    <link rel="stylesheet" type="text/css" href="../static/css/style.css" media="screen" />
 	<script type="text/javascript">	
 var countdownCurrent = {{timerDuration}} //number of seconds
 
@@ -12,7 +10,7 @@ var countdownCurrent = {{timerDuration}} //number of seconds
 $(function () {
 	var austDay = new Date("{{date}}");
 	austDay.setSeconds(austDay.getSeconds() + countdownCurrent);
-	$('#counter').countdown({until: austDay, compact: true, onExpiry: submitForm});
+	$('#counter').countdown({until: austDay, compact: true, onExpiry: submitForm, format: 'MS'});
 
 
 
