@@ -22,7 +22,7 @@ class BaseEntity(object):
 
     @classmethod
     def remove_by_id(cls, id):
-        entry = cls.by_id()
+        entry = cls.by_id(id)
         if entry == None:
             return
         session.delete(entry)
