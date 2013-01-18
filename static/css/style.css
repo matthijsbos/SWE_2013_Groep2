@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 body{
       color:#009DCE;
       width: 500px;
@@ -21,14 +20,7 @@ br { clear: both; }
     color: #000;
 }
 #counter{
-transform: scale(0.6) translate(-450px, 0px);
--webkit-transform: scale(0.4);
-float: right;
-margin-right: 140px;
-margin-top: -57px;
-
--o-transform: scale(0.6) translate(-450px, 0px);
--ms-transform: scale(0.6) translate(-450px, 0px);
+font-size: 25px;
 }
 textarea{
     border: 2px dotted #009DCE;
@@ -77,29 +69,4 @@ textarea:focus{
 }.submit-answer:active {
 	position:relative;
 	top:1px;
-}
-
-#quest {
-	border: 3px solid #009DCE;
-	margin-top: 20px;
-	margin-bottom: 20px;
-	text-align: center;
-	-moz-border-radius:6px;
-	-webkit-border-radius:6px;
-	border-radius:6px;
-}
-
-button {
-	color: #009DCE;
-	background-color: white;
-	border: 1px solid #009DCE;
-	width: 49%;
-	-moz-border-radius:6px;
-	-webkit-border-radius:6px;
-	border-radius:6px;
-}
-
-button:hover {
-	border: 3px solid #009DCE;
-	cursor: pointer;
 }
