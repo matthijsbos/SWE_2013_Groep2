@@ -98,6 +98,9 @@ class Answer():
 
         return render_template('answerfilter.html', answers=answer.AnswerModel.get_filtered(**args))
 
+    def render_results(self):
+        return render_template('rankresults.html', answers=answer.AnswerModel.get_all())
+
     def render_all(self):
         # Render all
         return render_template('showanswers.html', answers=answer.AnswerModel.get_all())
