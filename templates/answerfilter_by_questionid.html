@@ -1,30 +1,29 @@
-<html>
-    <body>
-        <form method="POST">
-            Filter by:<br\>
-            ID: <input type="text" name="id"/>
-            UserID: <input type="text" name="userID"/>
-            <input type="submit" value="Go"/>
-        </form>
-        <table style="border:1px solid black;">
-            <tr>
-                <th>id</td>
-                <th>questionID</td>
-                <th>userID</td>
-                <th>text</td>
-                <th>created on</td>
-                <th>modified on</td>
-            </tr>
-            {% for answer in answers %}
-                <tr>
-                    <td style="border:1px solid black;">{{ answer.id }}</td>
-                    <td style="border:1px solid black;">{{ answer.questionID }}</td>
-                    <td style="border:1px solid black;">{{ answer.userID }}</td>
-                    <td style="border:1px solid black;">{{ answer.text }}</td>
-                    <td style="border:1px solid black;">{{ answer.created }}</td>
-                    <td style="border:1px solid black;">{{ answer.modified }}</td>
-                </tr>
-            {% endfor %}
-        </table>
-    </body>
-</html>
+{% extends "_base.html" %}
+{% block content %}
+<form method="POST">
+    Filter by:<br\>
+    ID: <input type="text" name="id"/>
+    UserID: <input type="text" name="userID"/>
+    <input type="submit" value="Go"/>
+</form>
+<table style="border:1px solid black;">
+    <tr>
+        <th>id</td>
+        <th>questionID</td>
+        <th>userID</td>
+        <th>text</td>
+        <th>created on</td>
+        <th>modified on</td>
+    </tr>
+    {% for answer in answers %}
+    <tr>
+        <td style="border:1px solid black;">{{ answer.id }}</td>
+        <td style="border:1px solid black;">{{ answer.questionID }}</td>
+        <td style="border:1px solid black;">{{ answer.userID }}</td>
+        <td style="border:1px solid black;">{{ answer.text }}</td>
+        <td style="border:1px solid black;">{{ answer.created }}</td>
+        <td style="border:1px solid black;">{{ answer.modified }}</td>
+    </tr>
+    {% endfor %}
+</table>
+{% endblock %}

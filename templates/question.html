@@ -1,10 +1,5 @@
-<html>
-<head>
-    <title>Question</title>
-    <script src="http://code.jquery.com/jquery-latest.js"></script>
-</head>
-<body>
-
+{% extends "_base.html" %}
+{% block content %}
 <table id="questions">
     {% for word in wordlist %}
     <tr>
@@ -23,7 +18,4 @@
         });
     });
 </script>
-</body>
-</html>
-
-
+{% endblock %}
