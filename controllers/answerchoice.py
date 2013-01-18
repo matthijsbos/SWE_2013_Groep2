@@ -3,7 +3,7 @@
 # Changes:
 # Comment:
 
-from flask import render_template, g, request
+from flask import render_template, g, request, abort, redirect
 from models.question import Question
 from models.answer import AnswerModel
 from models.answerchoice import AnswerChoiceModel
@@ -16,9 +16,9 @@ class Answerchoice():
         # lele add dummy questions le
         if len(Question.get_all()) == 0:
             userID = g.lti.get_user_id()
-            q1 = Question("1","1","What am I?",True)
-            q2 = Question("2","1","Who am I?",True)
-            q3 = Question("3","1","Where am I?",True)
+            q1 = Question("1","1","What am I?",True,1000)
+            q2 = Question("2","1","Who am I?",True,1000)
+            q3 = Question("3","1","Where am I?",True,1000)
             session.add(q1)
             session.add(q2)
             session.add(q3)
@@ -60,27 +60,16 @@ class Answerchoice():
 
     def process(self):
         userid = g.lti.get_user_id()
+
         try:
             answer0 = int(request.values['answerzero'])
-        except KeyError:
-            return 404
-        except ValueError:
-            return 404
-
-        try:
             answer1 = int(request.values['answerone'])
-        except KeyError:
-            return 404
-        except ValueError:
-            return 404
-        
-        try:
             bestanswer = int(request.values['bestanswer'])
         except KeyError:
-            return 404
+            return abort(404)
         except ValueError:
-            return 404
-
+            return abort(404)
+        
         if answer0 == bestanswer:
             best = answer0
             other = answer1
