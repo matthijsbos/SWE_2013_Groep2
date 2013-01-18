@@ -1,4 +1,5 @@
 from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm.exc import NoResultFound
 from sqlalchemy import Column, Integer, DateTime
 from dbconnection import engine, session
 from datetime import datetime
@@ -15,13 +16,16 @@ class BaseEntity(object):
 
     @classmethod
     def by_id(cls, id):
-        return session.query(cls).filter(cls.id == id).one()
+        try:
+            return session.query(cls).filter(cls.id == id).one()
+        except NoResultFound:
+            return None
 
     @classmethod
     def remove_by_id(cls, id):
-        entry = session.query(cls).filter(cls.id == id).one()
-        session.delete(entry)
-        session.commit()
+        for entry in session.query(cls).filter(cls.id == id):
+            session.delete(entry)
+            session.commit()
         return
 
     @classmethod
