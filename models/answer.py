@@ -45,7 +45,7 @@ class AnswerModel(Base, BaseEntity):
     @staticmethod
     def save(questionID, userID, answerText):
         session.add(AnswerModel(
-            questionID=questionID, userID=userID, text=answerText, edit=0))
+            questionID=questionID, userID=userID, text=answerText, edit=0, ranking=700.0))
         session.commit()
 
     @staticmethod
@@ -79,4 +79,9 @@ class AnswerModel(Base, BaseEntity):
     def getTimeStamp(answerID):
         answer = session.query(AnswerModel).filter_by(id=answerID).one()
         return answer.created
+
+    @staticmethod
+    def getRank(answerID):
+        answer = session.query(AnswerModel).filter_by(id=answerID).one()
+        return answer.rank
 

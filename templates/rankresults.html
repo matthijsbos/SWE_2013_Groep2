@@ -1,0 +1,11 @@
+<html>
+    <body>
+        <table>
+            {% for answer in answers %}
+            <tr>
+                <td>The answer "{{answer.text}}" was ranked {{answer.rank}}</td>
+            <tr>
+            {% endfor %}            
+        </table>
+    </body>
+</html>

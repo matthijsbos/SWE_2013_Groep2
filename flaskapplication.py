@@ -171,6 +171,11 @@ def answerFilter():
     ctrler = Answer(request)
     return ctrler.render_filtered()
 
+@app.route("/rankresults", methods=['GET'])
+def rankResults():
+    ctrler = answer.Answer(request)
+    return ctrler.render_results()
+
 
 @app.route("/filteranswers/<questionid>", methods=['POST','GET'])
 def answerFilterByQuestionID(questionid):
