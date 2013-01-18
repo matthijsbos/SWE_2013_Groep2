@@ -11,9 +11,10 @@ class Answer():
     def render(self):
         # dummy shit, get some real data
         qText = 'wat is het antwoord op deze dummy vraag?'
+        #questionStartTime = datetime.datetime.now();
         uID = g.lti.get_user_id()
         qID = -1
-        timerD = 25       
+        timerD = 5       
 
         # Post should be real data
         if self.request.method == 'POST' and 'questionID' in self.request.form:
@@ -21,11 +22,11 @@ class Answer():
             q = question.Question.by_id(qID)
             if q is not None:
                 qText = q.question
-                #Found out q.time was not ment this way
-                #timerD = q.time
+                questionStartTime = q.modified;
+                timerD = q.time
 
         if 'answerText' in self.request.form:
-            return self.saveAnswer(uID, qID, timerD)
+            return self.saveAnswer(uID, qID, timerD, questionStartTime)
         elif 'showall' in self.request.form:
             # Render all
             return self.render_all()
@@ -38,16 +39,19 @@ class Answer():
         elif 'removeAnswer' in self.request.form:
             return self.removeAnswer()
         else:
-            return self.answerQuestion(uID, qID, qText, timerD)
+            return self.answerQuestion(uID, qID, qText, timerD, questionStartTime)
 
-    def saveAnswer(self, uID, qID, timerD):
+    def saveAnswer(self, uID, qID, timerD, questionStartTime):
         # save answer
         answerText = self.request.form['answerText']
-        aID = answer.AnswerModel.getAnswerID(uID, qID)
 
         flag = "false"
-        if self.timeLeft(aID, timerD, 0):
-            answer.AnswerModel.updateAnswer(aID, answerText)
+        if self.timeLeft(timerD, 0, questionStartTime):
+            if answer.AnswerModel.checkAnswerExist(uID, qID):
+                aID = answer.AnswerModel.getAnswerID(uID, qID)
+                answer.AnswerModel.updateAnswer(aID, answerText)
+            else:
+                answer.AnswerModel.save(qID, uID, answerText)
             flag = "true"
 
         return render_template('answersaved.html', flag=flag)
@@ -70,43 +74,30 @@ class Answer():
         answer.AnswerModel.remove_by_id(id)
         return render_template('answersaved.html', flag='removed')
 
-    def answerQuestion(self, uID, qID, qText, timerD):
+    def answerQuestion(self, uID, qID, qText, timerD, questionStartTime):
         if answer.AnswerModel.checkAnswerExist(uID, qID):
             aID = answer.AnswerModel.getAnswerID(uID, qID)
-            if self.timeLeft(aID, timerD, 0):
-                return render_template('answer.html', questionID=qID, userID=uID, questionText=qText, timerDuration=self.timeLeft(aID, timerD, 1), go="true", answerID=aID)
+            if self.timeLeft(timerD, 0, questionStartTime):
+                return render_template('answer.html', questionID=qID, userID=uID, questionText=qText, timerDuration=timerD, date=questionStartTime, go="true")
             else:
-                return render_template('answer.html', questionID=qID, userID=uID, questionText=qText, timerDuration=self.timerSyntax(timerD), go="false")
+                return render_template('answer.html', questionID=qID, userID=uID, questionText=qText, timerDuration=timerD, date=questionStartTime, go="false")
         else:
-            answer.AnswerModel.save(qID, uID, "")
-            return render_template('answer.html', questionID=qID, userID=uID, questionText=qText, timerDuration=self.timerSyntax(timerD), go="true")
+            #answer.AnswerModel.save(qID, uID, "")
+            return render_template('answer.html', questionID=qID, userID=uID, questionText=qText, timerDuration=timerD, date=questionStartTime, go="true")
 
-    def timeLeft(self, aID, timerD, giveTime):
+    def timeLeft(self, timerD, giveTime, questionStartTime):
         currentTime = datetime.datetime.now()
-        timeAnswered = answer.AnswerModel.getTimeStamp(aID)
+        timeAnswered = questionStartTime
         difference = currentTime - timeAnswered
         seconds = difference.days * 86400 + difference.seconds
 
         if giveTime == 1:
-            return self.timerSyntax(timerD - seconds)
+            return timerD - seconds
 
         if seconds < timerD + 2:
             return True
         else:
             return False
-
-    def timerSyntax(self, seconds):
-        minutes = int((seconds) / 60)
-        seconds = int((seconds) % 60)
-        if minutes < 10:
-            minutes = str("0"+str(minutes))
-        else:
-            minutes = str(minutes)
-        if seconds < 10:
-            seconds = str("0"+str(seconds))
-        else:
-            seconds = str(seconds)
-        return minutes + ":" + seconds
 
     def render_filtered(self):
         postdata = self.request.form
