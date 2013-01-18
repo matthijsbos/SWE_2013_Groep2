@@ -22,7 +22,7 @@ class BaseEntity(object):
 
     @classmethod
     def remove_by_id(cls, id):
-        entry = cls.by_id()
+        entry = cls.by_id(id)
         if entry == None:
             return
         session.delete(entry)
@@ -32,12 +32,10 @@ class BaseEntity(object):
     def by_ids(cls, ids):
         if not ids:
             return []
-
         return session.query(cls).filter(cls.id.in_(ids)).all()
 
     @classmethod
     def get_filtered(cls, **kws):
         if len(kws) > 0:
             return session.query(cls).filter_by(**kws).all()
-
         return cls.get_all()
