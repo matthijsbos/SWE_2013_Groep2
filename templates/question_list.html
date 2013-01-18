@@ -62,10 +62,25 @@
         $('#available_'+id).html(temp);
       }
       else{
-        $('#error').html("Error while toggle'ing question question.");
+        $('#error').html("Error while togging question question.");
       }
     });
   }
+
+    function add_question(){
+        $('#addQ').hide()
+            $('#qList tr:last').after(
+                    '<tr><td colspan="6"><center>FIREFOX MURDERS FORM IN TD //mustfix</center></td></tr> \
+                <tr><th colspan="6"> \
+                    <form action="/handle_question" method="post" style="display:block"> \
+                        <input type="textbox" name="question"> \
+                        <input type="number" name="time" size="3" maxlength="3"> \
+                        <input type="checkbox" name="active"> \
+                        <input type="submit" value="Submit">\
+                    </form> \
+                </th></tr>');
+    }
+
 </script>
 
 <div id="error" style="background-color: #a33; color: white;"></div>
@@ -75,8 +90,8 @@
         <th>Question</th>
         <th>Active</th>
         <th>Time</th>
-        <th>Edit</th>
         <th>Activate</th>
+        <th>Edit</th>
         <th>Delete</th>
     </tr>
     {% for question in questions %}
@@ -87,11 +102,12 @@
             </td>
             <td id="available_{{question.id}}">{{question.available}}</td>
             <td id="time_{{question.id}}">{{question.time}}</td>
-            <td><button value="edit" onclick=edit_field({{question.id}}) />edit</td>
             <td><button value="toggle" onclick=toggle_question({{question.id}}) />toggle</td>
+            <td><button value="edit" onclick=edit_field({{question.id}}) />edit</td>
             <td><button value="delete" onclick=delete_question({{question.id}}) />delete</td>
         </tr>
     {% endfor %}
 </table>
+<button id="addQ" value="add" onclick=add_question() />Add Question</button>
 <a href="/" class="blue">Back</a>
 {% endblock %}
