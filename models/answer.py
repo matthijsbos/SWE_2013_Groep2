@@ -10,7 +10,7 @@ class AnswerModel(Base, BaseEntity):
 
     text = Column(String)
     questionID = Column(Integer,ForeignKey('questions.id'))
-    #question = relationship('Question')
+    question = relationship('Question')
     userID = Column(Integer)
     edit = Column(Integer)
     ranking = Column(Float)
@@ -79,5 +79,3 @@ class AnswerModel(Base, BaseEntity):
         answer = session.query(AnswerModel).filter_by(id=answerID).one()
         return answer.created
 
-
-Base.metadata.create_all(engine)
