@@ -46,5 +46,3 @@ if __name__ == '__main__':
     answer_test = unittest.TestLoader().loadTestsFromTestCase(AnswerUnittest)
     unittest.TextTestRunner(verbosity=2).run(answer_test)
     tearDown()
-
-

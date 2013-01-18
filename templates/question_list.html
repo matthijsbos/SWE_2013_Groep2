@@ -1,9 +1,5 @@
-<html>
-<head>
-  <title>Test</title>
-  <script src="http://code.jquery.com/jquery-latest.js"></script>
-</head>
-<body>
+{% extends "_base.html" %}
+{% block content %}
 
 <script language="javascript" type="text/javascript">
     function edit_field(id){
@@ -15,7 +11,7 @@
         elem.addClass('activated');
         elem.text('');
         var edit_field = $('<input type="text" size="50"/>').val(text);
-        edit_field.on('blur', function(){
+        edit_field.blur(function(){
             edit_question(id, $(this).val());
             var newText = elem.val();
             $(this).parent().text(newText).removeClass('activated');
@@ -66,39 +62,52 @@
         $('#available_'+id).html(temp);
       }
       else{
-        $('#error').html("Error while toggle'ing question question.");
+        $('#error').html("Error while togging question question.");
       }
     });
   }
+
+    function add_question(){
+        $('#addQ').hide()
+            $('#qList tr:last').after(
+                    '<tr><td colspan="6"><center>FIREFOX MURDERS FORM IN TD //mustfix</center></td></tr> \
+                <tr><th colspan="6"> \
+                    <form action="/handle_question" method="post" style="display:block"> \
+                        <input type="textbox" name="question"> \
+                        <input type="number" name="time" size="3" maxlength="3"> \
+                        <input type="checkbox" name="active"> \
+                        <input type="submit" value="Submit">\
+                    </form> \
+                </th></tr>');
+    }
+
 </script>
 
-<body>
-{%block body%}
 <div id="error" style="background-color: #a33; color: white;"></div>
-<table border=1>
+<table id="qList" border=1 class="black">
     <tr>
         <!--<th>id</th>-->
         <th>Question</th>
         <th>Active</th>
         <th>Time</th>
-        <th>Edit</th>
         <th>Activate</th>
+        <th>Edit</th>
         <th>Delete</th>
     </tr>
     {% for question in questions %}
         <tr id="row_{{question.id}}">
             <!--<td id="id_{{question.id}}">{{question.id}}</td>-->
             <td id="question_{{question.id}}">
-                <a href="/filteranswers/{{question.id}}">{{question.question}}</a>
+                <a href="/filteranswers/{{question.id}}" class="blue">{{question.question}}</a>
             </td>
             <td id="available_{{question.id}}">{{question.available}}</td>
             <td id="time_{{question.id}}">{{question.time}}</td>
-            <td><button value="edit" onclick=edit_field({{question.id}}) />edit</td>
-            <td><button value="toggle" onclick=toggle_question({{question.id}}) />toggle</td>
-            <td><button value="delete" onclick=delete_question({{question.id}}) />delete</td>
+            <td><button value="edit" onclick=edit_field({{question.id}}) />edit</button></td>
+            <td><button value="toggle" onclick=toggle_question({{question.id}}) />toggle</button></td>
+            <td><button value="delete" onclick=delete_question({{question.id}}) />delete</button></td>
         </tr>
     {% endfor %}
-    </table>
-    <a href="/">Back</a>
-{%endblock%}
-</body>
+</table>
+<button id="addQ" value="add" onclick=add_question() />Add Question</button>
+<a href="/" class="blue">Back</a>
+{% endblock %}

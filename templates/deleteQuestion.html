@@ -1,25 +1,19 @@
-<html>
-  <head>
-    <title>Question deleted!</title>
-  </head>
+{% extends "_base.html" %}
+{% block content %}
+The following question has
+{% if not permission %}
+<b>NOT</b>
+{% endif %}
+been deleted:
+<ul>
+  <li>{{ question.question }}</li>
+</ul>
 
-  <body>
-    The following question has
-    {% if not permission %}
-    `<b>NOT</b>
-    {% endif %}
-    been deleted:
-    <ul>
-      <li>{{ question.question }}</li>
-    </ul>
-
-    {% if not permission %}
-    Insufficient priviledges
-    {% endif %}
+{% if not permission %}
+Insufficient priviledges
+{% endif %}
 <!--    OK-back-to-somewhere button here
     <form action="deleteQuestion" method="POST">
       <input type="submit" value="Confirm">
     </form> -->
-  </body>
-</html>
-
+{% endblock %}

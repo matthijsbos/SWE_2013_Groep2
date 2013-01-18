@@ -8,17 +8,14 @@ from models.question import Question
 class QuestionController():
     @staticmethod
     def toggle_question(q_id):
-        available = Question.by_id(q_id).available
+        '''toggles a question between available and not available'''
         if g.lti.is_instructor():
-            if available == True:
-                Question.by_id(q_id).available = False
-                return json.dumps({"toggle":False,"check": True})
-            else:
-                Question.by_id(q_id).available = True
-                return json.dumps({"toggle": True,"check": True})
+            available = Question.toggle_available(q_id)
+            return json.dumps({"toggle":available,"check": True})
+
         else:
           return json.dumps({"toggle": True,"check": False})
-                
+
     @staticmethod
     def edit_question(q_id, question, activate):
         """Updates a question with given contents and activation status."""
@@ -58,6 +55,7 @@ class QuestionController():
 
     @staticmethod
     def delete_question(qid):
+        '''removes the question with the provided id from the database'''
         question = Question.by_id(int(qid))
         if g.lti.is_instructor():
             session.delete(question)
@@ -67,15 +65,17 @@ class QuestionController():
 
     @staticmethod
     def ask_question(instructor):
+        '''passes the name of the course instructor to the ask question module and calls the screen to ask a question'''
         return render_template('askQuestion.html', instr=instructor)
 
     @staticmethod
-    def create_question(question, instructor, course, time):
+    def create_question(question, instructor, course, active, time):
+        '''formats a question for database insertion and inserts it, calls a result screen afterwards'''
         try:
             time = int(time)
         except ValueError:
             time = 0
-        session.add(Question(instructor, course, question, False, time))
+        session.add(Question(instructor, course, question, active, time))
         session.commit()
 
-        return render_template('handleQuestion.html', question=question)
+        return QuestionController.get_list()
