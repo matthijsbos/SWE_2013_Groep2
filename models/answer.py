@@ -5,7 +5,6 @@ from question import Question
 
 class AnswerModel(Base, BaseEntity):
     __tablename__ = 'answer'
-    __table_args__ = {'sqlite_autoincrement': True}
 
     text = Column(String)
     questionID = Column(Integer)
@@ -13,7 +12,9 @@ class AnswerModel(Base, BaseEntity):
     edit = Column(Integer)
 
     def __repr__(self):
-        return self.text + 'Represent'
+        return "<Answer('%s','%s','%s')>" % (self.id,
+                                                self.questionID,
+                                                self.userID)
 
     def __str__(self):
         return self.text
