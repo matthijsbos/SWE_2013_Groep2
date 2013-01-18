@@ -5,6 +5,8 @@ from datetime import datetime
 
 
 class BaseEntity(object):
+    __table_args__ = {'sqlite_autoincrement': True}
+
     id = Column(Integer, primary_key=True)
     created = Column(DateTime, default=datetime.now)
     modified = Column(DateTime, default=datetime.now, onupdate=datetime.now)

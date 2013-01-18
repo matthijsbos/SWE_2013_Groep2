@@ -36,12 +36,10 @@ if __name__ == '__main__':
 
     setUp()
     base_test = unittest.TestLoader().loadTestsFromTestCase(BaseUnittest)
-    unittest.TextTestRunner(verbosity=2).run(base_test)
-    tearDown()
- 
-    setUp()
     answer_test = unittest.TestLoader().loadTestsFromTestCase(AnswerUnittest)
+
     unittest.TextTestRunner(verbosity=2).run(answer_test)
+    unittest.TextTestRunner(verbosity=2).run(base_test)
     tearDown()    
 
 
