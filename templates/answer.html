@@ -8,10 +8,12 @@ var countdownCurrent = {{timerDuration}} //number of seconds
 
 
 $(function () {
-	var austDay = new Date("{{date}}");
+
+	var austDay = new Date({{date}} * 1000);
 	austDay.setSeconds(austDay.getSeconds() + countdownCurrent);
 	$('#counter').countdown({until: austDay, compact: true, onExpiry: submitForm, format: 'MS'});
-
+    
+    if ($('#counter').countdown('getTimes') == '0,0,0,0,0,0,0') document.getElementById("answer_form").innerHTML = "you cannot answer this question anymore";
 
 
 });
@@ -23,7 +25,7 @@ function submitForm() {
 
 <body>
 {% if go == "true" %}   
-    <div>
+    <div id="answer_form">
         <form action="/answer" id="answerform" method="post">
             <br>
             <div id="question">{{questionText}}</div>

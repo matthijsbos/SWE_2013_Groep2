@@ -20,9 +20,6 @@ br { clear: both; }
     color: #000;
 }
 #counter{
-float: right;
-margin-right: 200px;
-margin-top: -48px;
 font-size: 25px;
 }
 textarea{
