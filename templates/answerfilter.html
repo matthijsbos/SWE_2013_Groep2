@@ -1,32 +1,31 @@
-<html>
-    <body>
-        <form method="POST">
-            Filter by:<br\>
-            ID: <input type="text" name="id"/>
-            UserID: <input type="text" name="userID"/>
-            QuestionID <input type="text" name="questionID"/>
-            <input type="submit" value="Go"/>
-        </form>
-        <table style="border:1px solid black;">
-            <tr>
-                <th>id</td>
-                <th>questionID</td>
-                <th>userID</td>
-                <th>text</td>
-                <th>created on</td>
-                <th>modified on</td>
-            </tr>
-            {% for answer in answers %}
-                <tr>
-                    <td>{{ answer.id }}</td>
-                    <td>{{ answer.questionID }}</td>
-                    <td>{{ answer.userID }}</td>
-                    <td>{{ answer.text }}</td>
-                    <td>{{ answer.created }}</td>
-                    <td>{{ answer.modified }}</td>
-                </tr>
-            {% endfor %}
-        </table>
-        <a href="http://localhost:5000">Back to index</a>
-    </body>
-</html>
+{% extends "_base.html" %}
+{% block content %}
+<form method="POST">
+    Filter by:<br\>
+    ID: <input type="text" name="id"/>
+    UserID: <input type="text" name="userID"/>
+    QuestionID <input type="text" name="questionID"/>
+    <input type="submit" value="Go"/>
+</form>
+<table style="border:1px solid black;">
+    <tr>
+        <th>id</td>
+        <th>questionID</td>
+        <th>userID</td>
+        <th>text</td>
+        <th>created on</td>
+        <th>modified on</td>
+    </tr>
+    {% for answer in answers %}
+        <tr>
+            <td>{{ answer.id }}</td>
+            <td>{{ answer.questionID }}</td>
+            <td>{{ answer.userID }}</td>
+            <td>{{ answer.text }}</td>
+            <td>{{ answer.created }}</td>
+            <td>{{ answer.modified }}</td>
+        </tr>
+    {% endfor %}
+</table>
+<a href="http://localhost:5000">Back to index</a>
+{% endblock %}

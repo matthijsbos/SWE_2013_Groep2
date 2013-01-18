@@ -1,26 +1,23 @@
-<html>
-<head>
-</head>
-    <body>
-        <h1>Assign tags to answer:</h1>
-                {{ answer }}
-                <legend>Current Tags:<legend>
-                    {% for tag in tags %}
-                        {% if tag.id in enabledtags %}
-                            {{ tag.name }}
-                        {% endif %}
-                    {% endfor %}
-                <form action="/assigntags_done" method="POST">
-                    <legend>Assign tags:</legend>
-                    
-                    {% for tag in tags %}
-                      <input type="checkbox" name="tags" value="{{tag.id}}">
-                        {{tag.name}}
-                      </input>
-                    {% endfor %}
-                      <input type="submit" value="assign"> 
-                </form>
-                <hr>
-                <a href="http://localhost:5000">Back to index</a>
-    </body>
-</html>
+{% extends "_base.html" %}
+{% block content %}
+<h1>Assign tags to answer:</h1>
+{{ answer }}
+<legend>Current Tags:<legend>
+    {% for tag in tags %}
+        {% if tag.id in enabledtags %}
+            {{ tag.name }}
+        {% endif %}
+    {% endfor %}
+<form action="/assigntags_done" method="POST">
+    <legend>Assign tags:</legend>
+    
+    {% for tag in tags %}
+      <input type="checkbox" name="tags" value="{{tag.id}}">
+        {{tag.name}}
+      </input>
+    {% endfor %}
+      <input type="submit" value="assign"> 
+</form>
+<hr>
+<a href="http://localhost:5000">Back to index</a>
+{% endblock %}

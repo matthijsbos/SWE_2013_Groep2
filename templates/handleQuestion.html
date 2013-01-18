@@ -1,8 +1,6 @@
-<html>
-<head><title>Question received.</title></head>
-<body>
+{% extends "_base.html" %}
+{% block content %}
 The question has been received. The received question is: {{question}}<br>
 <a href="http://localhost:5000/question">Ask another question</a><br>
 <a href="http://localhost:5000/">Back to index</a>
-</body>
-</html>
+{% endblock %}
