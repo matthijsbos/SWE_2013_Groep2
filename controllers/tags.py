@@ -33,8 +33,6 @@ class Modifytags():
        #create json file of all tags
        data = Tag.get_all()
 
-       print data
-
        #list of dicytionaries
        data = [
                    {"id":"856","name":"Ruby"},
