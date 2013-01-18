@@ -4,6 +4,7 @@ from dbconnection import engine, session, Base
 from datetime import datetime
 from basemodel import BaseEntity
 
+K = 100
 class AnswerChoiceModel(Base,BaseEntity):
     __tablename__ = 'answerchoice'
 
