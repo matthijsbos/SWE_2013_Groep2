@@ -84,7 +84,8 @@
 </script>
 
 <div id="error" style="background-color: #a33; color: white;"></div>
-<table id="qList" border=1 class="black">
+<table id="qList" border=1 class="table table-hover">
+    <thead>
     <tr>
         <!--<th>id</th>-->
         <th>Question</th>
@@ -94,6 +95,7 @@
         <th>Edit</th>
         <th>Delete</th>
     </tr>
+    </thead>
     {% for question in questions %}
         <tr id="row_{{question.id}}">
             <!--<td id="id_{{question.id}}">{{question.id}}</td>-->
@@ -102,9 +104,9 @@
             </td>
             <td id="available_{{question.id}}">{{question.available}}</td>
             <td id="time_{{question.id}}">{{question.time}}</td>
-            <td><button value="edit" onclick=edit_field({{question.id}}) />edit</button></td>
-            <td><button value="toggle" onclick=toggle_question({{question.id}}) />toggle</button></td>
-            <td><button value="delete" onclick=delete_question({{question.id}}) />delete</button></td>
+            <td><button value="edit" onclick=edit_field({{question.id}}) class="btn"/>edit</button></td>
+            <td><button value="toggle" onclick=toggle_question({{question.id}}) class="btn" />toggle</button></td>
+            <td><button value="delete" onclick=delete_question({{question.id}}) class="btn" />delete</button></td>
         </tr>
     {% endfor %}
 </table>
