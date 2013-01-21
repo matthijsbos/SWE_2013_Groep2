@@ -25,23 +25,25 @@ table.black{
     color: #000;
 }
 #counter{
-float: right;
-margin-right: 250px;
-margin-top: -48px;
-font-size: 25px;
+    float: right;
+    margin-right: 250px;
+    margin-top: -48px;
+    font-size: 25px;
 }
 textarea{
     border: 2px dotted #009DCE;
-background: rgb(247, 251, 252);
-color:#126a65;
-font-weight: bold;
-font-size: 14px;
-font-family: sans-serif;
+    background: rgb(247, 251, 252);
+    color:#126a65;
+    font-weight: bold;
+    font-size: 14px;
+    font-family: sans-serif;
 }
 textarea:focus{
     background:  #ffffff;
 }
-
+#assigntags legend{
+    border:none
+}
 #question{
     font-size: 18px;
     font-weight: bold;

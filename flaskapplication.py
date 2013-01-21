@@ -164,12 +164,12 @@ def assign_tags():
 @app.route("/assigntags_done", methods=['POST'])
 def handle_assign_tags():
     ctrler = AssignTags.assign(request)
-    return "<a href='/'>back to main</a>"
+    return Index(request).render()
     
 @app.route("/removetags_done",methods=['POST'])
-def handle_assign_tags():
+def handle_remove_tags():
     ctrler = AssignTags.remove(request)
-    return "<a href='/'>back to main</a>"
+    return Index(request).render()
 
 @app.route("/assignratings", methods=['POST', 'GET'])
 def assign_ratings():
@@ -180,7 +180,7 @@ def assign_ratings():
 @app.route("/assignratings_done", methods=['POST'])
 def handle_assign_ratings():
     ctrler = AssignRatings.assign(request)
-    return "<a href='/'>back to main</a>"
+    return Index(request).render()
 
 """
 To review a answer, return reviewanswer.review(x) should be called from the
