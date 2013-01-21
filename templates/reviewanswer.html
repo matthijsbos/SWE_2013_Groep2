@@ -1,48 +1,47 @@
-﻿<html>
-<head>
-</head>
-	<body>
-		<h1>Review this answer:</h1>
-		<div class="answer">{{ answer }}</div>
-		<legend>Current Tags:<legend>
-			{% for tag in tags %}
-				{% if tag.id in enabledtags %}
-					{{ tag.name }}
-				{% endif %}
-			{% endfor %}
-		<legend>Assign tags:</legend>
+﻿{% extends "_base.html"%}
+{% block content %}
 
-		<form action="/reviewanswer" method="POST">
-			{% for tag in tags %}
-			<input type="checkbox" name="assign_tags" value="{{tag.id}}">
-				{{tag.name}}
-			</input>
-			{% endfor %}
-		
-			<legend>Remove tags:</legend>
-			
-			{% for tag in tags %}
-			<input type="checkbox" name="remove_tags" value="{{tag.id}}">
-				{{tag.name}}
-			</input>
-			{% endfor %}
-			<input type="submit" value="remove"> 
-			<hr>
-			<table>
-				<tr>
-					<td>
-						1
-						<input type="radio" name="rating" value="1">
-						<input type="radio" name="rating" value="2">
-						<input type="radio" name="rating" value="3">
-						<input type="radio" name="rating" value="4">
-						<input type="radio" name="rating" value="5">
-						5
-					</td>
-				</tr>
-			</table>
-			<textarea name="text" rows="4" cols="50" placeholder="Insert your comment here..."></textarea> <!-- close tag must be on the same line to work-->
-			<input type="submit" name="rating" value="Submit review">
-		</form>
-	</body>
-</html>
+<div id="assigntags">
+    <h1>Review this answer:</h1>
+    <div class="answer">{{ answer }}</div>
+    <legend>Current Tags:<legend>
+        {% for tag in tags %}
+            {% if tag.id in enabledtags %}
+                {{ tag.name }}
+            {% endif %}
+        {% endfor %}
+    <legend>Assign tags:</legend>
+
+    <form action="/reviewanswer" method="POST">
+        {% for tag in tags %}
+        <input type="checkbox" name="assign_tags" value="{{tag.id}}">
+            {{tag.name}}
+        </input>
+        {% endfor %}
+
+        <legend>Remove tags:</legend>
+        
+        {% for tag in tags %}
+        <input type="checkbox" name="remove_tags" value="{{tag.id}}">
+            {{tag.name}}
+        </input>
+        {% endfor %}
+        <input type="submit" value="remove"> 
+        <table>
+            <tr>
+                <td>
+                    1
+                    <input type="radio" name="rating" value="1">
+                    <input type="radio" name="rating" value="2">
+                    <input type="radio" name="rating" value="3">
+                    <input type="radio" name="rating" value="4">
+                    <input type="radio" name="rating" value="5">
+                    5
+                </td>
+            </tr>
+        </table>
+        <textarea name="text" rows="4" cols="50" placeholder="Insert your comment here..."></textarea> <!-- close tag must be on the same line to work-->
+        <input type="submit" name="rating" value="Submit review">
+    </form>
+</div>
+{% endblock %}

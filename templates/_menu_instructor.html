@@ -1,3 +1,15 @@
+<script>
+$(function(){
+    var url = window.location.pathname, 
+        urlRegExp = new RegExp(url.replace(/\/$/,'') + "$");
+        $('#menu_instructor a').each(function(){
+            if(urlRegExp.test(this.href.replace(/\/$/,''))){
+                $(this).addClass('active');
+            }
+        });
+
+});
+</script>
 <ul id="menu_instructor" class="nav nav-pills">
     <li><a href="/question_list" class="blue">Question list</a></li>
     <li><a href="/filteranswers" class="blue">Show answers</a></li>
