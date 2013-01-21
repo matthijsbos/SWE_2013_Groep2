@@ -1,6 +1,5 @@
 from models.rating import AnswerRating, Rating
 from models.answer import AnswerModel
-from dbconnection import session
 from flask import render_template, session as fsession
 
 class AssignRatings():

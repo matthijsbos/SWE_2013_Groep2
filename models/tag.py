@@ -7,9 +7,11 @@ Created on Mon Jan 14 14:01:46 2013
 from sqlalchemy import Column, Integer, Sequence, String, ForeignKey
 from sqlalchemy.ext.declarative import declarative_base
 
-from dbconnection import engine, session, Base
+from dbconnection import engine, Session, Base
 from models.answer import AnswerModel
 from basemodel import BaseEntity
+
+session = Session()
 
 #A way to serialize SQLalchemy results
 #Source: http://piotr.banaszkiewicz.org/blog/2012/06/30/serialize-sqlalchemy-results-into-json/

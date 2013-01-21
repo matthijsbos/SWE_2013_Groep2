@@ -1,6 +1,9 @@
 from sqlalchemy import *
-from dbconnection import engine, session, Base, exc
+from dbconnection import engine, Session, Base, exc
 from basemodel import BaseEntity
+
+session = Session()
+
 
 class AnswerModel(Base, BaseEntity):
     __tablename__ = 'answer'
