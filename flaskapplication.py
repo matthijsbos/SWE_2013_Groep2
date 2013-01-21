@@ -52,6 +52,13 @@ def home():
 def launch():
     ctrler = Index(debug=True)
     return ctrler.render()
+    
+@app.route("/is_instructor", methods=['GET', 'POST'])
+def is_instructor():
+    if g.lti.is_instructor() == False:
+        return "0";
+    else:
+        return "1";
 
 
 @app.route("/edit_question", methods=['GET', 'POST'])
