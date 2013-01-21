@@ -206,6 +206,10 @@ def has_new_question():
     ctrler = Index()
     return ctrler.has_new_question()
 
+@app.route("/has_new_review", methods=['GET', 'POST'])
+def has_new_review():
+    return ReviewAnswer.has_new_review()
+
 @app.route("/logout")
 def logout():
     g.lti.destroy()
