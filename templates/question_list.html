@@ -91,8 +91,8 @@
         <th>Question</th>
         <th>Active</th>
         <th>Time</th>
-        <th>Activate</th>
         <th>Edit</th>
+        <th>Activate</th>
         <th>Delete</th>
     </tr>
     </thead>
@@ -104,9 +104,9 @@
             </td>
             <td id="available_{{question.id}}">{{question.available}}</td>
             <td id="time_{{question.id}}">{{question.time}}</td>
-            <td><button value="edit" onclick=edit_field({{question.id}}) class="btn"/>edit</button></td>
-            <td><button value="toggle" onclick=toggle_question({{question.id}}) class="btn" />toggle</button></td>
-            <td><button value="delete" onclick=delete_question({{question.id}}) class="btn" />delete</button></td>
+            <td><a onclick=edit_field({{question.id}}) /><i class="icon-pencil"></i> edit</a></td>
+            <td><a onclick=toggle_question({{question.id}}) /><i class="icon-retweet"></i> toggle</a></td>
+            <td><a onclick=delete_question({{question.id}})  /><i class="icon-remove-sign"></i> delete</a></td>
         </tr>
     {% endfor %}
 </table>
