@@ -1,34 +1,33 @@
-{% extends "_base.html" %}
-<html>
-    <head>
-    </head>
-    <body>
-        <h1>Review this answer:</h1>
-        <div class="answer">{{ answer }}</div>
-    <legend>Current Tags:</legend>
-    {% for tag in tags %}
-    {% if tag.id in enabledtags %}
-    {{ tag.name }}
-    {% endif %}
-    {% endfor %}
-    <legend>Assign tags:</legend>
+{% extends "_base.html"%}
+{% block content %}
 
+<div id="assigntags">
+    <h1>Review this answer:</h1>
+    <div class="answer">{{ answer }}</div>
+    <legend>This answer has been tagged as:</legend>
+        {% for tag in tags %}
+            {% if tag.id in enabledtags %}
+                {{ tag.name }}
+            {% endif %}
+        {% endfor %}
+    <legend>Assign tags:</legend>
     <form action="/reviewanswer" method="POST">
         {% for tag in tags %}
         <input type="checkbox" name="assign_tags" value="{{tag.id}}">
-        {{tag.name}}
+            {{tag.name}}
         </input>
+        <br>
         {% endfor %}
 
         <legend>Remove tags:</legend>
-
         {% for tag in tags %}
         <input type="checkbox" name="remove_tags" value="{{tag.id}}">
-        {{tag.name}}
+            {{tag.name}}
         </input>
+        <br>
         {% endfor %}
+        <br>    
         <input type="submit" value="remove"> 
-        <hr>
         <table>
             <tr>
                 <td>
@@ -45,5 +44,5 @@
         <textarea name="text" rows="4" cols="50" placeholder="Insert your comment here..."></textarea> <!-- close tag must be on the same line to work-->
         <input type="submit" name="rating" value="Submit review">
     </form>
-</body>
-</html>
+</div>
+{% endblock %}
