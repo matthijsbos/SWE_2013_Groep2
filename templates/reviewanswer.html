@@ -4,28 +4,29 @@
 <div id="assigntags">
     <h1>Review this answer:</h1>
     <div class="answer">{{ answer }}</div>
-    <legend>Current Tags:<legend>
+    <legend>This answer has been tagged as:</legend>
         {% for tag in tags %}
             {% if tag.id in enabledtags %}
                 {{ tag.name }}
             {% endif %}
         {% endfor %}
     <legend>Assign tags:</legend>
-
     <form action="/reviewanswer" method="POST">
         {% for tag in tags %}
         <input type="checkbox" name="assign_tags" value="{{tag.id}}">
             {{tag.name}}
         </input>
+        <br>
         {% endfor %}
 
         <legend>Remove tags:</legend>
-        
         {% for tag in tags %}
         <input type="checkbox" name="remove_tags" value="{{tag.id}}">
             {{tag.name}}
         </input>
+        <br>
         {% endfor %}
+        <br>    
         <input type="submit" value="remove"> 
         <table>
             <tr>
