@@ -1,10 +1,8 @@
 from datetime import datetime, timedelta
 from sqlalchemy import *
-from dbconnection import engine, Session, Base, exc
+from dbconnection import engine, session, Base, exc
 from basemodel import BaseEntity
 from question import Question
-
-session = Session()
 
 
 class AnswerModel(Base, BaseEntity):

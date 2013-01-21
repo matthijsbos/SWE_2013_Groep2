@@ -1,10 +1,8 @@
 import json
 from flask import escape, render_template, g
 
-from dbconnection import Session
+from dbconnection import session
 from models.question import Question
-
-session = Session()
 
 
 class QuestionController():

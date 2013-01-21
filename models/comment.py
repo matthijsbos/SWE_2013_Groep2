@@ -8,11 +8,10 @@ Created on Fri Jan 18 11:37:35 2013
 from sqlalchemy import Column, Integer, Sequence, String, ForeignKey
 from sqlalchemy.ext.declarative import declarative_base
 
-from dbconnection import engine, Session, Base
+from dbconnection import engine, session, Base
 from models.answer import AnswerModel
 from basemodel import BaseEntity
 
-session = Session()
 
 class Comment(Base, BaseEntity):
     __tablename__ = 'Comments'

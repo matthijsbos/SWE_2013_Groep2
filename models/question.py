@@ -1,9 +1,7 @@
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import Column, String, Boolean, Integer
-from dbconnection import engine, Session, Base
+from dbconnection import engine, session, Base
 from basemodel import BaseEntity
-
-session = Session()
 
 
 class Question(Base, BaseEntity):

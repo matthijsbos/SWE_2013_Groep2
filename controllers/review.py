@@ -8,9 +8,8 @@ from models.tag import Tag, AnswerTag
 from models.answer import AnswerModel
 from models.rating import AnswerRating, Rating
 from models.comment import Comment
-from dbconnection import Session
+from dbconnection import session
 
-session = Session()
 
 class ReviewAnswer():
     def __init__(self, request):
