@@ -8,6 +8,8 @@ session = Session()
 
 
 class BaseEntity(object):
+    __table_args__ = {'sqlite_autoincrement': True}
+
     id = Column(Integer, primary_key=True)
     created = Column(DateTime, default=datetime.now)
     modified = Column(DateTime, default=datetime.now, onupdate=datetime.now)
@@ -20,26 +22,25 @@ class BaseEntity(object):
     def by_id(cls, id):
         try:
             return session.query(cls).filter(cls.id == id).one()
-        except NoResultFound:
+        except:
             return None
 
     @classmethod
     def remove_by_id(cls, id):
-        for entry in session.query(cls).filter(cls.id == id):
-            session.delete(entry)
-            session.commit()
-        return
+        entry = cls.by_id(id)
+        if entry == None:
+            return
+        session.delete(entry)
+        session.commit()
 
     @classmethod
     def by_ids(cls, ids):
         if not ids:
             return []
-
         return session.query(cls).filter(cls.id.in_(ids)).all()
 
     @classmethod
     def get_filtered(cls, **kws):
         if len(kws) > 0:
             return session.query(cls).filter_by(**kws).all()
-
         return cls.get_all()

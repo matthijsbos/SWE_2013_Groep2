@@ -1,16 +1,14 @@
-<html>
-
-    <body>
-        <form action='/answer' method='POST'>
-            <input name='showall' type='hidden' value='1' />
-            {% if flag == "true" %}
-            Saving answer done!
-            {% elif flag == "removed" %}
-            Answer successfully removed!
-            {% else %}
-            You did not finish in time!
-            {% endif %}
-            <input type='submit' value='showall' />
-        </form>
-    </body>
-</html>
+{% extends "_base.html" %}
+{% block content %}
+<form action='/answer' method='POST'>
+    <input name='showall' type='hidden' value='1' />
+    {% if flag == "true" %}
+    Saving answer done!
+    {% elif flag == "removed" %}
+    Answer successfully removed!
+    {% else %}
+    You did not finish in time!
+    {% endif %}
+    <input type='submit' value='showall' />
+</form>
+{% endblock %}

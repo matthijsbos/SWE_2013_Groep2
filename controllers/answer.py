@@ -1,6 +1,7 @@
 from models import answer, question
 from flask import render_template, g
 import datetime
+import time
 import sqlalchemy.orm.exc as sqlalchemyExp
 
 
@@ -11,24 +12,22 @@ class Answer():
     def render(self):
         # dummy shit, get some real data
         qText = 'wat is het antwoord op deze dummy vraag?'
-        uID = 7#g.lti.get_user_id()
+        questionStartTime = datetime.datetime.now();
+        uID = g.lti.get_user_id()
         qID = -1
-        timerD = 15       
+        timerD = 25
 
         # Post should be real data
         if self.request.method == 'POST' and 'questionID' in self.request.form:
             qID = int(self.request.form['questionID'])
-            try:
-                q = question.Question.by_id(qID).question
+            q = question.Question.by_id(qID)
+            if q is not None:
                 qText = q.question
+                questionStartTime = q.modified;
                 timerD = q.time
-            except(sqlalchemyExp.NoResultFound):
-                pass
-            except Exception as e:
-                return e
 
         if 'answerText' in self.request.form:
-            return self.saveAnswer(uID, qID, timerD)
+            return self.saveAnswer(uID, qID, timerD, questionStartTime)
         elif 'showall' in self.request.form:
             # Render all
             return self.render_all()
@@ -41,24 +40,28 @@ class Answer():
         elif 'removeAnswer' in self.request.form:
             return self.removeAnswer()
         else:
-            return self.answerQuestion(uID, qID, qText, timerD)            
-            
-    def saveAnswer(self, uID, qID, timerD):
+            return self.answerQuestion(uID, qID, qText, timerD, questionStartTime)
+
+    def saveAnswer(self, uID, qID, timerD, questionStartTime):
         # save answer
+        print "ANSW", uID, qID, timerD
         answerText = self.request.form['answerText']
-        aID = answer.AnswerModel.getAnswerID(uID, qID)
 
         flag = "false"
-        if self.timeLeft(aID, timerD, 0):
-            answer.AnswerModel.updateAnswer(aID, answerText)
+        if self.timeLeft(timerD, 0, questionStartTime):
+            if answer.AnswerModel.checkAnswerExist(uID, qID):
+                aID = answer.AnswerModel.getAnswerID(uID, qID)
+                answer.AnswerModel.updateAnswer(aID, answerText)
+            else:
+                answer.AnswerModel.save(qID, uID, answerText)
             flag = "true"
 
         return render_template('answersaved.html', flag=flag)
-    
+
     def viewAnswer(self):
         aid = int(self.request.form['id'])
         return render_template('editanswer.html', answer=answer.AnswerModel.by_id(aid))
-        
+
     def saveReviewAnswer(self):
         questionID = int(self.request.form['questionID'])
         userID = self.request.form['userID']
@@ -67,50 +70,37 @@ class Answer():
         answer.AnswerModel.savereview(
             questionID, userID, reviewAnswer, edit)
         return render_template('answersaved.html', flag='true')
-        
+
     def removeAnswer(self):
         id = int(self.request.form['id'])
         answer.AnswerModel.remove_by_id(id)
         return render_template('answersaved.html', flag='removed')
-        
-    def answerQuestion(self, uID, qID, qText, timerD):
+
+    def answerQuestion(self, uID, qID, qText, timerD, questionStartTime):
         if answer.AnswerModel.checkAnswerExist(uID, qID):
             aID = answer.AnswerModel.getAnswerID(uID, qID)
-            if self.timeLeft(aID, timerD, 0):
-                return render_template('answer.html', questionID=qID, userID=uID, questionText=qText, timerDuration=self.timeLeft(aID, timerD, 1), go="true", answerID=aID)
+            if self.timeLeft(timerD, 0, questionStartTime):
+                return render_template('answer.html', questionID=qID, userID=uID, questionText=qText, timerDuration=timerD, date=time.mktime(questionStartTime.timetuple()), go="true")
             else:
-                return render_template('answer.html', questionID=qID, userID=uID, questionText=qText, timerDuration=self.timerSyntax(timerD), go="false")
+                return render_template('answer.html', questionID=qID, userID=uID, questionText=qText, timerDuration=timerD, date=time.mktime(questionStartTime.timetuple()), go="false")
         else:
-            answer.AnswerModel.save(qID, uID, "")
-            return render_template('answer.html', questionID=qID, userID=uID, questionText=qText, timerDuration=self.timerSyntax(timerD), go="true")   
+            #answer.AnswerModel.save(qID, uID, "")
+            return render_template('answer.html', questionID=qID, userID=uID, questionText=qText, timerDuration=timerD, date=time.mktime(questionStartTime.timetuple()), go="true")
 
-    def timeLeft(self, aID, timerD, giveTime):
+    def timeLeft(self, timerD, giveTime, questionStartTime):
         currentTime = datetime.datetime.now()
-        timeAnswered = answer.AnswerModel.getTimeStamp(aID)
+        timeAnswered = questionStartTime
         difference = currentTime - timeAnswered
         seconds = difference.days * 86400 + difference.seconds
 
-        if giveTime == 1:            
-            return self.timerSyntax(timerD - seconds)
+        if giveTime == 1:
+            return timerD - seconds
 
         if seconds < timerD + 2:
             return True
         else:
             return False
 
-    def timerSyntax(self, seconds):
-        minutes = int((seconds) / 60)
-        seconds = int((seconds) % 60)
-        if minutes < 10:
-            minutes = str("0"+str(minutes))
-        else:
-            minutes = str(minutes)
-        if seconds < 10:
-            seconds = str("0"+str(seconds))
-        else:
-            seconds = str(seconds)
-        return minutes + ":" + seconds
-        
     def render_filtered(self):
         postdata = self.request.form
 
@@ -128,7 +118,7 @@ class Answer():
     def render_all(self):
         # Render all
         return render_template('showanswers.html', answers=answer.AnswerModel.get_all())
-        
+
     def render_filtered_by_questionid(self,questionid):
         postdata = self.request.form
         args = {"questionID": questionid}

@@ -4,6 +4,11 @@ body{
        font-family: sans-serif;
 }
 br { clear: both; }
+
+table.black{
+    color:#000000;
+}
+
 .cntSeparator {
     font-size: 54px;
     margin: 10px 7px;
@@ -20,14 +25,10 @@ br { clear: both; }
     color: #000;
 }
 #counter{
-transform: scale(0.6) translate(-450px, 0px);
--webkit-transform: scale(0.4);
 float: right;
-margin-right: 140px;
-margin-top: -57px;
-
--o-transform: scale(0.6) translate(-450px, 0px);
--ms-transform: scale(0.6) translate(-450px, 0px);
+margin-right: 250px;
+margin-top: -48px;
+font-size: 25px;
 }
 textarea{
     border: 2px dotted #009DCE;
@@ -45,7 +46,7 @@ textarea:focus{
     font-size: 18px;
     font-weight: bold;
     color:#009DCE;
-   
+
 }
 .submit-answer {
 	-moz-box-shadow:inset 0px 1px 0px 0px #cae3fc;

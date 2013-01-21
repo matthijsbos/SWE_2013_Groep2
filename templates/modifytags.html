@@ -1,28 +1,23 @@
-<html>
-<head>
-	<title>add/remove tags</title>
-</head>
-<body>
+{% extends "_base.html" %}
+{% block content %}
+<form action="/addtag" method="post">
+  Add new tag:  <input type="text" name="newTag">
+  <input type="submit" value="Add Tag">
+</form>
 
-	<form action="/addtag" method="post">
-	  Add new tag:  <input type="text" name="newTag">
-	  <input type="submit" value="Add Tag">
-	</form>
-	
-	<h3>These are the current tags</h3>
-	<form action="/removetag" method="post">
-	  <table class="tags">
-  	    {% for tag in tags %}
-  	    <tr>
-          <td> 
-            <input type="checkbox" value="{{tag.id}}" name="tags"> 
-            {{tag.name}}
-          </td>
-        </tr>
-  	    {% endfor %}
-	  </table>
-      <input type="submit" value="Delete">
-    </form>
-	
-</body>
-</html>
+<h3>These are the current tags</h3>
+<form action="/removetag" method="post">
+  <table class="tags">
+      {% for tag in tags %}
+      <tr>
+        <td> 
+          <input type="checkbox" value="{{tag.id}}" name="tags"> 
+          {{tag.name}}
+        </td>
+      </tr>
+      {% endfor %}
+  </table>
+    <input type="submit" value="Delete">
+</form>
+<a href="http://localhost:5000" class="blue">Cancel</a>
+{% endblock %}

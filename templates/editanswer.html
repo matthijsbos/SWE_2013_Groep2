@@ -1,21 +1,20 @@
-<html>
-    <body>
-		{{ answer.userID }}'s answer on question {{ answer.questionID }}:<br>
-        {{ answer.text }}
-		<form action="/answer" id="answerform" method="post">
-            <input type="hidden"  name="questionID" value="{{answer.questionID}}" />
-            <input type="hidden" name="userID" value="{{answer.userID}}" />
-            <input type="hidden" name="edit" value="{{answer.edit}}" />
-            <br>
-            Edit answer: <br><textarea cols=50 rows=10 name="reviewAnswer">{{ answer.text }}</textarea>
-            <br>
-            <input type="submit"" value="Edit" />
-		</form>
+{% extends "_base.html" %}
+{% block content %}
+{{ answer.userID }}'s answer on question {{ answer.questionID }}:<br>
+{{ answer.text }}
+<form action="/answer" id="answerform" method="post">
+    <input type="hidden"  name="questionID" value="{{answer.questionID}}" />
+    <input type="hidden" name="userID" value="{{answer.userID}}" />
+    <input type="hidden" name="edit" value="{{answer.edit}}" />
+    <br>
+    Edit answer: <br><textarea cols=50 rows=10 name="reviewAnswer">{{ answer.text }}</textarea>
+    <br>
+    <input type="submit"" value="Edit" />
+</form>
 
- 		<form action="/answer" id="removeAnswer" method="post">
-            <input type="hidden" name="id" value="{{answer.id}}" />
-            <input type="hidden" name="removeAnswer" value="1" />
-            <input type="submit"" value="Remove answer" />
-		</form>
-    </body>
-</html>
+<form action="/answer" id="removeAnswer" method="post">
+    <input type="hidden" name="id" value="{{answer.id}}" />
+    <input type="hidden" name="removeAnswer" value="1" />
+    <input type="submit"" value="Remove answer" />
+</form>
+{% endblock %}

@@ -31,4 +31,11 @@ class Question(Base, BaseEntity):
     def by_course_id(cls, course_id):
         return session.query(cls).filter(cls.course_id == course_id).all()
 
+    @classmethod
+    def toggle_available(cls, q_id):
+        question = Question.by_id(q_id)
+        question.available = not question.available
+        session.commit()
+        return question.available
+
 Base.metadata.create_all(engine)
