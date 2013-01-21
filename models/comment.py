@@ -47,3 +47,5 @@ class Comment(Base, BaseEntity):
     def get(answer_id, user_id):
         return session.query(Comment).filter(Comment.answer_id == answer_id,
             Comment.user_id == user_id).all()
+
+Base.metadata.create_all(engine)
