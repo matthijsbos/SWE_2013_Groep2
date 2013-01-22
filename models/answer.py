@@ -127,6 +127,7 @@ class AnswerModel(Base, BaseEntity):
     def winningProbability(rating1, rating2) :
         return 1.0 / (1.0 + (10.0**((rating2 - rating1) / 400.0)))
 
+
     @staticmethod
     def newRating(winner, loser) :
         expectedScore = winningProbability(winner, loser)
