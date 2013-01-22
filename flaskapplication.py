@@ -72,9 +72,6 @@ def toggle_question():
 
 @app.route("/question", methods=['GET', 'POST'])
 def ask_question():
-    if g.lti.is_instructor() == False:
-        return render_template("access_restricted.html")
-
     return Question.ask_question(g.lti.get_user_id())
 
 # this route is used for the feedback from inserting the question into the
