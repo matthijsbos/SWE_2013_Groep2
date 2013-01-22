@@ -179,8 +179,9 @@ def assign_ratings():
 
 @app.route("/assignratings_done", methods=['POST'])
 def handle_assign_ratings():
-    ctrler = AssignRatings.assign(request)
-    return Index(request).render()
+    ctrler = AssignRatings(1)
+    ctrler.assign(request)
+    return ctrler.render()
 
 """
 To review a answer, return reviewanswer.review(x) should be called from the
@@ -190,7 +191,7 @@ in the database (given a user has permission to do so)
 @app.route("/reviewanswer",methods=['POST', 'GET'])
 def handle_review_answer():
     ctrler = ReviewAnswer(request)
-    return Index(request).render()
+    return ReviewAnswer.review(1)
 
 @app.route("/reviewanswer_stub", methods=["POST", "GET"])
 def do_review_answer_stub():

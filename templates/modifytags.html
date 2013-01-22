@@ -1,22 +1,20 @@
 {% extends "_base.html" %}
 {% block content %}
-<form action="/addtag" method="post">
+<legend>These are the current tags</legend>
+<form class="form-inline" action="/addtag" method="post">
   Add new tag:  <input type="text" name="newTag">
-  <input type="submit" value="Add Tag">
+  <input class="btn" type="submit" value="Add Tag">
 </form>
 
-<h3>These are the current tags</h3>
 <form action="/removetag" method="post">
-  <table class="tags">
-      {% for tag in tags %}
-      <tr>
-        <td> 
-          <input type="checkbox" value="{{tag.id}}" name="tags"> 
-          {{tag.name}}
-        </td>
-      </tr>
-      {% endfor %}
-  </table>
-    <input type="submit" value="Delete">
+    <label class="checkbox">
+        {% for tag in tags %}
+            <input type="checkbox" name="remove_tags" value="{{tag.id}}">
+                {{tag.name}}
+            </input>
+            <br>
+        {% endfor %}
+    </label>
+    <input class="btn" type="submit" value="Delete">
 </form>
 {% endblock %}

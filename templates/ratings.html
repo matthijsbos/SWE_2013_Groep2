@@ -1,20 +1,19 @@
 {% extends "_base.html" %}
 {% block content %}
 <table>
-  <tr>
-    <td>{{ answer.id }}</td>
-    <td>{{ answer }}</td>
-    <td><form action="/assignratings_done" method="post">
-      1
-      <input type="radio" name="rating" value="1">
-      <input type="radio" name="rating" value="2">
-      <input type="radio" name="rating" value="3">
-      <input type="radio" name="rating" value="4">
-      <input type="radio" name="rating" value="5">
-      5
-      <input type="submit" name="rating" value="Submit Rating">
-      </form>
-    </td>
-  </tr>
+    <legend>Rate the following answer on a scale of 1 to 5</legend>
+    {{ answer }}<br><br>
+    <form action="/assignratings_done" method="post">
+        1
+        <div class="btn-group">
+            <input class="btn" type="radio" name="rating" value="1">
+            <input class="btn"type="radio" name="rating" value="2">
+            <input class="btn"type="radio" name="rating" value="3">
+            <input class="btn"type="radio" name="rating" value="4">
+            <input class="btn"type="radio" name="rating" value="5">
+        </div>
+        5
+        <input class="btn" type="submit" name="rating" value="Submit Rating">
+    </form>
 </table>
 {% endblock %}
