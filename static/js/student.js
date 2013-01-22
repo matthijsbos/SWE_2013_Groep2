@@ -34,7 +34,30 @@ function query_new_question() {
                     data.time_remaining);
             }
         });
+    /* Poll for reviewable questions */
+    $.getJSON("/has_new_review", {},
+        function(data) {
+            if (data.has_new) {
+                show_review_button(data.number);
+            }
+            else {
+                show_review_button(0);
+            }            
+        });
+
 }
+
+function show_review_button(number) {
+    console.log("GOT REVIEW", number);
+    if (number > 0) {
+        $('#reviewform #review-answer').val('You have ('+number+') reviewable answers waiting for you!');
+        $('#reviewform').show();
+    } else {
+        $('#reviewform').hide();
+    }
+
+}
+
 
 function show_question(id, question, time_remaining) {
     console.log("GOT QUESTION", id, question, time_remaining);

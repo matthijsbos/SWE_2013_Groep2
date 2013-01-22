@@ -11,7 +11,6 @@ from controllers.index import Index
 from controllers.answer import Answer
 from controllers.question import QuestionController as Question
 from controllers.tags import Modifytags, AssignTags
-from controllers.ratings import AssignRatings
 from controllers.review import ReviewAnswer
 
 app = Flask(__name__)
@@ -172,6 +171,16 @@ def assign_ratings():
     ctrler = AssignRatings(1)
     return ctrler.render()
 
+@app.route("/assignratings_done", methods=['POST'])
+def handle_assign_ratings():
+    ctrler = AssignRatings.assign(request)
+    return "<a href='/'>back to main</a>"
+    
+
+@app.route("/json/get_tags",methods=['POST', 'GET'])
+def json_get_tags():
+    return Modifytags.json_get_tags()
+
 """
 To review a answer, return reviewanswer.review(x) should be called from the
 controller deciding wich answer to review, this url handles storing the reviews
@@ -202,6 +211,10 @@ def answerFilterByQuestionID(questionid):
 def has_new_question():
     ctrler = Index()
     return ctrler.has_new_question()
+
+@app.route("/has_new_review", methods=['GET', 'POST'])
+def has_new_review():
+    return ReviewAnswer.has_new_review()
 
 @app.route("/logout")
 def logout():

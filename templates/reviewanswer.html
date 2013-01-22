@@ -4,8 +4,8 @@
 <form action="/reviewanswer" method="POST">
     <div class="reviewanswer_left">
         {{ answer }} <br>
-        
-        <textarea name="text" placeholder="Insert your comment here..."></textarea> <!-- close tag must be on the same line to work-->
+        <textarea name="comments" rows="4" cols="50" placeholder="Insert your comment here..."></textarea>
+
 
         <script>
             function rating2(value){
@@ -31,24 +31,24 @@
             </ul>
         </div>
     </div>
-    
     <div class="reviewanswer_right">
-        <h4>This answer has been tagged as:</h4>
+        <!--
+                <h4>This answer has been tagged as:</h4>
         {% for tag in tags %}
-            {% if tag.id in enabledtags %}
-                {{ tag.name }}, 
-            {% endif %}
+        {% if tag.id in enabledtags %}
+        {{ tag.name }}, 
+        {% endif %}
         {% endfor %}
-        
+
         <h4>Remove tags:</h4>
         <label class="checkbox">
             {% for tag in tags %}
-                {% if tag.id in enabledtags %}
-                    <input type="checkbox" name="remove_tags" value="{{tag.id}}">
-                        {{tag.name}}
-                    </input>
-                    <br>
-                {% endif %} 
+            {% if tag.id in enabledtags %}
+            <input type="checkbox" name="remove_tags" value="{{tag.id}}">
+            {{tag.name}}
+            </input>
+            <br>
+            {% endif %} 
             {% endfor %}
         </label>
         <input type="submit" class="btn" value="remove">
@@ -56,16 +56,32 @@
         <h4>Assign tags:</h4>
         <label class="checkbox">
             {% for tag in tags %}
-                {% if not tag.id in enabledtags %}
-                    <input type="checkbox" name="assign_tags" value="{{tag.id}}">
-                        {{tag.name}}
-                    </input>
-                    <br>
-                {% endif %}
+            {% if not tag.id in enabledtags %}
+            <input type="checkbox" name="assign_tags" value="{{tag.id}}">
+            {{tag.name}}
+            </input>
+            <br>
+            {% endif %}
             {% endfor %}
         </label>
+        -->
+        {% for tag in tags %}
+        <input type="checkbox" name="assign_tags" value="{{tag.id}}">
+        {{tag.name}}
+        </input>
+        {% endfor %}
+
+        <legend>Remove tags:</legend>
+
+        {% for tag in tags %}
+        <input type="checkbox" name="remove_tags" value="{{tag.id}}">
+        {{tag.name}}
+        </input>
+        {% endfor %}
+        <input type="submit" value="remove"> 
 
         <input type="submit" class="btn" name="rating" value="Submit review">
     </div>
 </form>
-{% endblock %}
+</body>
+</html>
