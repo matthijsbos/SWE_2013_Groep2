@@ -33,12 +33,24 @@ textarea{
     font-weight: bold;
     font-size: 14px;
     font-family: sans-serif;
+    resize: none;
 }
 textarea:focus{
     background:  #ffffff;
 }
 #assigntags legend{
-    border:none
+    border:none;
+}
+.reviewanswer_left{
+    float:left;
+    width: 400px;
+}
+.reviewanswer_left textarea{
+    width: 400px;
+    height: 100px;
+}
+.reviewanswer_right{
+    float:right;
 }
 #question{
     font-size: 18px;
