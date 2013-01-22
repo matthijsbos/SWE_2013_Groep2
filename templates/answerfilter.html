@@ -1,30 +1,32 @@
 {% extends "_base.html" %}
 {% block content %}
-<form method="POST">
-    Filter by:<br\>
-    ID: <input type="text" name="id"/>
-    UserID: <input type="text" name="userID"/>
-    QuestionID <input type="text" name="questionID"/>
-    <input type="submit" value="Go"/>
+<form method="POST" class="form-inline" id="answerfilter-form">
+    <b>Filter by:</b><br>
+    <label>ID</label> <input type="text" name="id"/>
+    <label>UserID</label> <input type="text" name="userID"/>
+    <label>QuestionID</label> <input type="text" name="questionID"/>
+    <input type="submit" value="Search" class="btn btn-primary"/>
 </form>
-<table style="border:1px solid black;">
-    <tr>
-        <th>id</td>
-        <th>questionID</td>
-        <th>userID</td>
-        <th>text</td>
-        <th>created on</td>
-        <th>modified on</td>
-    </tr>
-    {% for answer in answers %}
+<table class="table table-hover table-bordered table-striped">
+    <thead>
         <tr>
-            <td>{{ answer.id }}</td>
-            <td>{{ answer.questionID }}</td>
-            <td>{{ answer.userID }}</td>
-            <td>{{ answer.text }}</td>
-            <td>{{ answer.created }}</td>
-            <td>{{ answer.modified }}</td>
+            <th>id</th>
+            <th>questionID</th>
+            <th>userID</th>
+            <th>text</th>
+            <th>created on</th>
+            <th>modified on</th>
         </tr>
+    </thead>
+    {% for answer in answers %}
+    <tr>
+        <td>{{ answer.id }}</td>
+        <td>{{ answer.questionID }}</td>
+        <td>{{ answer.userID }}</td>
+        <td>{{ answer.text }}</td>
+        <td>{{ answer.created }}</td>
+        <td>{{ answer.modified }}</td>
+    </tr>
     {% endfor %}
 </table>
 {% endblock %}

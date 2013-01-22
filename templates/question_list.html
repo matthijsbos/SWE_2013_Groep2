@@ -70,8 +70,7 @@
     function add_question(){
         $('#addQ').hide()
             $('#qList tr:last').after(
-                    '<tr><td colspan="6"><center>FIREFOX MURDERS FORM IN TD //mustfix</center></td></tr> \
-                <tr><th colspan="6"> \
+                    '<tr><th colspan="6"> \
                     <form action="/handle_question" method="post" style="display:block"> \
                         <input type="textbox" name="question"> \
                         <input type="number" name="time" size="3" maxlength="3"> \
@@ -84,7 +83,7 @@
 </script>
 
 <div id="error" style="background-color: #a33; color: white;"></div>
-<table id="qList" border=1 class="table table-hover table-bordered table-striped">
+<table id="qList" class="table table-hover table-bordered table-striped">
     <thead>
     <tr>
         <!--<th>id</th>-->
