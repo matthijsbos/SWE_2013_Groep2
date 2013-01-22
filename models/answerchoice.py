@@ -5,7 +5,6 @@ from datetime import datetime
 from basemodel import BaseEntity
 from models import answer
 
-K = 100
 class AnswerChoiceModel(Base,BaseEntity):
     __tablename__ = 'answerchoice'
 

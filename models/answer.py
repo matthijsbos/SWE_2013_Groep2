@@ -130,6 +130,7 @@ class AnswerModel(Base, BaseEntity):
 
     @staticmethod
     def newRating(winner, loser) :
+        K = 100
         expectedScore = winningProbability(winner, loser)
         winnerRating = winner + K * (1 - winningProbability(winner, loser))
         loserRating = loser + K * (0 - winningProbability(loser, winner))
