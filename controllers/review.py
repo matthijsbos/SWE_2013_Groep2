@@ -3,7 +3,8 @@
 # Changes:
 # Comment: call ReviewAnswer.review(x) to start reviewing a answer
 
-from flask import render_template, g, session as fsession
+from flask import g, session as fsession
+from utilities import render_template
 from models.tag import Tag, AnswerTag
 from models.answer import AnswerModel
 from models.review import Review

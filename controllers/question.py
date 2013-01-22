@@ -1,6 +1,6 @@
 import json
-from flask import escape, render_template, g
-
+from flask import escape, g
+from utilities import render_template
 from dbconnection import session
 from models.question import Question
 

@@ -1,8 +1,8 @@
 import json
 import time
 from datetime import datetime, timedelta
-from flask import render_template, g
-
+from flask import g
+from utilities import render_template
 from models.answer import AnswerModel
 from controllers.answer import Answer
 
