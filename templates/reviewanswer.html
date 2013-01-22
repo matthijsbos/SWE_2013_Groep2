@@ -3,32 +3,40 @@
 <legend>Review the following answer and rate it on a scale of 1 to 5</legend>
 <form action="/reviewanswer" method="POST">
     <div class="reviewanswer_left">
-        {{ answer }} <br><br>
+        {{ answer }} <br>
         
         <textarea name="text" placeholder="Insert your comment here..."></textarea> <!-- close tag must be on the same line to work-->
-        
-        <table>
-            <tr>
-                <td>
-                    1
-                    <div class="btn-group">
-                        <input class="btn" type="radio" name="rating" value="1">
-                        <input class="btn"type="radio" name="rating" value="2">
-                        <input class="btn"type="radio" name="rating" value="3">
-                        <input class="btn"type="radio" name="rating" value="4">
-                        <input class="btn"type="radio" name="rating" value="5">
-                    </div>
-                    5
-                </td>
-            </tr>
-        </table>
+
+        <script>
+            function rating2(value){
+                $("#1").html("<span>Rate it 1 stars</span>");
+                $("#2").html("<span>Rate it 2 stars</span>");
+                $("#3").html("<span>Rate it 3 stars</span>");
+                $("#4").html("<span>Rate it 4 stars</span>");
+                $("#5").html("<span>Rate it 5 stars</span>");
+
+                $("#" + value).html("<span>Rate it " + value + " stars</span><b></b>");
+                document.getElementById("input_rating").value = value;
+            }
+        </script> 
+        <input type="hidden" name="rating" id="input_rating" value="3">
+        <div class="starRate">
+            <div>Rate this answer<b></b></div>
+            <ul>
+                <li><a href="#" onclick="javascript:rating2(5);" id="5" value="5"><span>Rate it 5 stars</span></a></li>
+                <li><a href="#" onclick="javascript:rating2(4);" id="4" value="4"><span>Rate it 4 stars</span></a></li>
+                <li><a href="#" onclick="javascript:rating2(3);" id="3" value="3"><span>Rate it 3 stars</span><b></b></a></li>
+                <li><a href="#" onclick="javascript:rating2(2);" id="2" value="2"><span>Rate it 2 stars</span></a></li>
+                <li><a href="#" onclick="javascript:rating2(1);" id="1" value="1"><span>Rate it 1 star</span></a></li>
+            </ul>
+        </div>
     </div>
     
     <div class="reviewanswer_right">
         <h4>This answer has been tagged as:</h4>
         {% for tag in tags %}
             {% if tag.id in enabledtags %}
-                {{ tag.name }}
+                {{ tag.name }}, 
             {% endif %}
         {% endfor %}
         
@@ -40,7 +48,7 @@
                         {{tag.name}}
                     </input>
                     <br>
-                {% endif %}
+                {% endif %} 
             {% endfor %}
         </label>
         <input type="submit" class="btn" value="remove">
@@ -48,10 +56,12 @@
         <h4>Assign tags:</h4>
         <label class="checkbox">
             {% for tag in tags %}
-                <input type="checkbox" name="assign_tags" value="{{tag.id}}">
-                    {{tag.name}}
-                </input>
-                <br>
+                {% if not tag.id in enabledtags %}
+                    <input type="checkbox" name="assign_tags" value="{{tag.id}}">
+                        {{tag.name}}
+                    </input>
+                    <br>
+                {% endif %}
             {% endfor %}
         </label>
 

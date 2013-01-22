@@ -21,9 +21,10 @@ class Question(Base, BaseEntity):
         self.time = time
 
     def __repr__(self):
-        return "<Question ('%s','%s','%s')>" % (self.teacher_id,
+        return "<Question ('%s','%s','%s', '%s')>" % (self.teacher_id,
                                                 self.question,
-                                                self.available)
+                                                self.available,
+                                                self.time)
 
     @classmethod
     def by_course_id(cls, course_id):

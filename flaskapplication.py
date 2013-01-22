@@ -160,27 +160,16 @@ def assign_tags():
     ctrler = AssignTags(1)
     return ctrler.render()
 
-
-@app.route("/assigntags_done", methods=['POST'])
-def handle_assign_tags():
-    ctrler = AssignTags.assign(request)
-    return Index(request).render()
     
 @app.route("/removetags_done",methods=['POST'])
 def handle_remove_tags():
     ctrler = AssignTags.remove(request)
     return Index(request).render()
 
+    
 @app.route("/assignratings", methods=['POST', 'GET'])
 def assign_ratings():
     ctrler = AssignRatings(1)
-    return ctrler.render()
-
-
-@app.route("/assignratings_done", methods=['POST'])
-def handle_assign_ratings():
-    ctrler = AssignRatings(1)
-    ctrler.assign(request)
     return ctrler.render()
 
 """

@@ -48,7 +48,7 @@ class Answer():
         answerText = self.request.form['answerText']
 
         flag = "false"
-        if self.timeLeft(timerD, 0, questionStartTime):
+        if self.timeLeft(timerD, questionStartTime):
             if answer.AnswerModel.checkAnswerExist(uID, qID):
                 aID = answer.AnswerModel.getAnswerID(uID, qID)
                 answer.AnswerModel.updateAnswer(aID, answerText)
@@ -79,7 +79,7 @@ class Answer():
     def answerQuestion(self, uID, qID, qText, timerD, questionStartTime):
         if answer.AnswerModel.checkAnswerExist(uID, qID):
             aID = answer.AnswerModel.getAnswerID(uID, qID)
-            if self.timeLeft(timerD, 0, questionStartTime):
+            if self.timeLeft(timerD, questionStartTime):
                 return render_template('answer.html', questionID=qID, userID=uID, questionText=qText, timerDuration=timerD, date=time.mktime(questionStartTime.timetuple()), go="true")
             else:
                 return render_template('answer.html', questionID=qID, userID=uID, questionText=qText, timerDuration=timerD, date=time.mktime(questionStartTime.timetuple()), go="false")
@@ -87,19 +87,19 @@ class Answer():
             #answer.AnswerModel.save(qID, uID, "")
             return render_template('answer.html', questionID=qID, userID=uID, questionText=qText, timerDuration=timerD, date=time.mktime(questionStartTime.timetuple()), go="true")
 
-    def timeLeft(self, timerD, giveTime, questionStartTime):
+    def timeLeft(self, timerD, questionStartTime):
         currentTime = datetime.datetime.now()
         timeAnswered = questionStartTime
         difference = currentTime - timeAnswered
         seconds = difference.days * 86400 + difference.seconds
-
-        if giveTime == 1:
-            return timerD - seconds
-
-        if seconds < timerD + 2:
+        
+        if timerD == 0:
             return True
         else:
-            return False
+            if seconds < timerD + 2:
+                return True
+            else:
+                return False
 
     def render_filtered(self):
         postdata = self.request.form
