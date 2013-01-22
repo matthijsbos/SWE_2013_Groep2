@@ -3,7 +3,7 @@ from flask import escape, render_template, g
 
 from dbconnection import session
 from models.question import Question
-
+from datetime import datetime, timedelta
 
 class QuestionController():
     @staticmethod
@@ -17,24 +17,49 @@ class QuestionController():
           return json.dumps({"toggle": True,"check": False})
 
     @staticmethod
-    def edit_question(q_id, question, activate):
+    def edit_question(q_id, question, time):
         """Updates a question with given contents and activation status."""
         if g.lti.is_instructor():
-            if question != None:
-                escaped_question = escape(question)
-                Question.by_id(q_id).question = question
-            else:
+            if question is None:
                 escaped_question = None
-            Question.by_id(q_id).available = activate
+            else:
+                escaped_question = escape(question)
+
+            escaped_time = escape(time)
+            q = Question.by_id(q_id)
+            q.question = escaped_question
+            q.time = int(time)
+            activate = q.available
+
+            session.add(q)
+            session.commit()
+
             return json.dumps({"id": q_id,
                                "text": escaped_question,
                                "available": activate,
+                               "time":time,
                                "check": g.lti.is_instructor()})
         else:
             return json.dumps({"id": q_id,
                                "text": question,
                                "available": activate,
+                               "time": time,
                                "check": g.lti.is_instructor()})
+    
+    @staticmethod
+    def get_remaining_time(q_id):
+        question = Question.by_id(q_id)
+        
+        if question is not None and question.activate_time is not None:
+            time_remaining = QuestionController.calculate_remaining_time(question)
+        else:
+            time_remaining = 0
+            question_time =  0
+            
+        return json.dumps({"still_available":((question is not None) and question.available),
+                           "time_remaining":time_remaining,
+                           "question_deleted":(question is None),
+                           "question_time":question_time})
 
     @staticmethod
     def get_questions(n):
@@ -79,3 +104,10 @@ class QuestionController():
         session.commit()
 
         return QuestionController.get_list()
+    
+    @staticmethod
+    def calculate_remaining_time(question):
+        time_remaining = datetime.now() - (question.activate_time +
+                timedelta(seconds=question.time))
+        time_remaining = time_remaining.seconds + time_remaining.days * 86400
+        return time_remaining

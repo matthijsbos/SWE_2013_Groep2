@@ -1,4 +1,3 @@
-# Author : Dexter Drupsteen
 # Descrp : Contains routing and calling of the constrollers
 # Changes:
 # Comment: MultiDict with isinstructor,consumerkey,coursekey and coursename in
@@ -58,7 +57,7 @@ def launch():
 def edit_question():
     return Question.edit_question(request.args['id'],
                                   request.args['text'],
-                                  False)
+                                  request.args['time'])
 
 # this route is called to toggle a question's availability
 
@@ -205,6 +204,10 @@ def answerFilterByQuestionID(questionid):
 def has_new_question():
     ctrler = Index()
     return ctrler.has_new_question()
+
+@app.route("/question_remaining_time",methods=['GET','POST'])
+def get_question_remaining_time():
+    return Question().get_remaining_time(request.args['questionID'])
 
 @app.route("/logout")
 def logout():

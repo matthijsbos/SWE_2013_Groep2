@@ -33,7 +33,7 @@ class Index():
 
         question = question[0]
 
-        time_remaining = datetime.now() - (question.modified +
+        time_remaining = datetime.now() - (question.activate_time +
                 timedelta(seconds=question.time))
         time_remaining = time_remaining.seconds + time_remaining.days * 86400
         time_remaining = -time_remaining
@@ -41,4 +41,5 @@ class Index():
         return json.dumps({'has_new': True,
                            'question_id': question.id,
                            'question_text': question.question,
-                           'time_remaining': time_remaining})
+                           'time_remaining': time_remaining,
+                           'question_time' : question.time})

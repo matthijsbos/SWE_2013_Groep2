@@ -4,24 +4,46 @@
 <script language="javascript" type="text/javascript">
     function edit_field(id){
         var elem = $('#question_' + id + ' a');
+        var time_elem = $('#time_'+id);
         if (elem.hasClass('activated')){
             return;
         }
         var text = elem.text();
+        var time = time_elem.text();
         elem.addClass('activated');
         elem.text('');
+        elem.hide();
+        time_elem.text('');
         var edit_field = $('<input type="text" size="50"/>').val(text);
-        edit_field.blur(function(){
-            edit_question(id, $(this).val());
+        var time_field = $('<input type="text" size="3"/>').val(time);
+
+        var editelem = $('#sedit_'+id);
+        editelem.click(function(){
+            $('#edit_'+id).show();
+            $('#sedit_'+id).hide();
+            
+            var newTime = time_field.val();
+            edit_question(id,edit_field.val(),newTime);
+
             var newText = elem.val();
-            $(this).parent().text(newText).removeClass('activated');
-            $(this).remove();
+            elem.text(newText);
+            elem.removeClass('activated');
+
+            time_elem.text(newTime);
+            
+            $(time_field).remove();
+            $(edit_field).remove();
+            $('#sedit_'+id).unbind('click');
         });
-        edit_field.appendTo(elem).focus();
+        $('#sedit_'+id).show();
+        $('#edit_'+id).hide();
+        
+        edit_field.appendTo(elem.parent()).focus();
+        time_field.appendTo(time_elem);
     }
 
-  function edit_question(id,text){
-    $.getJSON("/edit_question",{id:id,text:text},
+  function edit_question(id,text,time){
+    $.getJSON("/edit_question",{id:id,text:text,time:time},
     function(data){
       if(data.check){
         if(!data.available){
@@ -32,6 +54,7 @@
         }
         $('#available_'+id).html(temp);
         $('#question_'+id).html('<a href=\"/filteranswer/'+data.text+'\">'+data.text+'</a>');
+        $('#time_'+id).html(data.time)
       }
       else{
         $('#error').html("Error while editing question question.");
@@ -90,21 +113,23 @@
         <th>Question</th>
         <th>Active</th>
         <th>Time</th>
-        <th>Activate</th>
         <th>Edit</th>
+        <th>Activate</th>
         <th>Delete</th>
     </tr>
     {% for question in questions %}
         <tr id="row_{{question.id}}">
-            <!--<td id="id_{{question.id}}">{{question.id}}</td>-->
             <td id="question_{{question.id}}">
                 <a href="/filteranswers/{{question.id}}" class="blue">{{question.question}}</a>
             </td>
             <td id="available_{{question.id}}">{{question.available}}</td>
             <td id="time_{{question.id}}">{{question.time}}</td>
-            <td><button value="edit" onclick=edit_field({{question.id}}) />edit</button></td>
-            <td><button value="toggle" onclick=toggle_question({{question.id}}) />toggle</button></td>
-            <td><button value="delete" onclick=delete_question({{question.id}}) />delete</button></td>
+            <td>
+                <button id="edit_{{question.id}}" value="edit" onclick=edit_field({{question.id}})>Edit</button>
+                <button id="sedit_{{question.id}}" value="edit" style="display:none" >Submit</button>
+            </td>
+            <td><button value="toggle" onclick=toggle_question({{question.id}}) >Toggle</button></td>
+            <td><button value="delete" onclick=delete_question({{question.id}}) >Delete</button></td>
         </tr>
     {% endfor %}
 </table>

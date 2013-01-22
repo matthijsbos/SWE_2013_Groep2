@@ -1,7 +1,8 @@
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy import Column, String, Boolean, Integer
+from sqlalchemy import Column, String, Boolean, Integer,DateTime
 from dbconnection import engine, session, Base
 from basemodel import BaseEntity
+from datetime import datetime
 
 
 class Question(Base, BaseEntity):
@@ -12,18 +13,25 @@ class Question(Base, BaseEntity):
     question = Column(String)
     available = Column(Boolean)
     time = Column(Integer)
+    activate_time = Column(DateTime,nullable=True)
 
-    def __init__(self, teacher_id, course_id, question, available, time):
+    def __init__(self, teacher_id, course_id, question, available,time,activate_time = None):
         self.teacher_id = teacher_id
         self.course_id = course_id
         self.question = question
         self.available = available
+
+        if(available and self.activate_time is None):
+            self.activate_time = datetime.now()
+        else:
+            self.activate_time = activate_time
         self.time = time
 
     def __repr__(self):
-        return "<Question ('%s','%s','%s')>" % (self.teacher_id,
+        return "<Question ('%s','%s','%s','%s')>" % (self.teacher_id,
                                                 self.question,
-                                                self.available)
+                                                self.available,
+                                                self.time)
 
     @classmethod
     def by_course_id(cls, course_id):
@@ -33,6 +41,12 @@ class Question(Base, BaseEntity):
     def toggle_available(cls, q_id):
         question = Question.by_id(q_id)
         question.available = not question.available
+
+        dt = None
+        if question.available:
+            dt = datetime.now()
+
+        question.activate_time = dt
         session.commit()
         return question.available
 
