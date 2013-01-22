@@ -1,6 +1,6 @@
 {% extends "_base.html" %}
 {% block content %}
-Hello {{ instr }}, enter a question in the field below.
+Hello instructor: {{ instr }}, enter a question in the field below.
 <form action="handle_question" method="post">
   <textarea name="question" cols=80 rows=10></textarea><br>
   Insert time for question (in seconds):
