@@ -43,6 +43,10 @@ class ReviewAnswer():
         del fsession['reviewanswer']
     
     @staticmethod
+    def remove_tag_answer(aid, id):
+        AnswerTag.remove(aid, id)
+    
+    @staticmethod
     def review(answer_id):
 
         # one of these checks can be removed once we merge and know what's what

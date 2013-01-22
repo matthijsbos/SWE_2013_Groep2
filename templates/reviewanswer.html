@@ -1,24 +1,34 @@
 {% extends "_base.html" %}
 {% block content %}
+
+<script>
+    function rating2(value){
+        $("#1").html("<span>Rate it 1 stars</span>");
+        $("#2").html("<span>Rate it 2 stars</span>");
+        $("#3").html("<span>Rate it 3 stars</span>");
+        $("#4").html("<span>Rate it 4 stars</span>");
+        $("#5").html("<span>Rate it 5 stars</span>");
+
+        $("#" + value).html("<span>Rate it " + value + " stars</span><b></b>");
+        document.getElementById("input_rating").value = value;
+    }
+    function remove_tag(aid, id){
+        $.getJSON("/removetaganswer/<aid><id>",{},
+            function(data){
+                if (data.deleted)
+                    $('#'+id).remove();
+                else
+                    $('#error').html("Error while deleting question.");
+            });
+    }
+</script>
+
 <legend>Review the following answer and rate it on a scale of 1 to 5</legend>
 <form action="/reviewanswer" method="POST">
     <div class="reviewanswer_left">
         {{ answer }} <br>
         <textarea name="comments" rows="4" cols="50" placeholder="Insert your comment here..."></textarea>
 
-
-        <script>
-            function rating2(value){
-                $("#1").html("<span>Rate it 1 stars</span>");
-                $("#2").html("<span>Rate it 2 stars</span>");
-                $("#3").html("<span>Rate it 3 stars</span>");
-                $("#4").html("<span>Rate it 4 stars</span>");
-                $("#5").html("<span>Rate it 5 stars</span>");
-
-                $("#" + value).html("<span>Rate it " + value + " stars</span><b></b>");
-                document.getElementById("input_rating").value = value;
-            }
-        </script> 
         <input type="hidden" name="rating" id="input_rating" value="3">
         <div class="starRate">
             <div>Rate this answer<b></b></div>
@@ -33,25 +43,34 @@
     </div>
     <div class="reviewanswer_right">
 
-                <h4>This answer has been tagged as:</h4>
-        {% for tag in tags %}
-        {% if tag.id in enabledtags %}
-        {{ tag.name }}, 
-        {% endif %}
+        <h4>This answer has been tagged as:</h4>
+            {% for tag in tags %}
+                {% if tag.id in enabledtags %}
+                    {{ tag.name }}, 
+            {% endif %}
         {% endfor %}
 
         <h4>Remove tags:</h4>
-        <label class="checkbox">
-            {% for tag in tags %}
+        {% for tag in tags %}
             {% if tag.id in enabledtags %}
-            <input type="checkbox" name="remove_tags" value="{{tag.id}}">
-            {{tag.name}}
-            </input>
-            <br>
-            {% endif %} 
+                <div class="tags" id="{{tag.id}}">
+                    <div>{{tag.name}}</div>
+                    <div><a onclick="javascript:remove_tag({{answer.id}},{{tag.id}});"/><i class="icon-remove-sign"></i> delete </a></div>
+                </div>
+            {% endif %}
+        {% endfor %}
+        <!--<label class="checkbox">
+            {% for tag in tags %}
+                {% if tag.id in enabledtags %}
+                    <div class="tags" id="{{tag.id}}">
+                        <input type="checkbox" name="remove_tags" value="{{tag.id}}">
+                        <div>{{tag.name}}</div><i class="icon-remove-sign"></i> delete </a>
+                        </input>
+                    </div>
+                {% endif %} 
             {% endfor %}
         </label>
-        <input type="submit" class="btn" value="remove">
+        <input type="submit" class="btn" value="remove">-->
 
         <h4>Assign tags:</h4>
         <label class="checkbox">
@@ -66,7 +85,7 @@
         </label>
 
 
-        <input type="submit" class="btn" name="rating" value="Submit review">
+        <input type="submit" class="btn-primary btn" name="rating" value="Submit review">
     </div>
 </form>
 {% endblock %}

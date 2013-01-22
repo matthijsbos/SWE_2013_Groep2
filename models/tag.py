@@ -47,7 +47,7 @@ class Tag(Base, BaseEntity):
             session.commit()
             
     @staticmethod
-    def remove_tag(tag_id):
+    def remove_tag_question(tag_id):
         for tag in session.query(Tag).filter(Tag.id == tag_id):
             session.delete(tag)
             session.commit()

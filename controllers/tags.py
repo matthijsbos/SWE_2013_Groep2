@@ -3,7 +3,7 @@
 # Changes:
 # Comment:
 
-from flask import render_template, session as fsession
+from flask import render_template, session as fsession, g
 from models.tag import Tag, AnswerTag
 from models.answer import AnswerModel
 import json
@@ -16,9 +16,10 @@ class Modifytags():
     def addtag(self, request):
         Tag.add_tag(request.form['newTag'])
 
-    def deletetag(self, request):
-        for tid in request.form.getlist('tags'):
-            Tag.remove_tag(tid)
+    def delete_tag_question(self, id):
+        if g.lti.is_instructor():
+            Tag.remove_tag_question(id)
+        return json.dumps({'deleted': g.lti.is_instructor()})
 
     def render(self):
         self.taglist = Tag.get_all()
