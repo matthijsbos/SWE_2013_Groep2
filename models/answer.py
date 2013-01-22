@@ -1,3 +1,4 @@
+from datetime import datetime, timedelta
 from sqlalchemy import *
 from sqlalchemy.orm import relationship
 from dbconnection import engine, session, Base, exc
@@ -69,11 +70,42 @@ class AnswerModel(Base, BaseEntity):
         anssub = session.query(AnswerModel).filter(AnswerModel.userID == userid).\
             subquery()
 
+        # HACK: I can't figure out how to do timedelta stuff inside a filter,
+        #       so that is done after pulling all data... Slow!
+
         # Need to use the old Alias.c.[columname] when using subquery!
-        return session.query(Question).\
+        tmp = session.query(Question).\
                 outerjoin(anssub, anssub.c.questionID == Question.id).\
+                filter(Question.available == True).\
                 filter(Question.course_id == courseid).\
                 filter(anssub.c.id == None).all()
+
+        print tmp
+        print [(x.modified + timedelta(seconds=x.time), datetime.now()) for x in tmp]
+
+
+
+
+        return [x for x in tmp if x.modified + timedelta(seconds=x.time) >
+                datetime.now()]
+
+
+
+    @staticmethod
+    def get_answered_active_questions(userid, courseid):
+        """
+        Exactly the same as get_unanswered_questions except we want the answered
+        ones
+        """
+        anssub = session.query(AnswerModel).filter(AnswerModel.userID == userid).\
+            subquery()
+
+
+        tmp = session.query(Question).\
+                outerjoin(annsub, anssub.c.questionID == Question.id).\
+                filter(Question.available == True).\
+                filter(Question.course_id == courseid).\
+                filter(anssub.c.id != None).all()
 
     @staticmethod
     def getTimeStamp(answerID):

@@ -15,7 +15,7 @@ class Answer():
         questionStartTime = datetime.datetime.now();
         uID = g.lti.get_user_id()
         qID = -1
-        timerD = 15       
+        timerD = 25
 
         # Post should be real data
         if self.request.method == 'POST' and 'questionID' in self.request.form:
@@ -44,6 +44,7 @@ class Answer():
 
     def saveAnswer(self, uID, qID, timerD, questionStartTime):
         # save answer
+        print "ANSW", uID, qID, timerD
         answerText = self.request.form['answerText']
 
         flag = "false"

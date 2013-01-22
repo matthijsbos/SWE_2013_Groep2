@@ -21,10 +21,11 @@ from controllers.answer import Answer
 from controllers.question import QuestionController as Question
 from controllers.tags import Modifytags, AssignTags
 from controllers.ratings import AssignRatings
+from controllers.review import ReviewAnswer
 
 app = Flask(__name__)
 app.debug = True
-app.secret_key = "Hurdygurdy" # Used for Flask sessions, TODO: config?
+app.secret_key = "Hurdygurdy"  # Used for Flask sessions, TODO: config?
 
 
 @app.before_request
@@ -52,28 +53,33 @@ def init_lti():
 # define the routes for our application
 @app.route("/", methods=['GET', 'POST'])
 def home():
-    ctrler = Index(request)
+    ctrler = Index()
     return ctrler.render()
 
 
-@app.route("/launch", methods=['POST'])
+@app.route("/debug", methods=['GET', 'POST'])
 def launch():
-    ctrler = Index(request)
+    ctrler = Index(debug=True)
     return ctrler.render()
 
-@app.route("/edit_question",methods=['GET','POST'])
-def edit_question():
-  return Question.edit_question(request.args['id'],
-                             request.args['text'],
-                             False)
-                      
 
-@app.route("/toggle_question",methods=['GET','POST'])
+@app.route("/edit_question", methods=['GET', 'POST'])
+def edit_question():
+    return Question.edit_question(request.args['id'],
+                                  request.args['text'],
+                                  False)
+
+# this route is called to toggle a question's availability
+
+
+@app.route("/toggle_question", methods=['GET', 'POST'])
 def toggle_question():
-  return Question.toggle_question(request.args['id'])
-    
+    return Question.toggle_question(request.args['id'])
+
 # this route is used to ask a question to students
-@app.route("/question",methods=['GET', 'POST'])
+
+
+@app.route("/question", methods=['GET', 'POST'])
 def ask_question():
     if g.lti.is_instructor() == False:
         return render_template("access_restricted.html")
@@ -82,31 +88,48 @@ def ask_question():
 
 # this route is used for the feedback from inserting the question into the
 # database, it also inserts the question into the database
-@app.route("/handle_question",methods=['POST'])
+
+
+@app.route("/handle_question", methods=['POST'])
 def handle_question():
     if g.lti.is_instructor() == False:
-      return render_template("access_restricted.html")
+        return render_template("access_restricted.html")
+    try:
+        request.form['active']
+        isActive = True
+    except:
+        isActive = False
     return Question.create_question(request.form['question'],
-            g.lti.get_user_id(),g.lti.get_course_id(),request.form['time'])
+                                    g.lti.get_user_id(),
+                                    g.lti.get_course_id(),
+                                    isActive,
+                                    request.form['time'])
+
 
 @app.route("/question_list", methods=['GET', 'POST'])
 def list_questions():
     return Question.get_list()
 
+
 @app.route("/delete_question/<id>", methods=['GET', 'POST'])
 def delete_question(id):
     return Question.delete_question(id)
+
 
 @app.route("/question_export", methods=['GET', 'POST'])
 def question_export():
     exp = Question.export_course(g.lti.get_course_id())
     exp = yaml.dump(exp, default_flow_style=False)
     return Response(exp,
-            mimetype="text/plain",
-            headers={"Content-Disposition":
-                "attachment;filename=questions_%s.yaml" %
+                    mimetype="text/plain",
+                    headers={"Content-Disposition":
+                             "attachment;filename=questions_%s.yaml" %
                     g.lti.get_course_name()})
 
+@app.route("/question_import", methods=['GET', 'POST'])
+def question_import():
+    list = yaml.load(request.args['file'])
+    print list
 
 @app.route("/managetags", methods=['GET', 'POST'])
 def managetags():
@@ -143,17 +166,21 @@ def processanswerchoice():
     ctrler = answerchoice.Answerchoice(request)
     return ctrler.process()
 
-@app.route("/assigntags",methods=['POST', 'GET'])
+@app.route("/assigntags", methods=['POST', 'GET'])
 def assign_tags():
     ctrler = AssignTags(1)
     return ctrler.render()
 
 
-@app.route("/assigntags_done",methods=['POST'])
+@app.route("/assigntags_done", methods=['POST'])
 def handle_assign_tags():
     ctrler = AssignTags.assign(request)
     return "<a href='/'>back to main</a>"
-
+    
+@app.route("/removetags_done",methods=['POST'])
+def handle_assign_tags():
+    ctrler = AssignTags.remove(request)
+    return "<a href='/'>back to main</a>"
 
 @app.route("/assignratings", methods=['POST', 'GET'])
 def assign_ratings():
@@ -161,10 +188,24 @@ def assign_ratings():
     return ctrler.render()
 
 
-@app.route("/assignratings_done",methods=['POST'])
+@app.route("/assignratings_done", methods=['POST'])
 def handle_assign_ratings():
     ctrler = AssignRatings.assign(request)
     return "<a href='/'>back to main</a>"
+
+"""
+To review a answer, return reviewanswer.review(x) should be called from the
+controller deciding wich answer to review, this url handles storing the reviews
+in the database (given a user has permission to do so)
+"""
+@app.route("/reviewanswer",methods=['POST', 'GET'])
+def handle_review_answer():
+    ctrler = ReviewAnswer(request)
+    return Index(request).render()
+
+@app.route("/reviewanswer_stub", methods=["POST", "GET"])
+def do_review_answer_stub():
+    return ReviewAnswer.review(1)
 
 @app.route("/filteranswers", methods=['POST', 'GET'])
 def answerFilter():
@@ -177,10 +218,16 @@ def rankResults():
     return ctrler.render_results()
 
 
-@app.route("/filteranswers/<questionid>", methods=['POST','GET'])
+@app.route("/filteranswers/<questionid>", methods=['POST', 'GET'])
 def answerFilterByQuestionID(questionid):
     ctrler = Answer(request)
     return ctrler.render_filtered_by_questionid(questionid)
+
+
+@app.route("/has_new_question", methods=['GET', 'POST'])
+def has_new_question():
+    ctrler = Index()
+    return ctrler.has_new_question()
 
 @app.route("/logout")
 def logout():
