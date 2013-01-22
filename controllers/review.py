@@ -3,12 +3,13 @@
 # Changes:
 # Comment: call ReviewAnswer.review(x) to start reviewing a answer
 
-from flask import render_template, session as fsession
+from flask import render_template, g, session as fsession
 from models.tag import Tag, AnswerTag
 from models.answer import AnswerModel
 from models.rating import AnswerRating, Rating
 from models.comment import Comment
 from dbconnection import session
+import json
 
 
 class ReviewAnswer():
@@ -55,4 +56,14 @@ class ReviewAnswer():
 
         return render_template('reviewanswer.html', answer=answer,
                                tags=Tag.get_all(), enabledtags=enabledtags)
-        
+
+    """
+    Stub class, to be implemented by mustafa
+    """
+    @staticmethod 
+    def has_new_review():
+        if g.lti.is_instructor():
+            return json.dumps({'has_new': False})
+
+        return json.dumps({'has_new': True,
+                           'number': 5 })
