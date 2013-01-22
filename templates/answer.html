@@ -1,42 +1,49 @@
 <html>
 <head>
-    <script type="text/javascript" src="../static/js/jquery.min.js"></script>
-    <script type="text/javascript" src="../static/js/jquery.countdown.js"></script>
-    <link rel="stylesheet" type="text/css" href="../static/css/style.css" media="screen" />
-	<script type="text/javascript">
-var countdownCurrent = {{timerDuration}} //number of seconds
+<script src="../static/js/jquery-1.8.3.min.js" type="text/javascript" charset="utf-8"></script>
+<script src="../static/js/jquery.countdown.js" type="text/javascript" charset="utf-8"></script>
+<link rel="stylesheet" type="text/css" href="../static/css/style.css" media="screen" />
+<script type="text/javascript">
+    function formSubmit()
+    {
+        document.getElementById("answerform").submit();
+    }
+    $(function(){
+        $('#counter').countdown({
+            image: '../static/img/digits.png',
+            startTime: '{{timerDuration}}',
+            timerEnd: function(){ formSubmit(); },
+            format: 'mm:ss'
+        });
+    });
+		
+</script>
 
+<!-- Javascript for autocomplete -->
+<script type="text/javascript" src="../static/js/jquery.tokeninput.js"></script>
+<link rel="stylesheet" href="../static/css/token-input.css" type="text/css" />
+<link rel="stylesheet" href="../static/css/token-input-facebook.css" type="text/css" />
 
-$(function () {
+<!-- FIXME: use local files -->
+<script src="http://code.jquery.com/ui/1.10.0/jquery-ui.js"></script>
 
-	var austDay = new Date({{date}} * 1000);
-	austDay.setSeconds(austDay.getSeconds() + countdownCurrent);
-	$('#counter').countdown({until: austDay, compact: true, onExpiry: submitForm, format: 'MS'});
-
-    if ($('#counter').countdown('getTimes') == '0,0,0,0,0,0,0') document.getElementById("answer_form").innerHTML = "you cannot answer this question anymore";
-
-
-});
-function submitForm() {
-    document.getElementById("answerform").submit();
-}
-	</script>
 </head>
 
 <body>
-{% if go == "true" %}
-    <div id="answer_form">
+{% if go == "true" %}   
+    <div>
         <form action="/answer" id="answerform" method="post">
             <br>
-            <div id="question">{{questionText}}</div>
+            {{questionText}}
             <input type="hidden"  name="questionID" value="{{questionID}}" />
-            uid: <input type="text" name="userID" value="{{userID}}" />
+            <input type="text" name="userID" value="{{userID}}" />
             <br>
             Answer: <br><textarea name="answerText" cols=50 rows=10></textarea>
             <br>
-            <input type="submit" value="submit answer" class="submit-answer"/>
+            <input type="submit" value="go"/>
+            {{answerID}}
         </form>
-        <div id="counter" class="countdowntime"></div>
+        <div id="counter"></div>
         <div class="desc">
             <div>Minutes</div>
             <div>Seconds</div>
