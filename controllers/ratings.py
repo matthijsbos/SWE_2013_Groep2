@@ -1,4 +1,4 @@
-from models.rating import AnswerRating, Rating
+from models.review import Review
 from models.answer import AnswerModel
 from flask import render_template, session as fsession
 
@@ -13,7 +13,7 @@ class AssignRatings():
     @staticmethod
     def assign(request):
         for rating_id in request.form.getlist('rating'):
-            AnswerRating.add_answerrating(fsession['assignrating'], rating_id)
+            Review.add(fsession['assignrating'], rating_id)
               
     def render(self):
         return render_template('ratings.html', answer=self.answer,

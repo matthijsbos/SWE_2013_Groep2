@@ -6,7 +6,7 @@
 from flask import render_template, g, session as fsession
 from models.tag import Tag, AnswerTag
 from models.answer import AnswerModel
-from models.rating import AnswerRating, Rating
+from models.review import Review
 from models.comment import Comment
 from dbconnection import session
 import json
@@ -25,16 +25,20 @@ class ReviewAnswer():
         for tag_id in request.form.getlist('assign_tags'):
             AnswerTag.add_answertag(fsession['reviewanswer'], tag_id)
 
-        for rating_id in request.form.getlist('rating'):
-            AnswerRating.add_answerrating(fsession['reviewanswer'], rating_id)
+        #for rating in request.form.getlist('rating'):
+        #    Review.add(fsession['reviewanswer'], fsession['user_id'], rating, )
 
         for tag_id in request.form.getlist('remove_tags'):
             AnswerTag.remove(fsession['reviewanswer'], tag_id)
             
-        for comment in request.form.getlist('comments'):
-            if comment is not '':
-                Comment.add(fsession['reviewanswer'], fsession['user_id'], 
-                            comment)
+        for review in request.form.getlist('comments'):
+            rating = request.form['rating']
+            if review is not '':
+                Review.add(fsession['reviewanswer'], fsession['user_id'], rating,
+                            review)
+            else:
+                Review.add(fsession['reviewanswer'], fsession['user_id'], rating,
+                '')
 
         # revoke permission to review answer
         del fsession['reviewanswer']
