@@ -14,12 +14,12 @@
 
         {% block js %}
         <script type="text/javascript" src="/static/js/jquery-1.7.min.js"></script>
-        <script src="/static/js/bootstrap.min.js"></script>
+        <script type="text/javascript" src="/static/js/bootstrap.min.js"></script>
         {% endblock %}
     </head>
     <body>
-        {%- if lti.is_instructor -%}
-        <div id="include_menu">{% include "_menu_instructor.html" %}</div>
+        {% if lti.is_instructor() %}
+            <div id="include_menu">{% include "_menu_instructor.html" %}</div>
         {% endif %}
         {% block content %}
         <p>

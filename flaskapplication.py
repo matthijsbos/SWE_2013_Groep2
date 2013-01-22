@@ -10,7 +10,6 @@ from controllers.index import Index
 from controllers.answer import Answer
 from controllers.question import QuestionController as Question
 from controllers.tags import Modifytags, AssignTags
-from controllers.ratings import AssignRatings
 from controllers.review import ReviewAnswer
 
 app = Flask(__name__)
@@ -51,13 +50,6 @@ def home():
 def launch():
     ctrler = Index(debug=True)
     return ctrler.render()
-    
-@app.route("/is_instructor", methods=['GET', 'POST'])
-def is_instructor():
-    if g.lti.is_instructor() == False:
-        return "0";
-    else:
-        return "1";
 
 
 @app.route("/edit_question", methods=['GET', 'POST'])
@@ -169,16 +161,6 @@ def handle_assign_tags():
 def handle_remove_tags():
     ctrler = AssignTags.remove(request)
     return Index(request).render()
-
-@app.route("/assignratings", methods=['POST', 'GET'])
-def assign_ratings():
-    ctrler = AssignRatings(1)
-    return ctrler.render()
-
-@app.route("/assignratings_done", methods=['POST'])
-def handle_assign_ratings():
-    ctrler = AssignRatings.assign(request)
-    return "<a href='/'>back to main</a>"
     
 @app.route("/json/get_tags",methods=['POST', 'GET'])
 def json_get_tags():

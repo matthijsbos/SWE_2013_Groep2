@@ -14,8 +14,8 @@
         elem.text('');
         elem.hide();
         time_elem.text('');
-        var edit_field = $('<input type="text" size="50"/>').val(text);
-        var time_field = $('<input type="text" size="3"/>').val(time);
+        var edit_field = $('<input type="text" class="input-block-level" placeholder="your question">').val(text);
+        var time_field = $('<input type="number" size="3" maxlength="3" placeholder="sec">').val(time);
 
         var editelem = $('#sedit_'+id);
         editelem.click(function(){
@@ -42,65 +42,63 @@
         time_field.appendTo(time_elem);
     }
 
-  function edit_question(id,text,time){
-    $.getJSON("/edit_question",{id:id,text:text,time:time},
-    function(data){
-      if(data.check){
-        if(!data.available){
-          temp="False"
-        }
-        else{
-          temp="True"
-        }
-        $('#available_'+id).html(temp);
-        $('#question_'+id).html('<a href=\"/filteranswer/'+data.text+'\">'+data.text+'</a>');
-        $('#time_'+id).html(data.time)
-      }
-      else{
-        $('#error').html("Error while editing question question.");
-      }
-    });
-  }
+    function edit_question(id,text,time){
+        $.getJSON("/edit_question",{id:id,text:text,time:time},
+        function(data){
+            if(data.check){
+                if(!data.available){
+                    temp="False"
+                }
+                else{
+                    temp="True"
+                }
+                $('#available_'+id).html(temp);
+                $('#question_'+id).html('<a href=\"/filteranswer/'+data.text+'\">'+data.text+'</a>');
+                $('#time_'+id).html(data.time)
+            }
+            else{
+                $('#error').html("Error while editing question question.");
+            }
+        });
+    }
 
     function delete_question(id){
         $.getJSON("/delete_question/"+id,{},
-            function(data){
-                if (data.deleted)
-                    $('#row_'+id).remove();
-                else
-                    $('#error').html("Error while deleting question.");
-            });
+        function(data){
+            if (data.deleted)
+                $('#row_'+id).remove();
+            else
+                $('#error').html("Error while deleting question.");
+        });
     }
 
-  function toggle_question(id){
-    $.getJSON("/toggle_question",{id:id},
-    function(data){
-      if(data.check){
-        if(!data.toggle){
-          temp="False"
-        }
-        else{
-          temp="True"
-        }
-        $('#available_'+id).html(temp);
-      }
-      else{
-        $('#error').html("Error while togging question question.");
-      }
-    });
-  }
+    function toggle_question(id){
+        $.getJSON("/toggle_question",{id:id},
+        function(data){
+            if(data.check){
+                if(!data.toggle){
+                    temp="False"
+                }
+                else{
+                    temp="True"
+                }
+                $('#available_'+id).html(temp);
+            }
+            else{
+                $('#error').html("Error while togging question question.");
+            }
+        });
+    }
 
     function add_question(){
         $('#addQ').hide()
-            $('#qList tr:last').after(
-                    '<tr><th colspan="6"> \
-                    <form action="/handle_question" method="post" style="display:block"> \
-                        <input type="textbox" name="question"> \
-                        <input type="number" name="time" size="3" maxlength="3"> \
-                        <input type="checkbox" name="active"> \
-                        <input type="submit" value="Submit">\
-                    </form> \
-                </th></tr>');
+        $('#qList tr:last').after(
+        '<tr><form action="/handle_question" method="post" style="display:block"> \
+                        <td><input type="text" class="input-block-level" name="question" placeholder="your question"></td> \
+                        <td><input type="checkbox" name="active"></td> \
+                        <td><input type="number" name="time" size="3" maxlength="3" placeholder="sec"></td> \
+                        <td colspan=3><input type="submit" class="btn btn-block" value="Add Question"></td>\
+                    </form></tr>');
     }
 
 </script>
@@ -108,30 +106,43 @@
 <div id="error" style="background-color: #a33; color: white;"></div>
 <table id="qList" class="table table-hover table-bordered table-striped">
     <thead>
-    <tr>
-        <!--<th>id</th>-->
-        <th>Question</th>
-        <th>Active</th>
-        <th>Time</th>
-        <th>Activate</th>
-        <th>Edit</th>
-        <th>Delete</th>
-    </tr>
+        <tr>
+            <!--<th>id</th>-->
+            <th>Question</th>
+            <th>Active</th>
+            <th>Time</th>
+            <th>Edit</th>
+            <th>Activate</th>
+            <th>Delete</th>
+        </tr>
     </thead>
     {% for question in questions %}
-        <tr id="row_{{question.id}}">
-            <td id="question_{{question.id}}">
-                <a href="/filteranswers/{{question.id}}" class="blue">{{question.question}}</a>
-            </td>
-            <td id="available_{{question.id}}">{{question.available}}</td>
-            <td id="time_{{question.id}}">{{question.time}}</td>
-            <td>
-				<a id="edit_{{question.id}}" onclick=edit_field({{question.id}}) /><i class="icon-pencil"></i> edit</a>
-				<a id="sedit_{{question.id}}" style="display:none"><i class=" icon-ok-sign"></i> submit</a>
-			</td>
-            <td><a onclick=toggle_question({{question.id}}) /><i class="icon-retweet"></i> toggle</a></td>
-            <td><a onclick=delete_question({{question.id}})  /><i class="icon-remove-sign"></i> delete</a></td>
-        </tr>
+    <tr id="row_{{question.id}}">
+        <td id="question_{{question.id}}">
+            <a href="/filteranswers/{{question.id}}" class="blue">{{question.question}}</a>
+        </td>
+        <td id="available_{{question.id}}">{{question.available}}</td>
+        <td id="time_{{question.id}}">{{question.time}}</td>
+        <td>
+            <a href="#" id="edit_{{question.id}}" onclick=edit_field({{question.id}}) /><i class="icon-pencil"></i> edit</a>
+            <a href="#" id="sedit_{{question.id}}" style="display:none"><i class=" icon-ok-sign"></i> submit</a>
+        </td>
+        <td><a href="#" onclick=toggle_question({{question.id}}) /><i class="icon-retweet"></i> toggle</a></td>
+        <td><a href="#delete_question{{question.id}}" data-toggle="modal" /><i class="icon-remove-sign"></i> delete</a></td>
+    </tr>
+    <div id="delete_question{{question.id}}" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            <h3 id="myModalLabel">Delete question</h3>
+        </div>
+        <div class="modal-body">
+            <p>Are you sure you want to delete question "{{question.question}}" ?</p>
+        </div>
+        <div class="modal-footer">
+            <button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
+            <button class="btn btn-danger" data-dismiss="modal" onclick="delete_question({{question.id}});">Delete question</button>
+        </div>
+    </div>
     {% endfor %}
 </table>
 <button id="addQ" value="add" class="btn-primary btn" onclick=add_question() />Add Question</button>
