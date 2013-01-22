@@ -123,3 +123,13 @@ class AnswerModel(Base, BaseEntity):
         answer = session.query(AnswerModel).filter_by(id=answerID).one()
         answer.ranking = ranking
 
+    @staticmethod
+    def winningProbability(rating1, rating2) :
+        return 1.0 / (1.0 + (10.0**((rating2 - rating1) / 400.0)))
+
+    @staticmethod
+    def newRating(winner, loser) :
+        expectedScore = winningProbability(winner, loser)
+        winnerRating = winner + K * (1 - winningProbability(winner, loser))
+        loserRating = loser + K * (0 - winningProbability(loser, winner))
+        return winnerRating, loserRating
