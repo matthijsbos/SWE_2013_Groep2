@@ -84,7 +84,7 @@
 </script>
 
 <div id="error" style="background-color: #a33; color: white;"></div>
-<table id="qList" border=1 class="table table-hover">
+<table id="qList" border=1 class="table table-hover table-bordered table-striped">
     <thead>
     <tr>
         <!--<th>id</th>-->
@@ -110,6 +110,6 @@
         </tr>
     {% endfor %}
 </table>
-<button id="addQ" value="add" onclick=add_question() />Add Question</button>
+<button id="addQ" value="add" class="btn-primary btn" onclick=add_question() />Add Question</button>
 
 {% endblock %}
