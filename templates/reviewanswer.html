@@ -32,7 +32,7 @@
         </div>
     </div>
     <div class="reviewanswer_right">
-        <!--
+
                 <h4>This answer has been tagged as:</h4>
         {% for tag in tags %}
         {% if tag.id in enabledtags %}
@@ -64,24 +64,9 @@
             {% endif %}
             {% endfor %}
         </label>
-        -->
-        {% for tag in tags %}
-        <input type="checkbox" name="assign_tags" value="{{tag.id}}">
-        {{tag.name}}
-        </input>
-        {% endfor %}
 
-        <legend>Remove tags:</legend>
-
-        {% for tag in tags %}
-        <input type="checkbox" name="remove_tags" value="{{tag.id}}">
-        {{tag.name}}
-        </input>
-        {% endfor %}
-        <input type="submit" value="remove"> 
 
         <input type="submit" class="btn" name="rating" value="Submit review">
     </div>
 </form>
-</body>
-</html>
+{% endblock %}
