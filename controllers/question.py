@@ -48,7 +48,7 @@ class QuestionController():
 
     @staticmethod
     def get_list():
-    """Retrieves questions asked by the user currently logged in."""
+        """Retrieves questions asked by the user currently logged in."""
         if g.lti.is_instructor():
             # TODO: pagination, etc..... same goes for get_questions
             session.commit()
