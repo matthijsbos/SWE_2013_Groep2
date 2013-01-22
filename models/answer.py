@@ -47,7 +47,7 @@ class AnswerModel(Base, BaseEntity):
     @staticmethod
     def save(questionID, userID, answerText):
         session.add(AnswerModel(
-            questionID=questionID, userID=userID, text=answerText, edit=0, ranking=700.0))
+            questionID=questionID, userID=userID, text=answerText, edit=0, ranking=1000.0))
         session.commit()
 
     @staticmethod
@@ -114,7 +114,12 @@ class AnswerModel(Base, BaseEntity):
         return answer.created
 
     @staticmethod
-    def getRank(answerID):
+    def getRanking(answerID):
         answer = session.query(AnswerModel).filter_by(id=answerID).one()
-        return answer.rank
+        return answer.ranking
+
+    @staticmethod
+    def setRanking(answerID, ranking):
+        answer = session.query(AnswerModel).filter_by(id=answerID).one()
+        answer.ranking = ranking
 
