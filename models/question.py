@@ -7,21 +7,21 @@ from basemodel import BaseEntity
 class Question(Base, BaseEntity):
     __tablename__ = 'questions'
 
-    teacher_id = Column(String)
+    user_id = Column(String)
     course_id = Column(String)
     question = Column(String)
     available = Column(Boolean)
     time = Column(Integer)
 
-    def __init__(self, teacher_id, course_id, question, available, time):
-        self.teacher_id = teacher_id
+    def __init__(self, user_id, course_id, question, available, time):
+        self.user_id = user_id
         self.course_id = course_id
         self.question = question
         self.available = available
         self.time = time
 
     def __repr__(self):
-        return "<Question ('%s','%s','%s')>" % (self.teacher_id,
+        return "<Question ('%s','%s','%s')>" % (self.user_id,
                                                 self.question,
                                                 self.available)
 
