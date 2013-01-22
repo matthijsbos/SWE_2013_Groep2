@@ -15,11 +15,12 @@ class AnswerModel(Base, BaseEntity):
     edit = Column(Integer)
     ranking = Column(Float)
 
-    def __init__(self,text,questionID,userID,edit):
-		self.text = text
-		self.questionID = questionID
-		self.userID = userID
-		self.edit = edit
+    def __init__(self,text,questionID,userID,edit,ranking):
+        self.text = text
+        self.questionID = questionID
+        self.userID = userID
+        self.edit = edit
+        self.ranking = ranking
 
     def __repr__(self):
         return "<Answer('%s','%s','%s')>" % (self.id,

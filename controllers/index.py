@@ -24,8 +24,7 @@ class Index():
         if g.lti.is_instructor():
             return json.dumps({'has_new': False})
 
-        answers = AnswerModel()
-        question = answers.get_unanswered_questions(g.lti.get_user_id(),
+        question = AnswerModel.get_unanswered_questions(g.lti.get_user_id(),
                                                     g.lti.get_course_id())
 
         if not len(question):
