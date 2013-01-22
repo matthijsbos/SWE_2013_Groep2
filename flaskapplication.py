@@ -72,6 +72,9 @@ def toggle_question():
 
 @app.route("/question", methods=['GET', 'POST'])
 def ask_question():
+    if g.lti.is_instructor() == False:
+        return Question.ask_question(g.lti.get_user_id())
+
     return Question.ask_question(g.lti.get_user_id())
 
 # this route is used for the feedback from inserting the question into the
@@ -80,8 +83,6 @@ def ask_question():
 
 @app.route("/handle_question", methods=['POST'])
 def handle_question():
-    if g.lti.is_instructor() == False:
-        return render_template("access_restricted.html")
     try:
         request.form['active']
         isActive = True
