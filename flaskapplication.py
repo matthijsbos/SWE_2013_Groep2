@@ -228,6 +228,11 @@ def answerFilterByQuestionID(questionid):
 def has_new_question():
     ctrler = Index()
     return ctrler.has_new_question()
+	
+@app.route("/answerit", methods=['GET', 'POST'])
+def answer_it():
+    ctrler = Index()
+    return ctrler.answer_it()
 
 @app.route("/logout")
 def logout():
