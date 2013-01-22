@@ -82,8 +82,6 @@ def ask_question():
 
 @app.route("/handle_question", methods=['POST'])
 def handle_question():
-    if g.lti.is_instructor() == False:
-        return render_template("access_restricted.html")
     try:
         request.form['active']
         isActive = True
