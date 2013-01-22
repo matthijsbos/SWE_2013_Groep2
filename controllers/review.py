@@ -7,7 +7,6 @@ from flask import render_template, g, session as fsession
 from models.tag import Tag, AnswerTag
 from models.answer import AnswerModel
 from models.review import Review
-from models.comment import Comment
 from dbconnection import session
 import json
 
