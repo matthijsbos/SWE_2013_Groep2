@@ -3,7 +3,8 @@
 # Changes:
 # Comment:
 
-from flask import render_template, session as fsession
+from flask import session as fsession
+from utilities import render_template
 from models.tag import Tag, AnswerTag
 from models.answer import AnswerModel
 import json

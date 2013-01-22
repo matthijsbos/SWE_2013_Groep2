@@ -1,5 +1,6 @@
 from models import answer, question
-from flask import render_template, g
+from flask import g
+from utilities import render_template
 import datetime
 import time
 import sqlalchemy.orm.exc as sqlalchemyExp
