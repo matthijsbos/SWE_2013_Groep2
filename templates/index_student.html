@@ -2,7 +2,6 @@
 
 {% block js %}
 {{ super() }}
-<script type="text/javascript" src="/static/js/jquery.timer.js"></script>
 <script type="text/javascript" src="/static/js/jquery.countdown.js"></script>
 <script type="text/javascript" src="/static/js/student.js"></script>
 {% endblock %}
@@ -20,6 +19,11 @@
     <br>
     <input type="submit" value="submit answer" class="submit-answer"/>
     <div id="counter" class="countdowntime"></div>
-    <div id="prolongedText" style="display: none;">Question has been prolonged</div>
+	<div id="prolongedText" style="display: none;">Question has been prolonged</div>
+</form>
+
+<!-- For the review button. -->
+<form action="/review" id="reviewform" method="post" style="display:none;">
+    <input type="submit" value="You can review answers!" id="review-answer"/>
 </form>
 {% endblock %}

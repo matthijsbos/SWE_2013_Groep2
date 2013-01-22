@@ -52,6 +52,7 @@ class QuestionController():
         
         if question is not None and question.activate_time is not None:
             time_remaining = QuestionController.calculate_remaining_time(question)
+            question_time =  question.time
         else:
             time_remaining = 0
             question_time =  0
@@ -110,4 +111,4 @@ class QuestionController():
         time_remaining = datetime.now() - (question.activate_time +
                 timedelta(seconds=question.time))
         time_remaining = time_remaining.seconds + time_remaining.days * 86400
-        return time_remaining
+        return - time_remaining

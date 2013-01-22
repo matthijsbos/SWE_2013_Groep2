@@ -1,0 +1,16 @@
+<script>    
+
+    $(function() {
+        if (location.pathname.split("/")[1] != ''){
+            $('li[menu-url^="/' + location.pathname.split("/")[1] + '"]').addClass('active');
+        }
+    });
+
+</script>
+    <ul id="menu_instructor" class="nav nav-pills">
+        <li menu-url="/question_list"><a href="/question_list" class="blue">Question list</a></li>
+        <li menu-url="/filteranswers"><a href="/filteranswers" class="blue">Show answers</a></li>
+        <li menu-url="/managetags"><a href="/managetags" class="blue">Manage tags</a></li>
+        <li menu-url="/reviewanswer_stub"><a href="/reviewanswer_stub">Review an answer</a></li>
+        <li menu-url="/question_export"><a href="/question_export" class="blue">Export questions for this course</a></li>
+    </ul>

@@ -4,6 +4,7 @@ from dbconnection import engine, session, Base, exc
 from basemodel import BaseEntity
 from question import Question
 
+
 class AnswerModel(Base, BaseEntity):
     __tablename__ = 'answer'
 
@@ -19,13 +20,19 @@ class AnswerModel(Base, BaseEntity):
 
     def __str__(self):
         return self.text
-
+    
+    @staticmethod
+    def get_rating(questionID):
+        rating = 1
+        return rating
+    
     @staticmethod
     def savereview(questionID, userID, answerText, edit):
         session.add(AnswerModel(questionID=questionID,
                     userID=userID, text=answerText, edit=edit + 1))
         session.commit()
 
+    @staticmethod
     def get_question_answers(question_id):
         return session.query(AnswerModel).filter(AnswerModel.questionID==question_id)
 
@@ -74,13 +81,12 @@ class AnswerModel(Base, BaseEntity):
         print tmp
         print [(x.modified + timedelta(seconds=x.time), datetime.now()) for x in tmp]
 
-
-
-
-        return [x for x in tmp if x.modified + timedelta(seconds=x.time) >
-                datetime.now()]
-
-
+        for x in tmp:
+            print x.time
+            if x.time == 0:
+                return [x]
+            elif x.modified + timedelta(seconds=x.time) > datetime.now():
+                return [x]
 
     @staticmethod
     def get_answered_active_questions(userid, courseid):

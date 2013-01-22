@@ -51,6 +51,13 @@ def home():
 def launch():
     ctrler = Index(debug=True)
     return ctrler.render()
+    
+@app.route("/is_instructor", methods=['GET', 'POST'])
+def is_instructor():
+    if g.lti.is_instructor() == False:
+        return "0";
+    else:
+        return "1";
 
 
 @app.route("/edit_question", methods=['GET', 'POST'])
@@ -159,20 +166,23 @@ def handle_assign_tags():
     return "<a href='/'>back to main</a>"
     
 @app.route("/removetags_done",methods=['POST'])
-def handle_assign_tags():
+def handle_remove_tags():
     ctrler = AssignTags.remove(request)
-    return "<a href='/'>back to main</a>"
+    return Index(request).render()
 
 @app.route("/assignratings", methods=['POST', 'GET'])
 def assign_ratings():
     ctrler = AssignRatings(1)
     return ctrler.render()
 
-
 @app.route("/assignratings_done", methods=['POST'])
 def handle_assign_ratings():
     ctrler = AssignRatings.assign(request)
     return "<a href='/'>back to main</a>"
+    
+@app.route("/json/get_tags",methods=['POST', 'GET'])
+def json_get_tags():
+    return Modifytags.json_get_tags()
 
 """
 To review a answer, return reviewanswer.review(x) should be called from the
@@ -182,7 +192,7 @@ in the database (given a user has permission to do so)
 @app.route("/reviewanswer",methods=['POST', 'GET'])
 def handle_review_answer():
     ctrler = ReviewAnswer(request)
-    return Index(request).render()
+    return ReviewAnswer.review(1)
 
 @app.route("/reviewanswer_stub", methods=["POST", "GET"])
 def do_review_answer_stub():
@@ -204,6 +214,10 @@ def answerFilterByQuestionID(questionid):
 def has_new_question():
     ctrler = Index()
     return ctrler.has_new_question()
+
+@app.route("/has_new_review", methods=['GET', 'POST'])
+def has_new_review():
+    return ReviewAnswer.has_new_review()
 
 @app.route("/question_remaining_time",methods=['GET','POST'])
 def get_question_remaining_time():

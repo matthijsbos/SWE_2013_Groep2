@@ -93,8 +93,7 @@
     function add_question(){
         $('#addQ').hide()
             $('#qList tr:last').after(
-                    '<tr><td colspan="6"><center>FIREFOX MURDERS FORM IN TD //mustfix</center></td></tr> \
-                <tr><th colspan="6"> \
+                    '<tr><th colspan="6"> \
                     <form action="/handle_question" method="post" style="display:block"> \
                         <input type="textbox" name="question"> \
                         <input type="number" name="time" size="3" maxlength="3"> \
@@ -107,16 +106,18 @@
 </script>
 
 <div id="error" style="background-color: #a33; color: white;"></div>
-<table id="qList" border=1 class="black">
+<table id="qList" class="table table-hover table-bordered table-striped">
+    <thead>
     <tr>
         <!--<th>id</th>-->
         <th>Question</th>
         <th>Active</th>
         <th>Time</th>
-        <th>Edit</th>
         <th>Activate</th>
+        <th>Edit</th>
         <th>Delete</th>
     </tr>
+    </thead>
     {% for question in questions %}
         <tr id="row_{{question.id}}">
             <td id="question_{{question.id}}">
@@ -125,14 +126,13 @@
             <td id="available_{{question.id}}">{{question.available}}</td>
             <td id="time_{{question.id}}">{{question.time}}</td>
             <td>
-                <button id="edit_{{question.id}}" value="edit" onclick=edit_field({{question.id}})>Edit</button>
-                <button id="sedit_{{question.id}}" value="edit" style="display:none" >Submit</button>
-            </td>
-            <td><button value="toggle" onclick=toggle_question({{question.id}}) >Toggle</button></td>
-            <td><button value="delete" onclick=delete_question({{question.id}}) >Delete</button></td>
+				<a id="edit_{{question.id}}" onclick=edit_field({{question.id}}) /><i class="icon-pencil"></i> edit</a>
+				<a id="sedit_{{question.id}}" style="display:none"><i class=" icon-ok-sign"></i> submit</a>
+			</td>
+            <td><a onclick=toggle_question({{question.id}}) /><i class="icon-retweet"></i> toggle</a></td>
+            <td><a onclick=delete_question({{question.id}})  /><i class="icon-remove-sign"></i> delete</a></td>
         </tr>
     {% endfor %}
 </table>
-<button id="addQ" value="add" onclick=add_question() />Add Question</button>
-<a href="/" class="blue">Back</a>
+<button id="addQ" value="add" class="btn-primary btn" onclick=add_question() />Add Question</button>
 {% endblock %}

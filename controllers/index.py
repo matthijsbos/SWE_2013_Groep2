@@ -16,7 +16,7 @@ class Index():
             return render_template('index_debug.html',
                                    lti_dump=g.lti.dump_all())
         if g.lti.is_instructor():
-            return render_template('index_instructor.html')
+            return render_template('index_instructor.html', username=g.lti.get_user_name())
 
         return render_template('index_student.html')
 
@@ -28,7 +28,7 @@ class Index():
         question = answers.get_unanswered_questions(g.lti.get_user_id(),
                                                     g.lti.get_course_id())
 
-        if not len(question):
+        if question is None:
             return json.dumps({'has_new': False})
 
         question = question[0]
