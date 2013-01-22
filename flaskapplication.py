@@ -11,7 +11,6 @@ from controllers.index import Index
 from controllers.answer import Answer
 from controllers.question import QuestionController as Question
 from controllers.tags import Modifytags, AssignTags
-from controllers.ratings import AssignRatings
 from controllers.review import ReviewAnswer
 
 app = Flask(__name__)
@@ -83,8 +82,6 @@ def ask_question():
 
 @app.route("/handle_question", methods=['POST'])
 def handle_question():
-    if g.lti.is_instructor() == False:
-        return render_template("access_restricted.html")
     try:
         request.form['active']
         isActive = True

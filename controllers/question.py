@@ -48,10 +48,18 @@ class QuestionController():
 
     @staticmethod
     def get_list():
-        # TODO: pagination, etc..... same goes for get_questions
-        session.commit()
-        return render_template('question_list.html',
-                               questions=session.query(Question).order_by(Question.available.desc()))
+    """Retrieves questions asked by the user currently logged in."""
+        if g.lti.is_instructor():
+            # TODO: pagination, etc..... same goes for get_questions
+            session.commit()
+            return render_template('question_list.html',
+                                   questions=session.query(Question).order_by(Question.available.desc()).filter_by(user_id=g.lti.get_user_id()  ) )
+        else:
+            session.commit()
+            return render_template('question_list.html',
+                                   questions=session.query(Question).order_by(Question.available.desc()).filter_by(user_id=g.lti.get_user_id()  ) )
+            
+            
 
     @staticmethod
     def delete_question(qid):

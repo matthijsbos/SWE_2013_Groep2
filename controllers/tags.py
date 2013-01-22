@@ -9,7 +9,6 @@ from models.answer import AnswerModel
 import json
 
 
-
 class Modifytags():
     def __init__(self):
         pass
