@@ -11,7 +11,6 @@ from controllers.index import Index
 from controllers.answer import Answer
 from controllers.question import QuestionController as Question
 from controllers.tags import Modifytags, AssignTags
-from controllers.ratings import AssignRatings
 from controllers.review import ReviewAnswer
 
 app = Flask(__name__)

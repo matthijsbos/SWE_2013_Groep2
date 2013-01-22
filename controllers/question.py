@@ -64,14 +64,10 @@ class QuestionController():
         return json.dumps({'deleted': g.lti.is_instructor()})
 
     @staticmethod
-    def ask_question(user):
+    def ask_question(instructor):
         '''passes the name of the course instructor to the ask question module and calls the screen to ask a question'''
-        if g.lti.is_instructor():
-            return render_template('askQuestion.html', instr=user)
+        return render_template('askQuestion.html', instr=instructor)
 
-        else:
-            return render_template('askUserQuestion.html', stud=user, course=g.lti.get_course_id(),)
-            
     @staticmethod
     def create_question(question, instructor, course, active, time):
         '''formats a question for database insertion and inserts it, calls a result screen afterwards'''
