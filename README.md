@@ -1,5 +1,3 @@
-TROLOLO
-
 Draaien van de applicatie
 =========================
 
