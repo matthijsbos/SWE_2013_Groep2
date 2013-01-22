@@ -9,9 +9,6 @@ from models.answer import AnswerModel
 import json
 
 
-#create json file of all tags
-data = Tag.get_all()
-tags = json.dumps(data)
 
 class Modifytags():
     def __init__(self):
