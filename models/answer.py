@@ -74,13 +74,12 @@ class AnswerModel(Base, BaseEntity):
         print tmp
         print [(x.modified + timedelta(seconds=x.time), datetime.now()) for x in tmp]
 
-
-
-
-        return [x for x in tmp if x.modified + timedelta(seconds=x.time) >
-                datetime.now()]
-
-
+        for x in tmp:
+            print x.time
+            if x.time == 0:
+                return [x]
+            elif x.modified + timedelta(seconds=x.time) > datetime.now():
+                return [x]
 
     @staticmethod
     def get_answered_active_questions(userid, courseid):

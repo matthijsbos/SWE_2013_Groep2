@@ -8,7 +8,7 @@
 
 var has_active_question = false;
 var active_question_id;
-var query_interval = 1000 * 5; // Every 5 sec
+var query_interval = 1000 * 3; // Every 5 sec
 var query_interval_id;
 
 $(function() {
@@ -44,9 +44,15 @@ function show_question(id, question, time_remaining) {
 	var austDay = new Date();
 	austDay.setSeconds(austDay.getSeconds() + time_remaining);
     console.log(austDay);
-	$('#answerform #counter').countdown('option', {until: austDay,
-                                         compact: true,
-                                         onExpiry: submit_answer});
+    
+    if (time_remaining < 0)
+        $('#answerform #counter').hide()
+    else{
+        $('#answerform #counter').show()
+        $('#answerform #counter').countdown('option', {until: austDay,
+                                            compact: true,
+                                            onExpiry: submit_answer});
+    }   
 
     $('#pleasewait').hide();
     $('#answerform #question').text(question);
