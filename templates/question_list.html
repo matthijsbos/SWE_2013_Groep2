@@ -55,7 +55,7 @@
         $.getJSON("/edit_question",{id:id,text:text,time:time},
         function(data){
             if(data.check){
-                $('#question_'+id).html('<a href=\"/filteranswer/'+data.text+'\">'+data.text+'</a>');
+                $('#question_'+id).html('<a href=\"/filteranswers/'+data.id+'\">'+data.text+'</a>');
                 $('#time_'+id).html(data.time)
             }
             else{
