@@ -91,7 +91,7 @@
     function add_question(){
         $('#addQ').hide()
         $('#qList tr:last').after(
-        '<tr><form action="/handle_question" method="post" style="display:block"> \
+        '<tr>\
                         <td class="question-field"><input type="text" class="input-block-level" name="question" placeholder="your question"></td> \
                         <td class="time-field"><input type="number" name="time" size="3" maxlength="3" placeholder="sec"></td> \
                         <td><input type="checkbox" name="active"></td> \
@@ -99,12 +99,13 @@
                         <td><input type="checkbox" name="tags" checked></td> \
                         <td><input type="checkbox" name="rating" checked></td> \
                         <td colspan=2><input type="submit" class="btn btn-block btn-primary" value="Add Question"></td>\
-                    </form></tr>');
+                    </tr>');
     }
 
 </script>
 
 <div id="error" style="background-color: #a33; color: white;"></div>
+<form action="/handle_question" method="post" style="display:block">
 <table id="qList" class="table table-hover table-bordered table-striped">
     <thead>
         <tr>
@@ -150,5 +151,6 @@
     </div>
     {% endfor %}
 </table>
+    </form>
 <button id="addQ" value="add" class="btn-primary btn" onclick=add_question() />Add Question</button>
 {% endblock %}
