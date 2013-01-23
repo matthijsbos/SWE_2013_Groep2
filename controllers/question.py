@@ -3,6 +3,7 @@ from flask import escape, render_template, g
 
 from dbconnection import session
 from models.question import Question
+from controllers.scheduler import Scheduler
 
 
 class QuestionController():
@@ -43,6 +44,9 @@ class QuestionController():
         elif t == 'archived':
             question.archived = not question.archived
 
+        if question.reviewavailable:
+            Scheduler(args['id'])
+            
         return json.dumps({"answerable": question.answeravailable,
                            "reviewable": question.reviewavailable,
                            "archived"  : question.archived,

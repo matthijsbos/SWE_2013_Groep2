@@ -10,14 +10,11 @@ from models.schedule import Schedule
 
 class Scheduler():
     def __init__(self, question_id):
-        self.question_id = question_id
-        
-    def schdule(self):
         schedule_list = []
         user_list = []
         scores = []
         
-        answers = AnswerModel.get_question_answers(self.question_id)
+        answers = AnswerModel.get_question_answers(question_id)
         for a in answers:
             scores.append((a.get_rating(), a))
             user_list.append(a.userID)
