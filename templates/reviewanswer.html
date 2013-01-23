@@ -27,7 +27,7 @@
 			</input>
 			{% endfor %}
 			<input type="submit" value="remove"> 
-			<hr>
+			
 			<table>
 				<tr>
 					<td>
@@ -44,5 +44,12 @@
 			<textarea name="comments" rows="4" cols="50" placeholder="Insert your comment here..."></textarea>
 			<input type="submit" name="rating" value="Submit review">
 		</form>
+		
+		{% for review in reviews %}
+		<hr noshade size=2 width="50%" align=left>
+		user:{{ review.user_id }}<br>
+		comment:{{ review.text }}<br>
+		raiting:{{ review.rating }}<br>
+		{% endfor %}
 	</body>
 </html>
