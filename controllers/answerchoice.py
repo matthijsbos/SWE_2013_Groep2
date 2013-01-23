@@ -86,3 +86,9 @@ class Answerchoice():
             session.rollback()
 
         return 'success' 
+
+    def lobby(self):
+        if True:
+            return render_template('choice.html',question='DUMMY')
+        else:
+            return redirect('/answerchoice')
