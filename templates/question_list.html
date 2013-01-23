@@ -11,7 +11,7 @@
         elem.addClass('activated');
         elem.text('');
         var edit_field = $('<input type="text" size="50"/>').val(text);
-        edit_field.on('blur', function(){
+        edit_field.blur(function(){
             edit_question(id, $(this).val());
             var newText = elem.val();
             $(this).parent().text(newText).removeClass('activated');
@@ -62,21 +62,36 @@
         $('#available_'+id).html(temp);
       }
       else{
-        $('#error').html("Error while toggle'ing question question.");
+        $('#error').html("Error while togging question question.");
       }
     });
   }
+
+    function add_question(){
+        $('#addQ').hide()
+            $('#qList tr:last').after(
+                    '<tr><td colspan="6"><center>FIREFOX MURDERS FORM IN TD //mustfix</center></td></tr> \
+                <tr><th colspan="6"> \
+                    <form action="/handle_question" method="post" style="display:block"> \
+                        <input type="textbox" name="question"> \
+                        <input type="number" name="time" size="3" maxlength="3"> \
+                        <input type="checkbox" name="active"> \
+                        <input type="submit" value="Submit">\
+                    </form> \
+                </th></tr>');
+    }
+
 </script>
 
 <div id="error" style="background-color: #a33; color: white;"></div>
-<table border=1 class="black">
+<table id="qList" border=1 class="black">
     <tr>
         <!--<th>id</th>-->
         <th>Question</th>
         <th>Active</th>
         <th>Time</th>
-        <th>Edit</th>
         <th>Activate</th>
+        <th>Edit</th>
         <th>Delete</th>
     </tr>
     {% for question in questions %}
@@ -93,5 +108,6 @@
         </tr>
     {% endfor %}
 </table>
+<button id="addQ" value="add" onclick=add_question() />Add Question</button>
 <a href="/" class="blue">Back</a>
 {% endblock %}
