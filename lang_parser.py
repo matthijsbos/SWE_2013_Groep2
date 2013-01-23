@@ -13,6 +13,7 @@ types:
 
 """
 
+import string
 
 class LanguageParser():
     """Parses given texts in a set language. It can normalize text and extract
@@ -24,7 +25,7 @@ class LanguageParser():
     LANG_NL = 'nl'
 
     def __init__(self, language, texts=[]):
-        if language not in (LANG_EN, LANG_NL):
+        if language not in (self.LANG_EN, self.LANG_NL):
             raise ValueError("Invalid language: %s" % repr(language))
 
         self.language = language
@@ -50,9 +51,45 @@ class LanguageParser():
         return map(self.extract_keywords, self.texts)
 
     def normalize(self, text):
-        # TODO: normalize (singularize, lemma)
-        return text.lower()  # placeholder
+        if self.language == self.LANG_EN:
+            from pattern.en import parse
+        elif self.language == self.LANG_NL:
+            from pattern.nl import parse
+        else:
+            raise Exception("Unsupported language: %s" % repr(self.language))
+
+        parsed = parse(text, lemmata=True, chunks=False)
+        print parsed
+        t = []
+        for x in parsed.split():
+            t += x
+        print t
+        t = [x[-1] for x in t if x[-1] not in string.punctuation]
+        t = ' '.join(t)
+
+        return t
 
     def extract_keywords(self, text):
-        # TODO: normalize, then select... things (nouns, cardinal numbers, ...)
-        return text.split()[:-1]  # placeholder
+        keyword_types = ('NN', 'NNS', 'NNP', 'NNPS', 'CD', 'FW')
+        keyword_types_fallback = ('VBZ', 'VBP', 'VBD', 'VBN', 'VBG')
+
+        if self.language == self.LANG_EN:
+            from pattern.en import parse, pprint
+        elif self.language == self.LANG_NL:
+            from pattern.nl import parse, pprint
+        else:
+            raise Exception("Unsupported language: %s" % repr(self.language))
+
+        parsed = parse(text, lemmata=True, chunks=False)
+        pprint(parsed)
+
+        parsed = [x for y in parsed.split() for x in y]  # Flatten
+        parsed = filter(lambda w: w[-1] not in string.punctuation, parsed)
+        keywords = filter(lambda w: w[1] in keyword_types, parsed)
+        if not keywords:
+            keywords = filter(lambda w: w[1] in keyword_types_fallback, parsed)
+        if not keywords:
+            keywords = parsed
+        keywords = map(lambda w: w[-1], keywords)
+
+        return keywords
