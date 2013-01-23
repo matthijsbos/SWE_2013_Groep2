@@ -8,6 +8,7 @@ from utilities import render_template
 from models.tag import Tag, AnswerTag
 from models.answer import AnswerModel
 from models.review import Review
+from models.question import Question
 from dbconnection import session
 import json
 
@@ -53,13 +54,21 @@ class ReviewAnswer():
             return "Error answer not found"
         if answer == None:
             return "Error answer not found"
+            
+        try:
+            question = Question.by_id(answer.questionID)
+        except:
+            return "Error question not found"
+            
 
         fsession['reviewanswer'] = answer_id
 
         enabledtags = AnswerTag.get_tag_ids(answer_id)
 
         return render_template('reviewanswer.html', answer=answer,
-                               tags=Tag.get_all(), enabledtags=enabledtags)
+                               tags=Tag.get_all(), enabledtags=enabledtags,
+                               tagsOn = question.tags, commentOn = question.comment,
+                               ratingOn = question.rating)
 
     """
     Stub class, to be implemented by mustafa

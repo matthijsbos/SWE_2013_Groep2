@@ -2,11 +2,15 @@
 {% block content %}
 <legend>Review the following answer and rate it on a scale of 1 to 5</legend>
 <form action="/reviewanswer" method="POST">
+
     <div class="reviewanswer_left">
         {{ answer }} <br>
+
+        {% if commentOn %}
         <textarea name="comments" rows="4" cols="50" placeholder="Insert your comment here..."></textarea>
-
-
+        {% endif %}
+        
+        {% if ratingOn %}
         <script>
             function rating2(value){
                 $("#1").html("<span>Rate it 1 stars</span>");
@@ -30,7 +34,10 @@
                 <li><a href="#" onclick="javascript:rating2(1);" id="1" value="1"><span>Rate it 1 star</span></a></li>
             </ul>
         </div>
+        {% endif %}
     </div>
+    
+    {% if tagsOn %}
     <div class="reviewanswer_right">
 
                 <h4>This answer has been tagged as:</h4>
@@ -64,9 +71,9 @@
             {% endif %}
             {% endfor %}
         </label>
-
-
         <input type="submit" class="btn" name="rating" value="Submit review">
     </div>
+    {% endif %}
+    
 </form>
 {% endblock %}
