@@ -32,14 +32,17 @@ function query_new_question() {
     }
     $.getJSON("/has_new_question", {},
         function(data) {
-            if (data.has_new) {
-                show_question(data.question_id, data.question_text,
-                    data.time_remaining,data.question_time);
+            alert(data.has_new)            
+            if (data.has_new) {   
+                
+                show_question(data.questions[0].question_id, data.questions[0].question_text,
+                    data.questions[0].time_remaining, data.questions[0].question_time);
             }
+             
         });
     /* Poll for reviewable questions */
     $.getJSON("/has_new_review", {},
-        function(data) {
+        function(data) {            
             if (data.has_new) {
                 show_review_button(data.number);
             }
@@ -47,7 +50,6 @@ function query_new_question() {
                 show_review_button(0);
             }            
         });
-
 }
 
 function show_review_button(number) {

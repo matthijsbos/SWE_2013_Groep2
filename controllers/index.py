@@ -25,21 +25,29 @@ class Index():
             return json.dumps({'has_new': False})
 
         answers = AnswerModel()
-        question = answers.get_unanswered_questions(g.lti.get_user_id(),
+        questions = answers.get_unanswered_questions(g.lti.get_user_id(),
                                                     g.lti.get_course_id())
 
-        if question is None:
+        if len(questions) == 0:
             return json.dumps({'has_new': False})
-
-        question = question[0]
-
-        time_remaining = datetime.now() - (question.activate_time +
-                timedelta(seconds=question.time))
-        time_remaining = time_remaining.seconds + time_remaining.days * 86400
-        time_remaining = -time_remaining
-
-        return json.dumps({'has_new': True,
-                           'question_id': question.id,
-                           'question_text': question.question,
-                           'time_remaining': time_remaining,
-                           'question_time' : question.time})
+        
+        output = { 'has_new': True, 'len': len(questions) } 
+        array = []        
+        
+        for question in questions:        
+            time_remaining = datetime.now() - (question.activate_time +
+                    timedelta(seconds=question.time))
+            time_remaining = time_remaining.seconds + time_remaining.days * 86400
+            time_remaining = -time_remaining      
+            
+            object = {'question_id': question.id,
+                      'question_text': question.question,
+                      'time_remaining': time_remaining,
+                      'question_time': question.time}        
+                      
+            array.append(object)
+        
+        #qArray = {'questions': array}        
+        output['questions'] = array
+        
+        return json.dumps(output)
