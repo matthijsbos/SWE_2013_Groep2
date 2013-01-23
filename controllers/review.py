@@ -7,7 +7,7 @@ from flask import render_template, g, session as fsession
 from models.tag import Tag, AnswerTag
 from models.answer import AnswerModel
 from models.review import Review
-from dbconnection import session
+from models.schedule import Schedule
 import json
 
 
@@ -37,26 +37,23 @@ class ReviewAnswer():
         else:
             Review.add(fsession['reviewanswer'], fsession['user_id'],
                        request.form['rating'], request.form['comments'])
+                       
+            # users can review only once per answer so delete from schdule list
+            Schedule.delete(fsession['reviewanswer'], fsession['user_id'])
                                
         # revoke permission to review answer
         del fsession['reviewanswer']
     
     @staticmethod
-    def review(answer_id):
-
-        # one of these checks can be removed once we merge and know what's what
-        try:
-            answer = AnswerModel.by_id(answer_id)
-        except:
-            return "Error answer not found"
+    def review():
+        answer = Schedule.get_answer(fsession['user_id'])
         if answer == None:
-            return "Error answer not found"
+            return "No answers to review."
 
-        fsession['reviewanswer'] = answer_id
+        fsession['reviewanswer'] = answer.id
 
-        enabledtags = AnswerTag.get_tag_ids(answer_id)
-        reviews = Review.get_list(answer_id)
-        print reviews
+        enabledtags = AnswerTag.get_tag_ids(answer.id)
+        reviews = Review.get_list(answer.id)
 
         return render_template('reviewanswer.html', answer=answer,
                                tags=Tag.get_all(), enabledtags=enabledtags,
@@ -67,8 +64,9 @@ class ReviewAnswer():
     """
     @staticmethod 
     def has_new_review():
-        if g.lti.is_instructor():
+        answer = Schedule.get_answer(fsession['user_id'])
+        
+        if g.lti.is_instructor() or answer is None:
             return json.dumps({'has_new': False})
 
-        return json.dumps({'has_new': True,
-                           'number': 5 })
+        return json.dumps({'has_new': True})

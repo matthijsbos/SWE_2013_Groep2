@@ -185,11 +185,11 @@ in the database (given a user has permission to do so)
 @app.route("/reviewanswer",methods=['POST', 'GET'])
 def handle_review_answer():
     ctrler = ReviewAnswer(request)
-    return Index(request).render()
+    return ReviewAnswer.review()
 
 @app.route("/reviewanswer_stub", methods=["POST", "GET"])
 def do_review_answer_stub():
-    return ReviewAnswer.review(1)
+    return ReviewAnswer.review()
 
 @app.route("/filteranswers", methods=['POST', 'GET'])
 def answerFilter():
