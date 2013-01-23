@@ -11,6 +11,7 @@ from controllers.answer import Answer
 from controllers.question import QuestionController as Question
 from controllers.tags import Modifytags, AssignTags
 from controllers.review import ReviewAnswer
+from models.sakai import SakaiData
 
 app = Flask(__name__)
 app.debug = True
@@ -121,11 +122,9 @@ def handle_question():
 def list_questions():
     return Question.get_list()
 
-
 @app.route("/delete_question/<id>", methods=['GET', 'POST'])
 def delete_question(id):
     return Question.delete_question(id)
-
 
 @app.route("/question_export", methods=['GET', 'POST'])
 def question_export():
@@ -147,13 +146,11 @@ def managetags():
     ctrler = Modifytags()
     return ctrler.render()
 
-
 @app.route("/addtag", methods=['POST'])
 def addtags():
     ctrler = Modifytags()
     ctrler.addtag(request)
     return ctrler.render()
-
 
 @app.route("/removetag", methods=['POST'])
 def removetags():
@@ -161,18 +158,15 @@ def removetags():
     ctrler.deletetag(request)
     return ctrler.render()
 
-
 @app.route("/answer", methods=['GET', 'POST'])
 def answerForm():
     ctrler = Answer(request)
     return ctrler.render()
 
-
 @app.route("/assigntags", methods=['POST', 'GET'])
 def assign_tags():
     ctrler = AssignTags(1)
     return ctrler.render()
-
 
 @app.route("/assigntags_done", methods=['POST'])
 def handle_assign_tags():
@@ -198,21 +192,15 @@ def handle_review_answer():
     ctrler = ReviewAnswer(request)
     return ReviewAnswer.review(1)
 
-@app.route("/reviewanswer_stub", methods=["POST", "GET"])
-def do_review_answer_stub():
-    return ReviewAnswer.review(1)
-
 @app.route("/filteranswers", methods=['POST', 'GET'])
 def answerFilter():
     ctrler = Answer(request)
     return ctrler.render_filtered()
 
-
 @app.route("/filteranswers/<questionid>", methods=['POST', 'GET'])
 def answerFilterByQuestionID(questionid):
     ctrler = Answer(request)
     return ctrler.render_filtered_by_questionid(questionid)
-
 
 @app.route("/has_new_question", methods=['GET', 'POST'])
 def has_new_question():
