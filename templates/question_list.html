@@ -18,6 +18,7 @@
         var time_field = $('<input type="number" size="3" maxlength="3" placeholder="sec">').val(time);
 
         var editelem = $('#sedit_'+id);
+
         editelem.click(function(){
             $('#edit_'+id).show();
             $('#sedit_'+id).hide();
@@ -37,6 +38,11 @@
         });
         $('#sedit_'+id).show();
         $('#edit_'+id).hide();
+        
+        edit_field.blur(function() {
+            editelem.css('color', 'green');
+            editelem.css('font-weight', 'bold');
+        });
         
         edit_field.appendTo(elem.parent()).focus();
         time_field.appendTo(time_elem);
@@ -67,7 +73,6 @@
 
     function toggle_question(id, field){
         $.getJSON("/toggle_question",{id:id, field:field},
-
         function(data){
             if(data.check){
                 if(!data.toggle){

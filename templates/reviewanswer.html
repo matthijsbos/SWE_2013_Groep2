@@ -1,5 +1,11 @@
 {% extends "_base.html" %}
 {% block content %}
+{% if error %}
+<div class="alert alert-error">
+	<i class="icon-warning-sign"></i>
+	No answers found!
+</div>
+{% else %}
 <legend>Review the following answer and rate it on a scale of 1 to 5</legend>
 <form action="/reviewanswer" method="POST">
 
@@ -76,4 +82,5 @@
     {% endif %}
     
 </form>
+{% endif %}
 {% endblock %}
