@@ -165,6 +165,11 @@ def answerChoice():
 def processanswerchoice():
     ctrler = answerchoice.Answerchoice(request)
     return ctrler.process()
+	
+@app.route("/choicelobby",methods=['GET'])
+def lobby():
+    ctrler = answerchoice.Answerchoice(request)
+    return ctrler.lobby()
 
 @app.route("/assigntags", methods=['POST', 'GET'])
 def assign_tags():
