@@ -15,12 +15,10 @@ var submit_interval_id;
 var time_check_interval = 5000;
 
 $(function() {
-    $("#answerform").submit(submit_answer);
+    $("#answerform"+active_question_id).submit(submit_answer);
     query_new_question();
 
-	$('#answerform #counter').countdown({until: new Date(),
-                                         compact: true,
-                                         onExpiry: check_submit_answer});
+	
     if (!has_active_question)
         query_interval_id = setInterval(query_new_question, query_interval);
 });
@@ -31,12 +29,12 @@ function query_new_question() {
         return;
     }
     $.getJSON("/has_new_question", {},
-        function(data) {
-            alert(data.has_new)            
+        function(data) {          
             if (data.has_new) {   
-                
-                show_question(data.questions[0].question_id, data.questions[0].question_text,
-                    data.questions[0].time_remaining, data.questions[0].question_time);
+                for (var i=0;i<data.len;i++){
+                    show_question(data.questions[i].question_id, data.questions[i].question_text,
+                        data.questions[i].time_remaining, data.questions[i].question_time);
+                }
             }
              
         });
@@ -64,9 +62,8 @@ function show_review_button(number) {
 
 function show_question(id, question, time_remaining, question_time) {
     console.log("GOT QUESTION", id, question, time_remaining);
-
     clearInterval(query_interval_id);
-    submit_interval_id = setInterval(check_remaining_time,time_check_interval)
+    submit_interval_id = setInterval(function(){check_remaining_time(id)},time_check_interval)
 
     has_active_question = true;
     active_question_id = id;
@@ -75,13 +72,27 @@ function show_question(id, question, time_remaining, question_time) {
 	var austDay = new Date();
 	austDay.setSeconds(austDay.getSeconds() + time_remaining);
     console.log(austDay);
-	$('#answerform #counter').countdown('option', {until: austDay,
+     $('#questions').append('<form id="answerform'+active_question_id+'" method="post" style="display:none;">\
+        <br>\
+        <div id="questionArea">\
+            <div id="question'+active_question_id+'"></div>\
+            <textarea name="answerText" cols=50 rows=5></textarea>\
+            <br>\
+            <button class="btn btn-info" type="submit" value="submit answer">submit answer</button>\
+            <div id="counter'+active_question_id+'" class="countdowntime"></div>\
+            <div id="prolongedText" style="display: none;">Question has been prolonged</div>\
+        </div>\
+    </form>');
+    $('#answerform'+active_question_id+' #counter'+active_question_id).countdown({until: new Date(),
+                                         compact: true,
+                                         onExpiry: check_submit_answer});
+	$('#answerform'+active_question_id+' #counter'+active_question_id).countdown('option', {until: austDay,
                                          compact: true,
                                          onExpiry: check_submit_answer});
     $('#pleasewait').hide();
-    $('#answerform #question').text(question);
-    $('#answerform textarea').val('');
-    $('#answerform').show();
+    $('#answerform'+active_question_id+' #question'+active_question_id).text(question);
+    $('#answerform'+active_question_id+' textarea').val('');
+    $('#answerform'+active_question_id).show();
 }
 
 function check_submit_answer(){
@@ -92,14 +103,14 @@ function check_submit_answer(){
     }
 }
 
-function check_remaining_time(){
+function check_remaining_time(id){
     if(!has_active_question)
     {
         return false;
     }
 
     var res = false;
-    $.getJSON("/question_remaining_time", {questionID:active_question_id},
+    $.getJSON("/question_remaining_time", {questionID:id},
         function(data) {
             if (data.still_available)
             {
@@ -112,7 +123,7 @@ function check_remaining_time(){
                     $('#answerform #counter').countdown('option',
                                                      {until: austDay});
 
-                    pupub_div('#answerform #prolongedText')
+                    popup_div('#answerform #prolongedText')
 
                     time_delta = data.question_time;
                     res = true;
@@ -160,7 +171,7 @@ function submit_answer() {
     show_query_screen();
 
     $.post("/answer", {"questionID": active_question_id,
-                       "answerText": $('#answerform textarea').val()});
+                       "answerText": $('#answerform'+active_question_id+' textarea').val()});
 
     activate_new_question_query()
     return false;
