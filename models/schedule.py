@@ -7,7 +7,7 @@ Created on Tue Jan 22 12:47:32 2013
 from sqlalchemy import Column, Integer, String, ForeignKey
 
 from dbconnection import engine, session, Base
-from baseentity import BaseEntity
+from models.basemodel import BaseEntity
 
 class Schedule(Base, BaseEntity):
     __tablename__ = "Schedule"
