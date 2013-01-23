@@ -1,11 +1,18 @@
 <html>
     <body>
         <table>
+            <tr>
+                <th>Student</th>
+                <th>Answer</th>
+                <th>Rank</th>
+            </tr>		
             {% for answer in answers %}
             <tr>
-                <td>The answer "{{answer.text}}" was ranked {{answer.rank}}</td>
-            <tr>
-            {% endfor %}            
+                <td>{{username}}</td>
+                <td>{{answer.text}}</td>
+                <td>{{answer.ranking}}</td>
+            </tr>
+            {% endfor %}
         </table>
     </body>
 </html>

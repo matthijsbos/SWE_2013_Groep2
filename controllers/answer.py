@@ -1,5 +1,5 @@
 from models import answer, question
-from flask import render_template, g
+from flask import render_template, g, request
 import datetime
 import time
 import sqlalchemy.orm.exc as sqlalchemyExp
@@ -116,7 +116,10 @@ class Answer():
         return render_template('answerfilter.html', answers=answer.AnswerModel.get_filtered(**args))
 
     def render_results(self):
-        return render_template('rankresults.html', answers=answer.AnswerModel.get_all())
+        userid = answer.AnswerModel.by_id(request.values["questionid"]).userID
+        splitid = userid.split(':')
+        args = {"questionID": request.values["questionid"]}
+        return render_template('rankresults.html', answers=answer.AnswerModel.get_filtered(**args), username=splitid[0])
 
     def render_all(self):
         # Render all
