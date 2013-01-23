@@ -47,7 +47,7 @@ class AnswerModel(Base, BaseEntity):
     @staticmethod
     def save(questionID, userID, answerText):
         session.add(AnswerModel(
-            questionID=questionID, userID=userID, text=answerText, edit=0, ranking=700.0))
+            questionID=questionID, userID=userID, text=answerText, edit=0, ranking=1000.0))
         session.commit()
 
     @staticmethod
@@ -94,19 +94,28 @@ class AnswerModel(Base, BaseEntity):
 
     @staticmethod
     def get_answered_active_questions(userid, courseid):
-        """
-        Exactly the same as get_unanswered_questions except we want the answered
-        ones
-        """
         anssub = session.query(AnswerModel).filter(AnswerModel.userID == userid).\
             subquery()
 
+        # HACK: I can't figure out how to do timedelta stuff inside a filter,
+        #       so that is done after pulling all data... Slow!
 
+        # Need to use the old Alias.c.[columname] when using subquery!
         tmp = session.query(Question).\
-                outerjoin(annsub, anssub.c.questionID == Question.id).\
+                outerjoin(anssub, anssub.c.questionID == Question.id).\
                 filter(Question.available == True).\
                 filter(Question.course_id == courseid).\
                 filter(anssub.c.id != None).all()
+				
+        print tmp
+        print [(x.modified + timedelta(seconds=x.time), datetime.now()) for x in tmp]
+
+
+
+
+        return [x for x in tmp if x.modified + timedelta(seconds=x.time) >
+                datetime.now()]
+
 
     @staticmethod
     def getTimeStamp(answerID):
@@ -114,7 +123,24 @@ class AnswerModel(Base, BaseEntity):
         return answer.created
 
     @staticmethod
-    def getRank(answerID):
+    def getRanking(answerID):
         answer = session.query(AnswerModel).filter_by(id=answerID).one()
-        return answer.rank
+        return answer.ranking
 
+    @staticmethod
+    def setRanking(answerID, ranking):
+        answer = session.query(AnswerModel).filter_by(id=answerID).one()
+        answer.ranking = ranking
+
+    @staticmethod
+    def winningProbability(rating1, rating2) :
+        return 1.0 / (1.0 + (10.0**((rating2 - rating1) / 400.0)))
+
+
+    @staticmethod
+    def newRating(winner, loser) :
+        K = 100
+        expectedScore = winningProbability(winner, loser)
+        winnerRating = winner + K * (1 - winningProbability(winner, loser))
+        loserRating = loser + K * (0 - winningProbability(loser, winner))
+        return winnerRating, loserRating
