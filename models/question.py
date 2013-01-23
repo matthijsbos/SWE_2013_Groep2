@@ -10,14 +10,19 @@ class Question(Base, BaseEntity):
     user_id = Column(String)
     course_id = Column(String)
     question = Column(String)
-    available = Column(Boolean)
+
+    # we don't need to have seperate toggle_methods,
+    # just use if Question.xavailble: bla bla
+    _answeravailable = Column(Boolean)
+    _reviewavailable = Column(Boolean)
+    _archived = Column(Boolean)
     time = Column(Integer)
 
     def __init__(self, user_id, course_id, question, available, time):
         self.user_id = user_id
         self.course_id = course_id
         self.question = question
-        self.available = available
+        self.answeravailable = available
         self.time = time
 
     def __repr__(self):
@@ -25,15 +30,41 @@ class Question(Base, BaseEntity):
                                                 self.question,
                                                 self.available)
 
+    """
+    Yay properties
+    """
+    @property
+    def answeravailable(self):
+         return self._answeravailable
+
+    @answeravailable.setter
+    def answeravailable(self, value):
+         self._answeravailable = value
+         session.add(self)
+         session.commit()
+
+    @property
+    def reviewavailable(self):
+         return self._reviewavailable
+
+    @reviewavailable.setter
+    def reviewavailable(self, value):
+         self._reviewavailable = value
+         session.add(self)
+         session.commit()
+
+    @property
+    def archived(self):
+         return self._archived
+
+    @archived.setter
+    def archived(self, value):
+         self._archived = value
+         session.add(self)
+         session.commit()
+
     @classmethod
     def by_course_id(cls, course_id):
         return session.query(cls).filter(cls.course_id == course_id).all()
-
-    @classmethod
-    def toggle_available(cls, q_id):
-        question = Question.by_id(q_id)
-        question.available = not question.available
-        session.commit()
-        return question.available
 
 Base.metadata.create_all(engine)

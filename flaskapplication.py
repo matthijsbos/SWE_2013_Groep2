@@ -66,6 +66,10 @@ def edit_question():
 def toggle_question():
     return Question.toggle_question(request.args['id'])
 
+@app.route("/questionavailability", methods=['GET', 'POST'])
+def questionavailability():
+    return Question.availability(request.args)
+
 # this route is used to ask a question to students
 
 

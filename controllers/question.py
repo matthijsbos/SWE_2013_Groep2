@@ -17,6 +17,39 @@ class QuestionController():
           return json.dumps({"toggle": True,"check": False})
 
     @staticmethod
+    def availability(args):
+        """
+        Handles availability via the question_list form
+        """
+        try:
+            question = Question.by_id(args['id'])
+        except KeyError:
+            return 
+
+        if not g.lti.is_instructor():
+            return
+
+        try:
+            t = args['type']
+        except KeyError:
+            return 
+        
+        if t == 'answerable':
+            question.answeravailable = not question.answeravailable
+
+        elif t == 'reviewable':
+            question.reviewavailable = not question.reviewavailable
+
+        elif t == 'archived':
+            question.archived = not question.archived
+
+        return json.dumps({"answerable": question.answeravailable,
+                           "reviewable": question.reviewavailable,
+                           "archived"  : question.archived,
+                           "check"     : True,
+                         })
+
+    @staticmethod
     def edit_question(q_id, question, activate):
         """Updates a question with given contents and activation status."""
         if g.lti.is_instructor():
@@ -53,11 +86,11 @@ class QuestionController():
             # TODO: pagination, etc..... same goes for get_questions
             session.commit()
             return render_template('question_list.html',
-                                   questions=session.query(Question).order_by(Question.available.desc()).filter_by(user_id=g.lti.get_user_id()  ) )
+                                   questions=session.query(Question).order_by(Question.id.desc()).filter_by(user_id=g.lti.get_user_id()  ) )
         else:
             session.commit()
             return render_template('question_list.html',
-                                   questions=session.query(Question).order_by(Question.available.desc()).filter_by(user_id=g.lti.get_user_id()  ) )
+                                   questions=session.query(Question).order_by(Question.id.desc()).filter_by(user_id=g.lti.get_user_id()  ) )
             
             
 
