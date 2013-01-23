@@ -77,8 +77,9 @@ class QuestionController():
         # TODO: pagination, etc..... same goes for get_questions
         questions=session.query(Question).order_by(Question.available.desc())
         for question in questions:
-            if QuestionController.calculate_remaining_time(question) < 0:            
-                question.available = False
+            if question is not None and question.activate_time is not None:
+                if QuestionController.calculate_remaining_time(question) < 0:            
+                    question.available = False
         session.commit()
         return render_template('question_list.html', questions=questions)
 
