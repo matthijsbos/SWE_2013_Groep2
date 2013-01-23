@@ -1,7 +1,7 @@
 body{
       color:#009DCE;
       width: 500px;
-       font-family: sans-serif;
+      font-family: sans-serif;
 }
 br { clear: both; }
 
@@ -46,7 +46,7 @@ textarea:focus{
     font-size: 18px;
     font-weight: bold;
     color:#009DCE;
-
+   
 }
 .submit-answer {
 	-moz-box-shadow:inset 0px 1px 0px 0px #cae3fc;
