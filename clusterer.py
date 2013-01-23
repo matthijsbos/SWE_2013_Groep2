@@ -8,7 +8,8 @@ def test():
   best_error=99999999999
   best_clustering = nr_tries+1
   
-  lemma_answers = ["ja","nee"]
+  lemma_answers = ["ja auto kapot","nee auto heel","ja auto kapot","nee auto kapot"
+    ,"nee heel","nee","ja voertuig kapot","nee fietser ongeluk","ja fietser auto","ja"]
   
   data=Data()
   
@@ -28,6 +29,7 @@ def test():
       
   print best_error
   print best_clustering
+  print clustering_list[best_clustering].clusters
     
 
 class Data():
@@ -47,12 +49,13 @@ class Data():
   
   # tokenizer placeholder
   def tokenize_string(self,str):
-    return str.split(' .,')
+    return str.split()
   
   # tokenize all answers, generate list of tokens and create term frequency matrix
   def tokenize_all(self):
     for str in self.answers:
       toks = self.tokenize_string(str)
+      print toks
       for token in toks:
         if token not in self.tokens:
           self.tokens.append(token)
@@ -64,9 +67,11 @@ class Data():
     for i in range(len(self.answers)):
       toks = self.tokenize_string(self.answers[i])
       for token in toks:
-        for k in range(len(self.tokens)):
-          if token == k:
+        for j in range(len(self.tokens)):
+          if token == self.tokens[j]:
             self.term_frequency[i][j] = 1
+    print self.term_frequency
+    print self.tokens
     
 class N_random():
   n = 0
@@ -88,6 +93,7 @@ class N_random():
     self.assign_cluster()
     for c in self.clusters:
       self.calc_average_error(c)
+    print self.clusters
     
   def distance(self,q1,q2):
     vector1 = self.vectors[q1]
