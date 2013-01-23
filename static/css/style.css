@@ -21,6 +21,9 @@ br { clear: both; }
 .delete-question-link{
     color: #c40f0f;
 }
+.delete-question-link:hover{
+    color:#c40f0f;
+}
 
 #qList td, #addQuestion-table td{
     max-width: 500px;
