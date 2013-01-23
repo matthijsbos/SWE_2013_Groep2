@@ -86,11 +86,11 @@ class QuestionController():
            # TODO: pagination, etc..... same goes for get_questions
            session.commit()
            return render_template('question_list.html',
-                                  questions=session.query(Question).order_by(Question.available.desc()).filter_by(user_id=g.lti.get_user_id()  ) )
+                                  questions=session.query(Question).filter_by(user_id=g.lti.get_user_id()  ) )
        else:
            session.commit()
            return render_template('question_list.html',
-                                  questions=session.query(Question).order_by(Question.available.desc()).filter_by(user_id=g.lti.get_user_id()  ) )
+                                  questions=session.query(Question).filter_by(user_id=g.lti.get_user_id()  ) )
 
     @staticmethod
     def get_list_to_answer():
@@ -99,7 +99,7 @@ class QuestionController():
          # TODO: pagination, etc..... same goes for get_questions
          session.commit()
          return render_template('answer_student_questions.html',
-                                questions=session.query(Question).order_by(Question.available.desc()).\
+                                questions=session.query(Question).\
                                     filter(Question.course_id == g.lti.get_course_id() ).\
                                     filter(Question.course_id != g.lti.get_user_id() ))         #Filter questions by instructor                                    
 
@@ -133,4 +133,4 @@ class QuestionController():
         session.add(Question(instructor, course, question, active, time))
         session.commit()
 
-        return QuestionController.get_list()
+        return QuestionController.get_list_asked()

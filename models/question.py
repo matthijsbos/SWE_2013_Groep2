@@ -24,6 +24,9 @@ class Question(Base, BaseEntity):
         self.question = question
         self.answeravailable = available
         self.time = time
+        self.answeravailable = False
+        self.reviewavailable = False
+        self.archived = False
 
     def __repr__(self):
         return "<Question ('%s','%s','%s')>" % (self.user_id,

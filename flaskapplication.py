@@ -98,12 +98,17 @@ def handle_question():
                                     request.form['time'])
 
 
-@app.route("/question_list/asked", methods=['GET', 'POST'])
+@app.route("/question_list", methods=['GET', 'POST'])                                            
 def list_questions():
     return Question.get_list_asked()
 
+
+@app.route("/question_list/asked", methods=['GET', 'POST'])
+def list_questions_asked():
+    return Question.get_list_asked()
+
 @app.route("/question_list/to_answer", methods=['GET', 'POST'])
-def list_questions():
+def list_questions_answer():
     return Question.get_list_to_answer()
 
 @app.route("/delete_question/<id>", methods=['GET', 'POST'])
