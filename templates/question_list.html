@@ -49,17 +49,25 @@
             });
     }
 
-  function toggle_question(id){
-    $.getJSON("/toggle_question",{id:id},
+  function availability(id, type){
+    answerable = "False"
+    reviewable = "False"
+    archived = "False"
+    $.getJSON("/questionavailability",{id:id, type:type},
     function(data){
       if(data.check){
-        if(!data.toggle){
-          temp="False"
+        if(data.answerable){
+          answerable="True"
         }
-        else{
-          temp="True"
+        if(data.reviewable){
+          reviewable="True"
         }
-        $('#available_'+id).html(temp);
+        if(data.archived){
+          archived="True"
+        }
+        $('#answerable_'+id).html(answerable);
+        $('#reviewable_'+id).html(reviewable);
+        $('#archived_'+id).html(archived);
       }
       else{
         $('#error').html("Error while togging question question.");
@@ -88,22 +96,38 @@
     <tr>
         <!--<th>id</th>-->
         <th>Question</th>
-        <th>Active</th>
+        <th>Answerable</th>
+        <th>Reviewable</th>
+        <th>Archived</th>
         <th>Time</th>
-        <th>Activate</th>
         <th>Edit</th>
         <th>Delete</th>
     </tr>
     {% for question in questions %}
         <tr id="row_{{question.id}}">
-            <!--<td id="id_{{question.id}}">{{question.id}}</td>-->
             <td id="question_{{question.id}}">
                 <a href="/filteranswers/{{question.id}}" class="blue">{{question.question}}</a>
             </td>
-            <td id="available_{{question.id}}">{{question.available}}</td>
+            <td>
+                <button id="answerable_{{question.id}}" value="Answerable" 
+                        onclick=availability({{question.id}},"answerable") />
+                    {{question.answeravailable}}
+                </button>
+            </td>
+            <td>
+                <button id="reviewable_{{question.id}}" value="Reviewable" 
+                        onclick=availability({{question.id}},"reviewable") />
+                    {{question.reviewavailable}}
+                </button>
+            </td>
+            <td>
+                 <button id="archived_{{question.id}}" value="Archived" 
+                         onclick=availability({{question.id}},"archived") />
+                    {{question.archived}}
+                 </button>
+            </td>
             <td id="time_{{question.id}}">{{question.time}}</td>
             <td><button value="edit" onclick=edit_field({{question.id}}) />edit</button></td>
-            <td><button value="toggle" onclick=toggle_question({{question.id}}) />toggle</button></td>
             <td><button value="delete" onclick=delete_question({{question.id}}) />delete</button></td>
         </tr>
     {% endfor %}
