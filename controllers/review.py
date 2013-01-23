@@ -24,21 +24,20 @@ class ReviewAnswer():
         for tag_id in request.form.getlist('assign_tags'):
             AnswerTag.add_answertag(fsession['reviewanswer'], tag_id)
 
-        #for rating in request.form.getlist('rating'):
-        #    Review.add(fsession['reviewanswer'], fsession['user_id'], rating, )
+        # for rating in request.form.getlist('rating'):
+        # Review.add(fsession['reviewanswer'], fsession['user_id'], rating, )
 
         for tag_id in request.form.getlist('remove_tags'):
             AnswerTag.remove(fsession['reviewanswer'], tag_id)
             
-        for review in request.form.getlist('comments'):
-            rating = request.form['rating']
-            if review is not '':
-                Review.add(fsession['reviewanswer'], fsession['user_id'], rating,
-                            review)
-            else:
-                Review.add(fsession['reviewanswer'], fsession['user_id'], rating,
-                '')
-
+        try:
+            request.form['rating']
+        except KeyError:
+            pass
+        else:
+            Review.add(fsession['reviewanswer'], fsession['user_id'],
+                       request.form['rating'], request.form['comments'])
+                               
         # revoke permission to review answer
         del fsession['reviewanswer']
     
@@ -57,6 +56,7 @@ class ReviewAnswer():
 
         enabledtags = AnswerTag.get_tag_ids(answer_id)
         reviews = Review.get_list(answer_id)
+        print reviews
 
         return render_template('reviewanswer.html', answer=answer,
                                tags=Tag.get_all(), enabledtags=enabledtags,
