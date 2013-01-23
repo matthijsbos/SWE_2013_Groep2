@@ -51,10 +51,11 @@ class ReviewAnswer():
         try:
             answer = AnswerModel.by_id(answer_id)
         except:
-            return "Error answer not found"
+			return render_template('reviewanswer.html', error="true")
+            #return "<div class=\"alert alert-error\"><i class=\"icon-warning-sign\"></i>No answers found!</div>"
         if answer == None:
-            return "Error answer not found"
-            
+			return render_template('reviewanswer.html', error="true")
+            #return "<div class=\"alert alert-error\"><i class=\"icon-warning-sign\"></i>No answers found!</div>"
         try:
             question = Question.by_id(answer.questionID)
         except:
