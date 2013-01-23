@@ -77,12 +77,11 @@
         function(data){
             if(data.check){
                 if(!data.toggle){
-                    temp="False"
+                    $('input[name=active]').attr('checked', false);
                 }
                 else{
-                    temp="True"
+                    $('input[name=active'+id+']').attr('checked', true);
                 }
-                $('#available_'+id).html(temp);
             }
             else{
                 $('#error').html("Error while togging question question.");
@@ -92,16 +91,16 @@
 
     function add_question(){
         $('#addQ').hide()
-        $('#qList tr:last').after(
-        '<tr><form action="/handle_question" method="post" style="display:block"> \
-                        <td><input type="text" class="input-block-level" name="question" placeholder="your question"></td> \
+        $('#qList').after(
+        '<table id="addQuestion-table" class="table table-hover table-bordered table-striped"><thead><tr><th>Question</th><th>Active</th><th>Time</th><th>Comments</th><th>Tags</th><th>Rating</th><th>Submit</th></tr></thead><tr><form action="/handle_question" method="post" style="display:block"> \
+                        <td class="question-field"><input type="text" class="input-block-level" name="question" placeholder="your question"></td> \
                         <td><input type="checkbox" name="active"></td> \
+                        <td><input type="number" name="time" size="3" maxlength="3" placeholder="sec"></td> \
                         <td><input type="checkbox" name="comment" checked></td> \
                         <td><input type="checkbox" name="tags" checked></td> \
                         <td><input type="checkbox" name="rating" checked></td> \
-                        <td><input type="number" name="time" size="3" maxlength="3" placeholder="sec"></td> \
-                        <td colspan=3><input type="submit" class="btn btn-block" value="Add Question"></td>\
-                    </form></tr>');
+                        <td><input type="submit" class="btn btn-block btn-primary" value="Add Question"></td>\
+                    </form></tr></table>');
     }
 
 </script>
@@ -115,22 +114,20 @@
             <th>Active</th>
             <th>Time</th>
             <th>Edit</th>
-            <th>Activate</th>
             <th>Delete</th>
         </tr>
     </thead>
     {% for question in questions %}
     <tr id="row_{{question.id}}">
-        <td id="question_{{question.id}}">
+        <td class="question-field" id="question_{{question.id}}">
             <a href="/filteranswers/{{question.id}}" class="blue">{{question.question}}</a>
         </td>
-        <td id="available_{{question.id}}">{{question.available}}</td>
+        <td id="available_{{question.id}}"><input type="checkbox" name="active{{question.id}}" onclick=toggle_question({{question.id}}) {% if question.available %}checked{% endif %}></td>
         <td id="time_{{question.id}}">{{question.time}}</td>
         <td>
             <a href="#" id="edit_{{question.id}}" onclick=edit_field({{question.id}}) /><i class="icon-pencil"></i> edit</a>
             <a href="#" id="sedit_{{question.id}}" style="display:none"><i class=" icon-ok-sign"></i> submit</a>
         </td>
-        <td><a href="#" onclick=toggle_question({{question.id}}) /><i class="icon-retweet"></i> toggle</a></td>
         <td><a href="#delete_question{{question.id}}" data-toggle="modal" /><i class="icon-remove-sign"></i> delete</a></td>
     </tr>
     <div id="delete_question{{question.id}}" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">

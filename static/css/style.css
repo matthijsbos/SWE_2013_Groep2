@@ -5,16 +5,24 @@ body{
 }
 br { clear: both; }
 
-#qList input{
+#qList input, #addQuestion-table input{
     margin-bottom: 0px;
 }
-#qList td{
+
+.question-field{
+    width: 400px;
+}
+
+#qList td, #addQuestion-table td{
     max-width: 500px;
     word-wrap: break-word;
 }
-#qList input[type="number"]{
+#qList input[type="number"], #addQuestion-table input[type="number"]{
     margin-bottom: 0px;
     width: 40px;
+}
+#addQuestion-table{
+    margin-top: -21px;
 }
 .cntSeparator {
     font-size: 54px;
