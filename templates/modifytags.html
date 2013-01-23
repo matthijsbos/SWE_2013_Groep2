@@ -1,12 +1,15 @@
 {% extends "_base.html" %}
 {% block content %}
-<legend>These are the current tags</legend>
 <form class="form-inline" action="/addtag" method="post">
-  Add new tag:  <input type="text" name="newTag">
-  <input class="btn" type="submit" value="Add Tag">
+  <b>New tag:</b>
+  <br>
+  <input type="text" name="newTag">
+  <input class="btn-primary btn" type="submit" value="Add Tag">
 </form>
 
 <form action="/removetag" method="post">
+	<b>Current tags:</b>
+	<br>
     <label class="checkbox">
         {% for tag in tags %}
             <input type="checkbox" name="remove_tags" value="{{tag.id}}">

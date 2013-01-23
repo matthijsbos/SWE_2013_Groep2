@@ -21,6 +21,9 @@ br { clear: both; }
 .delete-question-link{
     color: #c40f0f;
 }
+.delete-question-link:hover{
+    color:#c40f0f;
+}
 
 #qList td, #addQuestion-table td{
     max-width: 500px;
@@ -106,4 +109,10 @@ textarea:focus{
 #questionArea textarea{
     margin-top: 8px;
     width: 96%;
+}
+#answer{
+    font-size: 18px;
+    font-weight: bold;
+	margin-bottom: 5px;
+    color:#009DCE;
 }
