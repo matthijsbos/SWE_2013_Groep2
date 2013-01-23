@@ -93,6 +93,7 @@
         <th>Activate</th>
         <th>Edit</th>
         <th>Delete</th>
+        <th>Ranking</th>
     </tr>
     {% for question in questions %}
         <tr id="row_{{question.id}}">
@@ -105,6 +106,7 @@
             <td><button value="edit" onclick=edit_field({{question.id}}) />edit</button></td>
             <td><button value="toggle" onclick=toggle_question({{question.id}}) />toggle</button></td>
             <td><button value="delete" onclick=delete_question({{question.id}}) />delete</button></td>
+            <td><a href="/rankresults?questionid={{question.id}}">view</a></td>
         </tr>
     {% endfor %}
 </table>

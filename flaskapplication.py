@@ -12,7 +12,7 @@ import models.rating
 from dbconnection import Base, engine
 from flask import Flask, request, render_template, g
 from lti import LTI, LTIException
-from controllers import index, answer, modifytags, answerchoice
+from controllers import index, answer, answerchoice
 import yaml
 from flask import Flask, Response, request, render_template, g
 from lti import LTI, LTIException
@@ -212,8 +212,8 @@ def answerFilter():
     ctrler = Answer(request)
     return ctrler.render_filtered()
 
-@app.route("/rankresults", methods=['GET'])
-def rankResults():
+@app.route("/rankresults", methods=['POST', 'GET'])
+def render_results():
     ctrler = answer.Answer(request)
     return ctrler.render_results()
 
@@ -238,6 +238,11 @@ def answer_it():
 def render():
     ctrler = Index()
     return ctrler.render()
+    
+@app.route("/studenthistory", methods=['GET', 'POST'])
+def studenthistory():
+    ctrler = answer.Answer(request)
+    return ctrler.studenthistory()
 
 @app.route("/logout")
 def logout():
