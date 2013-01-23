@@ -2,26 +2,28 @@ import numpy as np
 from Math import *
 import random
 
-clustering_list = []
-nr_tries = 10
-best_error=99999999999
-best_clustering = nr_tries+1
 
-data=Data()
-
-for answer in lemma_answers
-  data.add_answer(answer)
-data.tokenize_all()
-data.count_frequency()
-
-for n in range(nr_tries):
-  clustering_list[n]=N_random()
-  for vector in range(len(data.term_frequency))
-    clustering_list[n].add_vector(vector)
-  clustering_list[n].execute()
-  if clustering_list[n].error < best_error:
-    best_clustering = n
-    best_error=clustering_list[n].error
+def test():
+  clustering_list = []
+  nr_tries = 10
+  best_error=99999999999
+  best_clustering = nr_tries+1
+  
+  data=Data()
+  
+  for answer in lemma_answers
+    data.add_answer(answer)
+  data.tokenize_all()
+  data.count_frequency()
+  
+  for n in range(nr_tries):
+    clustering_list[n]=N_random()
+    for vector in range(len(data.term_frequency))
+      clustering_list[n].add_vector(vector)
+    clustering_list[n].execute()
+    if clustering_list[n].error < best_error:
+      best_clustering = n
+      best_error=clustering_list[n].error
     
 
 class Data():
