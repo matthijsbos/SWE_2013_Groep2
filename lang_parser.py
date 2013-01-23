@@ -15,6 +15,7 @@ types:
 
 import string
 
+
 class LanguageParser():
     """Parses given texts in a set language. It can normalize text and extract
     keywords for it."""
@@ -29,7 +30,7 @@ class LanguageParser():
 
     def __init__(self, language, texts=[]):
         if language not in (self.LANG_EN, self.LANG_NL, self.LANG_DE,
-                self.LANG_ES, self.LANG_UNKNOWN):
+                            self.LANG_ES, self.LANG_UNKNOWN):
             raise ValueError("Invalid language: %s" % repr(language))
 
         self.language = language
