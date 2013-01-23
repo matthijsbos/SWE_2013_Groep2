@@ -42,22 +42,25 @@ class Answerchoice():
             session.add(a33)
             session.commit()
 
-    def render(self):
-        def randpop(array):
-            return array.pop(randrange(0,len(array)))
-        
+    def render(self):        
         userID = g.lti.get_user_id()
-        questionID = 1 # hardcoded shizzle
+        questionID = int(request.values['question_id'])
         allquestions = (Question.get_all())
+        validAnswers = getotheranswers(userID,questionID)
+        print session.query(AnswerChoiceModel).filter().all()
+        return render_template('choice.html',questions=allquestions[questionID], answers=(randpop(validAnswers),randpop(validAnswers)))
+
+    def randpop(array):
+        return array.pop(randrange(0,len(array)))
+        
+    def getotheranswers(self,userid,questionid):
         allanswers = (AnswerModel.get_all())
         validAnswers = []
         for current in allanswers:
             if current.userID != userID and current.questionID == questionID:
                 validAnswers.append(current)
-                
-        print session.query(AnswerChoiceModel).filter().all()
-        return render_template('choice.html',questions=allquestions[questionID], answers=(randpop(validAnswers),randpop(validAnswers)))
 
+    
     def process(self):
         userid = g.lti.get_user_id()
 
@@ -88,7 +91,11 @@ class Answerchoice():
         return 'success' 
 
     def lobby(self):
-        if True:
-            return render_template('choice.html',question='DUMMY')
+        userID = g.lti.get_user_id()
+        questionID = int(request.values['question_id'])
+        validAnswers = getotheranswers(userID,questionID)
+        
+        if len(validAnswers) < 2:
+            return render_template('choicelobby.html',question='DUMMY')
         else:
-            return redirect('/answerchoice')
+            return redirect('/answerchoice?questionid='+str(questionID)+'&answerid1='+str(randpop(validAnswers))+'&answerid2='+str(randpop(validAnswers)))
