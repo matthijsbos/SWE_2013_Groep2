@@ -233,6 +233,11 @@ def has_new_question():
 def answer_it():
     ctrler = Index()
     return ctrler.answer_it()
+	
+@app.route("/index_student", methods=['GET', 'POST'])
+def render():
+    ctrler = Index()
+    return ctrler.render()
 
 @app.route("/logout")
 def logout():
