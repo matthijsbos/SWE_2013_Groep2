@@ -78,21 +78,35 @@ class QuestionController():
     def export_course(course_id):
         questions = Question.by_course_id(course_id)
         return [{'question': question.question} for question in questions]
+    
+    @staticmethod
+    def get_list_asked():
+       """Retrieves questions asked by the user currently logged in."""
+       if g.lti.is_instructor():
+           # TODO: pagination, etc..... same goes for get_questions
+           session.commit()
+           return render_template('question_list.html',
+                                  questions=session.query(Question).order_by(Question.available.desc()).filter_by(user_id=g.lti.get_user_id()  ) )
+       else:
+           session.commit()
+           return render_template('question_list.html',
+                                  questions=session.query(Question).order_by(Question.available.desc()).filter_by(user_id=g.lti.get_user_id()  ) )
 
     @staticmethod
-    def get_list():
-        """Retrieves questions asked by the user currently logged in."""
-        if g.lti.is_instructor():
-            # TODO: pagination, etc..... same goes for get_questions
-            session.commit()
-            return render_template('question_list.html',
-                                   questions=session.query(Question).order_by(Question.id.desc()).filter_by(user_id=g.lti.get_user_id()  ) )
-        else:
-            session.commit()
-            return render_template('question_list.html',
-                                   questions=session.query(Question).order_by(Question.id.desc()).filter_by(user_id=g.lti.get_user_id()  ) )
-            
-            
+    def get_list_to_answer():
+     """Retrieves questions to be answered by the instructor (all questions )"""
+     if g.lti.is_instructor():
+         # TODO: pagination, etc..... same goes for get_questions
+         session.commit()
+         return render_template('answer_student_questions.html',
+                                questions=session.query(Question).order_by(Question.available.desc()).\
+                                    filter(Question.course_id == g.lti.get_course_id() ).\
+                                    filter(Question.course_id != g.lti.get_user_id() ))         #Filter questions by instructor                                    
+
+     #Only instructors can answer these questions
+     else:
+         return render_template('access_restricted.html')
+        
 
     @staticmethod
     def delete_question(qid):

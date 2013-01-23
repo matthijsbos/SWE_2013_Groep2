@@ -34,7 +34,7 @@ class Review(Base, BaseEntity):
     @staticmethod
     def add(answer_id, user_id, rating, text):
         if session.query(Review).filter(Review.answer_id == answer_id,
-                Review.user_id == user_id).first() is not None:
+                Review.user_id == user_id).first() is None:
             session.add(Review(answer_id, user_id, rating, text))
             session.commit()
             
