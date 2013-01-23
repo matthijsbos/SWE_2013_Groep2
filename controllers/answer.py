@@ -1,4 +1,4 @@
-from models import answer, question
+from models import answer, question,user
 from flask import g
 from utilities import render_template
 import datetime
@@ -57,6 +57,7 @@ class Answer():
                 answer.AnswerModel.save(qID, uID, answerText)
             flag = "true"
 
+        user.UserModel.save(uID,g.lti.get_user_name())
         return render_template('answersaved.html', flag=flag)
 
     def viewAnswer(self):

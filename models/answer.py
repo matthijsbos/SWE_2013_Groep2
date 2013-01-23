@@ -3,6 +3,7 @@ from sqlalchemy import *
 from dbconnection import engine, session, Base, exc
 from basemodel import BaseEntity
 from question import Question
+from user import UserModel
 
 
 class AnswerModel(Base, BaseEntity):
@@ -13,6 +14,13 @@ class AnswerModel(Base, BaseEntity):
     userID = Column(Integer)
     edit = Column(Integer)
 
+    @property
+    def username(self):
+        user = UserModel.by_user_id(self.userID)
+        if user is None:
+            return self.userID
+        return user.username
+
     def __repr__(self):
         return "<Answer('%s','%s','%s')>" % (self.id,
                                                 self.questionID,
@@ -20,7 +28,7 @@ class AnswerModel(Base, BaseEntity):
 
     def __str__(self):
         return self.text
-    
+
     @staticmethod
     def get_rating(questionID):
         rating = 1
