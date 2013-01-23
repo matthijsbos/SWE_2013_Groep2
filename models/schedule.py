@@ -27,7 +27,7 @@ class Schedule(Base, BaseEntity):
     @staticmethod
     def add(answer_id, user_id):
         if session.query(Schedule).filter(Schedule.answer_id == answer_id,
-                Schedule.user_id == user_id).first() is not None:
+                Schedule.user_id == user_id).first() is None:
             session.add(Schedule(answer_id, user_id))
             session.commit()
     
@@ -36,7 +36,7 @@ class Schedule(Base, BaseEntity):
     def add_list(list):
         for a_id, u_id in list:
             if session.query(Schedule).filter(Schedule.answer_id == a_id,
-                    Schedule.user_id == u_id).first() is not None:
+                    Schedule.user_id == u_id).first() is None:
                 session.add(Schedule(a_id, u_id))
         
         session.commit()
