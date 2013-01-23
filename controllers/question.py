@@ -7,10 +7,10 @@ from datetime import datetime, timedelta
 
 class QuestionController():
     @staticmethod
-    def toggle_question(q_id):
+    def toggle_question(q_id, field):
         '''toggles a question between available and not available'''
         if g.lti.is_instructor():
-            available = Question.toggle_available(q_id)
+            available = Question.toggle_available(q_id, field)
             return json.dumps({"toggle":available,"check": True})
 
         else:
