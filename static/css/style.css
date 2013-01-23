@@ -12,6 +12,15 @@ br { clear: both; }
 .question-field{
     width: 400px;
 }
+.time-field{
+    width: 71px;
+}
+.edit-field{
+    width: 60px;
+}
+.delete-question-link{
+    color: #c40f0f;
+}
 
 #qList td, #addQuestion-table td{
     max-width: 500px;

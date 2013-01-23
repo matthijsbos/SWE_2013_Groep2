@@ -49,16 +49,29 @@ class Question(Base, BaseEntity):
         return session.query(cls).filter(cls.course_id == course_id).all()
 
     @classmethod
-    def toggle_available(cls, q_id):
+    def toggle_available(cls, q_id, field):
         question = Question.by_id(q_id)
-        question.available = not question.available
+        if (field == 'active'):
+            question.available = not question.available
 
-        dt = None
-        if question.available:
-            dt = datetime.now()
+            dt = None
+            if question.available:
+                dt = datetime.now()
 
-        question.activate_time = dt
-        session.commit()
-        return question.available
+            question.activate_time = dt
+            session.commit()
+            return question.available
+        elif (field == 'comments'):
+            question.comment = not question.comment
+            session.commit()
+            return question.comment
+        elif (field == 'tags'):
+            question.tags = not question.tags
+            session.commit()
+            return question.tags
+        elif (field == 'rating'):
+            question.rating = not question.rating
+            session.commit()
+            return question.rating
 
 Base.metadata.create_all(engine)
