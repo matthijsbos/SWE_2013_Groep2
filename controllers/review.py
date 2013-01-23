@@ -56,11 +56,11 @@ class ReviewAnswer():
         fsession['reviewanswer'] = answer_id
 
         enabledtags = AnswerTag.get_tag_ids(answer_id)
-		reviews = Review.get_list(answer_id)
+        reviews = Review.get_list(answer_id)
 
         return render_template('reviewanswer.html', answer=answer,
                                tags=Tag.get_all(), enabledtags=enabledtags,
-							   reviews=reviews)
+                               reviews=reviews)
 
     """
     Stub class, to be implemented by mustafa
