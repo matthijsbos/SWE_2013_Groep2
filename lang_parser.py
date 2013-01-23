@@ -19,21 +19,22 @@ class LanguageParser():
     """Parses given texts in a set language. It can normalize text and extract
     keywords for it."""
 
-    # TODO (optional): detect language if none given?
+    # TODO: detect language if none given?
 
     LANG_EN = 'en'
     LANG_NL = 'nl'
+    LANG_DE = 'de'
+    LANG_ES = 'es'
+    LANG_UNKNOWN = None
 
     def __init__(self, language, texts=[]):
-        if language not in (self.LANG_EN, self.LANG_NL):
+        if language not in (self.LANG_EN, self.LANG_NL, self.LANG_DE,
+                self.LANG_ES, self.LANG_UNKNOWN):
             raise ValueError("Invalid language: %s" % repr(language))
 
         self.language = language
         self.texts = []
         self.add_texts(texts)
-
-        # TODO: import stuff to setup everything for given language... or do
-        # that in the normalize/extract keyword functions?
 
     def add_texts(self, texts):
         if isinstance(texts, (list, tuple)):
@@ -51,38 +52,55 @@ class LanguageParser():
         return map(self.extract_keywords, self.texts)
 
     def normalize(self, text):
+        """Normalizes a given string by:
+            * singularizing any plurals.
+            * getting the base form of any verb
+            * eliminating all capitals"""
+
         if self.language == self.LANG_EN:
             from pattern.en import parse
         elif self.language == self.LANG_NL:
             from pattern.nl import parse
+        elif self.language == self.LANG_DE:
+            from pattern.de import parse
+        elif self.language == self.LANG_ES:
+            from pattern.es import parse
         else:
             raise Exception("Unsupported language: %s" % repr(self.language))
 
         parsed = parse(text, lemmata=True, chunks=False)
-        print parsed
-        t = []
-        for x in parsed.split():
-            t += x
-        print t
-        t = [x[-1] for x in t if x[-1] not in string.punctuation]
-        t = ' '.join(t)
-
-        return t
+        parsed = [x for y in parsed.split() for x in y]  # Flatten
+        normalized = map(lambda w: w[-1], parsed)
+        normalized = filter(lambda w: w not in string.punctuation, normalized)
+        normalized = ' '.join(normalized)
+        return normalized
 
     def extract_keywords(self, text):
+        """Extracts keywords from a given string.
+
+        The string is first analysed and normalized. First, it tries to find
+        any nouns, cardinal number or foreign words.
+        If that set is empty, all verbs are returned.
+        If even that set is empty, every word in the sentence is returned as
+        keyword."""
+
+        # TODO: can there be double keywords?
+
         keyword_types = ('NN', 'NNS', 'NNP', 'NNPS', 'CD', 'FW')
         keyword_types_fallback = ('VBZ', 'VBP', 'VBD', 'VBN', 'VBG')
 
         if self.language == self.LANG_EN:
-            from pattern.en import parse, pprint
+            from pattern.en import parse
         elif self.language == self.LANG_NL:
-            from pattern.nl import parse, pprint
+            from pattern.nl import parse
+        elif self.language == self.LANG_DE:
+            from pattern.de import parse
+        elif self.language == self.LANG_ES:
+            from pattern.es import parse
         else:
             raise Exception("Unsupported language: %s" % repr(self.language))
 
         parsed = parse(text, lemmata=True, chunks=False)
-        pprint(parsed)
-
         parsed = [x for y in parsed.split() for x in y]  # Flatten
         parsed = filter(lambda w: w[-1] not in string.punctuation, parsed)
         keywords = filter(lambda w: w[1] in keyword_types, parsed)
