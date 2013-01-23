@@ -28,6 +28,15 @@
 			{% endfor %}
 			<input type="submit" value="remove"> 
 			<hr>
+			
+			{% for review in reviews %}
+			user:{{ review.user_id }}<br>
+			comment:{{ review.text }}<br>
+			raiting:{{ review.rating }}<br>
+			<hr noshade size=2 width="50%" align=left> 
+			{% endfor %}
+			
+			<hr>
 			<table>
 				<tr>
 					<td>
