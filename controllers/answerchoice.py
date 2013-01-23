@@ -43,20 +43,13 @@ class Answerchoice():
             session.commit()
 
     def render(self):
-        def randpop(array):
-            return array.pop(randrange(0,len(array)))
-        
-        userID = g.lti.get_user_id()
-        questionID = 1 # hardcoded shizzle
-        allquestions = (Question.get_all())
-        allanswers = (AnswerModel.get_all())
-        validAnswers = []
-        for current in allanswers:
-            if current.userID != userID and current.questionID == questionID:
-                validAnswers.append(current)
-                
-        print session.query(AnswerChoiceModel).filter().all()
-        return render_template('choice.html',questions=allquestions[questionID], answers=(randpop(validAnswers),randpop(validAnswers)))
+	    questionID = request.values['questionid'])
+        if(question_valid(questionID) {
+            return render_template('choice.html',question=Question.by_id[questionID], answer1=AnswerModel.by_id(request.values['answerid1']), answer2=AnswerModel.by_id(request.values['answerid2']))
+        }
+        else {
+            return render_template('/choicelobby')
+        }
 
     def process(self):
         userid = g.lti.get_user_id()
@@ -91,4 +84,4 @@ class Answerchoice():
         if True:
             return render_template('choice.html',question='DUMMY')
         else:
-            return redirect('/answerchoice')
+            return redirect('/choicelobby')
