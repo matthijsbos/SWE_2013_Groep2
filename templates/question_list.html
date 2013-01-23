@@ -77,7 +77,7 @@
         function(data){
             if(data.check){
                 if(!data.toggle){
-                    $('input[name=active]').attr('checked', false);
+                    $('input[name=active'+id+']').attr('checked', false);
                 }
                 else{
                     $('input[name=active'+id+']').attr('checked', true);
