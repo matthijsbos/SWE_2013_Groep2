@@ -88,11 +88,33 @@ def handle_question():
         isActive = True
     except:
         isActive = False
+    
+    try:
+        request.form['comment']
+        comment = True
+    except:
+        comment = False
+        
+    try:
+        request.form['tags']
+        tags = True
+    except:
+        tags = False
+        
+    try:
+        request.form['rating']
+        rating = True
+    except:
+        rating = False
+        
     return Question.create_question(request.form['question'],
                                     g.lti.get_user_id(),
                                     g.lti.get_course_id(),
                                     isActive,
-                                    request.form['time'])
+                                    request.form['time'],
+                                    comment,
+                                    tags,
+                                    rating)
 
 
 @app.route("/question_list", methods=['GET', 'POST'])
