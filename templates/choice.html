@@ -17,6 +17,7 @@
 				<input type="hidden" name="answerone" id="answerone" value="{{ answers.id }}">
 				<button type="submit" name="bestanswer" value="{{ answers.id }}">{{ answers[0].text }}</button>
 				<button type="submit" name="bestanswer" value="{{ answers.id }}">{{ answers[1].text }}</button>
+				<button type="button" onclick="window.location='/index_student'" class="submit-answer">back</button>
 			</form>
         </body>
         </html>

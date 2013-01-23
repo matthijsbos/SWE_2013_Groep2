@@ -94,19 +94,28 @@ class AnswerModel(Base, BaseEntity):
 
     @staticmethod
     def get_answered_active_questions(userid, courseid):
-        """
-        Exactly the same as get_unanswered_questions except we want the answered
-        ones
-        """
         anssub = session.query(AnswerModel).filter(AnswerModel.userID == userid).\
             subquery()
 
+        # HACK: I can't figure out how to do timedelta stuff inside a filter,
+        #       so that is done after pulling all data... Slow!
 
+        # Need to use the old Alias.c.[columname] when using subquery!
         tmp = session.query(Question).\
-                outerjoin(annsub, anssub.c.questionID == Question.id).\
+                outerjoin(anssub, anssub.c.questionID == Question.id).\
                 filter(Question.available == True).\
                 filter(Question.course_id == courseid).\
                 filter(anssub.c.id != None).all()
+				
+        print tmp
+        print [(x.modified + timedelta(seconds=x.time), datetime.now()) for x in tmp]
+
+
+
+
+        return [x for x in tmp if x.modified + timedelta(seconds=x.time) >
+                datetime.now()]
+
 
     @staticmethod
     def getTimeStamp(answerID):
