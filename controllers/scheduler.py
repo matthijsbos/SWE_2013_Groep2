@@ -24,7 +24,13 @@ class Scheduler():
             
         scores.sort(key=lambda tup: tup[0])
         
-        # TODO: user sorting based on rating
+        # TODO: possibly change fixed percentage to variable
+        # IMPORTANT: users that did not give an answer should be able to rate,
+        # not sure if that will happen right now
+        #
+        # initial scheduler
+        shift_count = len(scores) - max(1, int(len(scores) * 0.2))
+        user_list = user_list[shift_count:] + user_list[0:shift_count]
         
         for x in xrange(0, len(scores)):
             a_id = scores[x][1].id
