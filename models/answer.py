@@ -144,4 +144,3 @@ class AnswerModel(Base, BaseEntity):
         winnerRating = winner + K * (1 - winningProbability(winner, loser))
         loserRating = loser + K * (0 - winningProbability(loser, winner))
         return winnerRating, loserRating
-
