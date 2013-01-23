@@ -75,9 +75,12 @@ class QuestionController():
     @staticmethod
     def get_list():
         # TODO: pagination, etc..... same goes for get_questions
+        questions=session.query(Question).order_by(Question.available.desc())
+        for question in questions:
+            if QuestionController.calculate_remaining_time(question) < 0:            
+                question.available = False
         session.commit()
-        return render_template('question_list.html',
-                               questions=session.query(Question).order_by(Question.available.desc()))
+        return render_template('question_list.html', questions=questions)
 
     @staticmethod
     def delete_question(qid):

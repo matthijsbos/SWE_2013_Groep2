@@ -72,8 +72,8 @@
         });
     }
 
-    function toggle_question(id){
-        $.getJSON("/toggle_question",{id:id},
+    function toggle_question(id, string){
+        $.getJSON("/toggle_",{id:id},
         function(data){
             if(data.check){
                 if(!data.toggle){
