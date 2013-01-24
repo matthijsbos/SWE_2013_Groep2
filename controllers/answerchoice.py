@@ -58,7 +58,7 @@ class Answerchoice():
         except:
             return abort(404)
             
-        if AnswerModel.question_valid(questionID):
+        if AnswerModel.question_valid(questionid):
             return render_template('choice.html',question=question, answer1=answer1, answer2=answer2)
         else:
             return redirect('/choicelobby?question_id='+str(questionid))
