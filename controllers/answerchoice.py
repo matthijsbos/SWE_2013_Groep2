@@ -42,6 +42,7 @@ class Answerchoice():
             session.add(a32)
             session.add(a33)
             session.commit()
+            
 
     def render(self):
         try:
