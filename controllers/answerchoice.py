@@ -48,7 +48,6 @@ class Answerchoice():
             return render_template('choice.html',question=Question.by_id[questionID], answer1=AnswerModel.by_id(request.values['answerid1']), answer2=AnswerModel.by_id(request.values['answerid2']))
         else:
             return render_template('/choicelobby')
-        
 
     def randpop(array):
         return array.pop(randrange(0,len(array)))
@@ -95,6 +94,6 @@ class Answerchoice():
         validAnswers = getotheranswers(userID,questionID)
         
         if len(validAnswers) < 2:
-            return render_template('choicelobby.html',question='DUMMY')
+            return render_template('choicelobby.html',question=questionID)
         else:
             return redirect('/answerchoice?questionid='+str(questionID)+'&answerid1='+str(randpop(validAnswers))+'&answerid2='+str(randpop(validAnswers)))

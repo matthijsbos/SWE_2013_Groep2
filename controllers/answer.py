@@ -116,11 +116,9 @@ class Answer():
         return render_template('answerfilter.html', answers=answer.AnswerModel.get_filtered(**args))
 
     def render_results(self):
-        userid = answer.AnswerModel.by_id(request.values["questionid"]).userID
-        splitid = userid.split(':')
         args = {"questionID": request.values["questionid"]}
-        return render_template('rankresults.html', answers=answer.AnswerModel.get_filtered(**args), username=splitid[0])
-
+        return render_template('rankresults.html', answers=answer.AnswerModel.get_filtered(**args))
+        
     def render_all(self):
         # Render all
         return render_template('showanswers.html', answers=answer.AnswerModel.get_all())
@@ -136,3 +134,6 @@ class Answer():
                 args["id"] = postdata["id"]
 
         return render_template('answerfilter_by_questionid.html', answers=answer.AnswerModel.get_filtered(**args))
+
+    def studenthistory(self):
+        return render_template('studenthistory.html')
