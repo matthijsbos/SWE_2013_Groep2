@@ -76,8 +76,7 @@ function show_question(id, question, time_remaining, question_time, answer) {
         until: austDay,
         compact: true,
         onExpiry: function(){
-        check_submit_answer(id, question_time)}
-        alert(id);
+        check_submit_answer(id, question_time)}        
     });
     
     $('#pleasewait').hide();
@@ -93,6 +92,10 @@ function check_submit_answer(id, question_time){
         submit_answer(id);
     }
     $('#answerform'+id).remove();
+    if ( $('#questions').is(':empty') )
+    {
+        $('#pleasewait').show();
+    }
 }
 
 function check_remaining_time(id, time_delta){
@@ -125,7 +128,7 @@ function check_remaining_time(id, time_delta){
             }
         }
         else
-        {
+        {            
             if(data.question_deleted)
             {
                 if ( $('#questions').is(':empty') )
