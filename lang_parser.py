@@ -92,7 +92,7 @@ class LanguageParser():
         keyword."""
 
         keyword_types = ('NN', 'NNS', 'NNP', 'NNPS', 'CD', 'FW')
-        keyword_types_fallback = ('VBZ', 'VBP', 'VBD', 'VBN', 'VBG')
+        keyword_types_fallback = ('VBZ', 'VBP', 'VBD', 'VBN', 'VBG', 'JJ', 'JJS', 'JJR')
 
         if self.language == self.LANG_EN:
             from pattern.en import parse
