@@ -162,3 +162,6 @@ class Answer():
 
     def studenthistory(self):
         return render_template('studenthistory.html')
+        
+    def studenthistory_result(self):
+        return render_template('studenthistory_result.html', studid=answer.AnswerModel.getRanking(request.values['sid']))

@@ -5,29 +5,44 @@
 {% extends "_base.html" %}
 
 {% block content %}
-	<table border="1" width="400">
-	{% for question in unansq_questions %}
-	<tr width="50%">
-	<td width="50%">
-		{{ question.question }}
-	</td>
-	<td>
-		<p id="answerit"><a href="/answerit?question_id={{ question.id }}">Answer it!</a></p>
-	</td>
-	</tr>
-	{% endfor %}
-	</table>
+    <!---
+        Check to see if there are questions to answer
+        or questions to rank. If so link to the appropriate
+        answer or rank page by posting the question_id.
+        If not print a simple line saying there is no
+        question to answer or question to rank.
+     -->
+	{% if unansq_questions == [] %}
+		<p>There are currently no questions to answer.</p>
+	{% else %}
+		<table border="1" width="400">
+		{% for question in unansq_questions %}
+			<tr width="50%">
+			<td width="50%">
+				{{ question.question }}
+			</td>
+			<td>
+				<p id="answerit"><a href="/answerit?question_id={{ question.id }}">Answer it!</a></p>
+			</td>
+			</tr>
+		{% endfor %}
+		</table>
+	{% endif %}
 	<br>
-	<table border="1" width="400">
-	{% for question in answ_questions %}
-	<tr width="50%">
-	<td width="50%">
-		{{ question.question }}
-	</td>
-	<td>
-		<p id="rankit"><a href="/choicelobby?question_id={{ question.id }}">Rank it!</a></p>
-	</td>
-	</tr>
-	{% endfor %}
-	</table>
+	{% if answ_questions == [] %}
+		<p>There are currently no questions to rank.</p>
+	{% else %}
+		<table border="1" width="400">
+		{% for question in answ_questions %}
+			<tr width="50%">
+			<td width="50%">
+				{{ question.question }}
+			</td>
+			<td>
+				<p id="rankit"><a href="/choicelobby?question_id={{ question.id }}">Rank it!</a></p>
+			</td>
+			</tr>
+		{% endfor %}
+		</table>
+	{% endif %}
 {% endblock %}

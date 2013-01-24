@@ -251,6 +251,11 @@ def render():
 def studenthistory():
     ctrler = answer.Answer(request)
     return ctrler.studenthistory()
+    
+@app.route("/studenthistory_result", methods=['GET', 'POST'])
+def studenthistory_result():
+    ctrler = answer.Answer(request)
+    return ctrler.studenthistory_result()
 
 @app.route("/logout")
 def logout():
