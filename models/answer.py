@@ -72,7 +72,7 @@ class AnswerModel(Base, BaseEntity):
             return 0
 
     @staticmethod
-    def get_active_questions(userid,courseid):
+    def get_unanswered_questions(userid,courseid):
         anssub = session.query(AnswerModel).filter(AnswerModel.userID == userid).\
             subquery()
 
@@ -83,21 +83,23 @@ class AnswerModel(Base, BaseEntity):
         tmp = session.query(Question).\
                 outerjoin(anssub, anssub.c.questionID == Question.id).\
                 filter(Question.available == True).\
-                filter(Question.course_id == courseid)        
+                filter(Question.course_id == courseid).\
+                filter(anssub.c.id == None).all()
 
-        #print tmp
-        #print [(x.modified + timedelta(seconds=x.time), datetime.now()) for x in tmp]
+        print tmp
+        print [(x.modified + timedelta(seconds=x.time), datetime.now()) for x in tmp]
         
         questions = []
         
-        for x in tmp:           
+        for x in tmp:
+            print x.time
             if x.time == 0:
                 questions.append(x)
             elif x.modified + timedelta(seconds=x.time) > datetime.now():
                 questions.append(x)
          
         return questions
-    
+
     @staticmethod
     def get_answered_active_questions(userid, courseid):
         """
@@ -112,8 +114,7 @@ class AnswerModel(Base, BaseEntity):
                 outerjoin(annsub, anssub.c.questionID == Question.id).\
                 filter(Question.available == True).\
                 filter(Question.course_id == courseid).\
-                filter(anssub.c.id != None).all()                
-        
+                filter(anssub.c.id != None).all()
 
     @staticmethod
     def getTimeStamp(answerID):
