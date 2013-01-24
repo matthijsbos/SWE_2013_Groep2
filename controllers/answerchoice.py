@@ -44,12 +44,10 @@ class Answerchoice():
 
     def render(self):
 	    questionID = request.values['questionid'])
-        if(question_valid(questionID) {
+        if(question_valid(questionID)
             return render_template('choice.html',question=Question.by_id[questionID], answer1=AnswerModel.by_id(request.values['answerid1']), answer2=AnswerModel.by_id(request.values['answerid2']))
-        }
-        else {
+        else
             return render_template('/choicelobby')
-        }
 
     def process(self):
         userid = g.lti.get_user_id()
