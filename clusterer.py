@@ -4,7 +4,7 @@ import random
 
 def test():
   clustering_list = []
-  nr_tries = 10
+  nr_tries = 1
   best_error=99999999999
   best_clustering = nr_tries+1
   
@@ -122,10 +122,8 @@ class N_random():
     print "---end clusters---"
     
   def distance(self,vector1,vector2):
-    #vector1 = self.vectors[q1]
-    #vector2 = self.vectors[q2]
-    result = vector1 * vector2
-    length = np.sum(result)
+    diff = np.abs(vector1 - vector2)
+    length = np.sum(diff)
     return length
   
   def add_vector(self,vector):
@@ -139,12 +137,11 @@ class N_random():
       self.calc_n()
       if self.n < 1:
         self.n = 1
-    for i in range(self.n):
-      a = random.randint(0,len(self.vectors)-1)
-      while a in self.selected_indices:
-        a = random.randint(0,len(self.vectors)-1)
-      self.selected_indices.append(a)
-      self.selected_vectors.append(self.vectors[a])
+    a = range(len(self.vectors))
+    random.shuffle(a)
+    self.selected_indices = a[:self.n]
+    for i in self.selected_indices:
+      self.selected_vectors.append(self.vectors[i])
       self.clusters.append([])
     print "---begin selected vectors---"
     print self.selected_vectors
@@ -152,17 +149,20 @@ class N_random():
   
   def assign_cluster(self):
     for v in self.vectors:
-      best_dist = 0
+      best_dist = len(v)
       best_selected = 0
       for s in range(len(self.selected_vectors)):
         dist = self.distance(v,self.selected_vectors[s])
-        if dist > best_dist:
+        if dist < best_dist:
           best_dist = dist
           best_selected = s
       self.clusters[best_selected].append(v)
       
   def calc_average_error(self,cluster):
     average = np.average(np.array(cluster),0)
+    print "---begin average---"
+    print average
+    print "---end average---"
     error = 0
     for c in cluster:
       diff = np.abs(c - average)
