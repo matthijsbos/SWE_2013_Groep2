@@ -1,5 +1,5 @@
 from models import answer, question
-from flask import render_template, g, request
+from flask import render_template, g, request, redirect
 import datetime
 import time
 import sqlalchemy.orm.exc as sqlalchemyExp
@@ -10,41 +10,36 @@ class Answer():
         self.request = request
 
     def render(self):
-        # dummy shit, get some real data
-        qText = 'wat is het antwoord op deze dummy vraag?'
-        questionStartTime = datetime.datetime.now();
-        uID = g.lti.get_user_id()
-        qID = -1
-        timerD = 25
+        try:
+            qID = int(self.request.values['questionID'])
+            uID = g.lti.get_user_id()
+        except:
+            return abort(404)
 
-        # Post should be real data
-        if self.request.method == 'POST' and 'questionID' in self.request.form:
-            qID = int(self.request.form['questionID'])
-            q = question.Question.by_id(qID)
-            if q is not None:
-                qText = q.question
-                questionStartTime = q.modified;
-                timerD = q.time
+        q = question.Question.by_id(qID)
+        if q is not None:
+            qText = q.question
+            questionStartTime = q.modified;
+            timerD = q.time
 
-        if 'answerText' in self.request.form:
+        if 'answerText' in self.request.values:
             return self.saveAnswer(uID, qID, timerD, questionStartTime)
-        elif 'showall' in self.request.form:
+        elif 'showall' in self.request.values:
             # Render all
             return self.render_all()
-        elif 'viewanswer' in self.request.form:
+        elif 'viewanswer' in self.request.values:
             # show answer
             return self.viewAnswer()
-        elif 'reviewAnswer' in self.request.form:
+        elif 'reviewAnswer' in self.request.values:
             # save review answer
             return self.saveReviewAnswer()
-        elif 'removeAnswer' in self.request.form:
+        elif 'removeAnswer' in self.request.values:
             return self.removeAnswer()
         else:
             return self.answerQuestion(uID, qID, qText, timerD, questionStartTime)
 
     def saveAnswer(self, uID, qID, timerD, questionStartTime):
         # save answer
-        print "ANSW", uID, qID, timerD
         answerText = self.request.form['answerText']
 
         flag = "false"
@@ -56,7 +51,7 @@ class Answer():
                 answer.AnswerModel.save(qID, uID, answerText)
             flag = "true"
 
-        return render_template('answersaved.html', flag=flag)
+        return redirect('/index_student')
 
     def viewAnswer(self):
         aid = int(self.request.form['id'])
@@ -69,23 +64,28 @@ class Answer():
         edit = int(self.request.form['edit'])
         answer.AnswerModel.savereview(
             questionID, userID, reviewAnswer, edit)
-        return render_template('answersaved.html', flag='true')
+        return redirect('/index_student')
+        #return render_template('answersaved.html', flag='true')
 
     def removeAnswer(self):
         id = int(self.request.form['id'])
         answer.AnswerModel.remove_by_id(id)
-        return render_template('answersaved.html', flag='removed')
+        return redirect('/index_student')
+        #return render_template('answersaved.html', flag='removed')
 
     def answerQuestion(self, uID, qID, qText, timerD, questionStartTime):
         if answer.AnswerModel.checkAnswerExist(uID, qID):
             aID = answer.AnswerModel.getAnswerID(uID, qID)
             if self.timeLeft(timerD, 0, questionStartTime):
-                return render_template('answer.html', questionID=qID, userID=uID, questionText=qText, timerDuration=timerD, date=time.mktime(questionStartTime.timetuple()), go="true")
+                return redirect('/index_student')
+                #return render_template('answer.html', questionID=qID, userID=uID, questionText=qText, timerDuration=timerD, date=time.mktime(questionStartTime.timetuple()), go="true")
             else:
-                return render_template('answer.html', questionID=qID, userID=uID, questionText=qText, timerDuration=timerD, date=time.mktime(questionStartTime.timetuple()), go="false")
+                return redirect('/index_student')
+                #return render_template('answer.html', questionID=qID, userID=uID, questionText=qText, timerDuration=timerD, date=time.mktime(questionStartTime.timetuple()), go="false")
         else:
             #answer.AnswerModel.save(qID, uID, "")
-            return render_template('answer.html', questionID=qID, userID=uID, questionText=qText, timerDuration=timerD, date=time.mktime(questionStartTime.timetuple()), go="true")
+            return redirect('/index_student')
+            #return render_template('answer.html', questionID=qID, userID=uID, questionText=qText, timerDuration=timerD, date=time.mktime(questionStartTime.timetuple()), go="true")
 
     def timeLeft(self, timerD, giveTime, questionStartTime):
         currentTime = datetime.datetime.now()

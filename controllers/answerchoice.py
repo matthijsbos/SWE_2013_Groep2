@@ -77,7 +77,7 @@ class Answerchoice():
             best = answer1
             other = answer0
         else:
-            return 404
+            return abort(404)
         
         try:
             session.add(AnswerChoiceModel(userid,best,other))
