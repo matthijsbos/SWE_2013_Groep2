@@ -12,11 +12,42 @@
         $("#" + value).html("<span>Rate it " + value + " stars</span><b></b>");
         document.getElementById("input_rating").value = value;
     }
-    function remove_tag(aid, id){
-        $.getJSON("/removetaganswer/<aid><id>",{},
+    
+    function remove_tag(aid, tid, tname){
+        $.getJSON("/removetaganswer",{answerid:aid, tagid:tid},
             function(data){
-                if (data.deleted)
-                    $('#'+id).remove();
+                if (data.deleted) {
+                    $('#remove_'+tid).remove();
+                    $('#assigned_tag_'+tid).remove();
+                    $('#available_tags').append('\
+                        <div id="assign_tag_'+tid+'">\
+                            <div><a onclick="javascript:add_tag('+aid+','+tid+',\''+tname+'\');">\
+                                <i class="icon-ok"></i> '+tname+' \
+                            </a></div>\
+                        </div>')
+                }
+                else
+                    $('#error').html("Error while deleting question.");
+            });
+    }
+    
+    function add_tag(aid, tid, tname){
+        $.getJSON("/addtaganswer",{answerid:aid, tagid:tid},
+            function(data){
+                if (data.deleted) {
+                    $('#assign_tag_'+tid).remove();
+                    $('#assigned_tags').append('\
+                            <div id="assigned_tag_'+tid+'">\
+                                '+tname+',\
+                            </div>')
+                    $('#remove_tags').append('\
+                            <div class="tags" id="remove_'+tid+'">\
+                                <div>'+tname+'</div>\
+                                <div><a onclick="javascript:remove_tag('+aid+','+tid+',\''+tname+'\');">\
+                                    <i class="icon-remove-sign"></i> delete \
+                                </a></div>\
+                            </div>')
+                }
                 else
                     $('#error').html("Error while deleting question.");
             });
@@ -24,6 +55,7 @@
 </script>
 
 <legend>Review the following answer and rate it on a scale of 1 to 5</legend>
+<div id="error"></div>
 <form action="/reviewanswer" method="POST">
     <div class="reviewanswer_left">
         {{ answer }} <br>
@@ -44,47 +76,38 @@
     <div class="reviewanswer_right">
 
         <h4>This answer has been tagged as:</h4>
+            <div id="assigned_tags">
             {% for tag in tags %}
                 {% if tag.id in enabledtags %}
-                    {{ tag.name }}, 
-            {% endif %}
-        {% endfor %}
-
+                    <div class="assigned_tags" id="assigned_tag_{{tag.id}}">{{ tag.name }}, </div>
+                {% endif %}
+            {% endfor %}
+            </div>
+        
         <h4>Remove tags:</h4>
+        <div id="remove_tags">
         {% for tag in tags %}
             {% if tag.id in enabledtags %}
-                <div class="tags" id="{{tag.id}}">
+                <div class="tags" id="remove_{{tag.id}}">
                     <div>{{tag.name}}</div>
-                    <div><a onclick="javascript:remove_tag({{answer.id}},{{tag.id}});"/><i class="icon-remove-sign"></i> delete </a></div>
+                    <a onclick="javascript:remove_tag({{answer.id}},{{tag.id}},'{{tag.name}}');"/><i class="icon-remove-sign"></i> delete </a>
                 </div>
             {% endif %}
         {% endfor %}
-        <!--<label class="checkbox">
-            {% for tag in tags %}
-                {% if tag.id in enabledtags %}
-                    <div class="tags" id="{{tag.id}}">
-                        <input type="checkbox" name="remove_tags" value="{{tag.id}}">
-                        <div>{{tag.name}}</div><i class="icon-remove-sign"></i> delete </a>
-                        </input>
-                    </div>
-                {% endif %} 
-            {% endfor %}
-        </label>
-        <input type="submit" class="btn" value="remove">-->
-
+        </div>
+        
         <h4>Assign tags:</h4>
-        <label class="checkbox">
+        <div id="available_tags">
             {% for tag in tags %}
-            {% if not tag.id in enabledtags %}
-            <input type="checkbox" name="assign_tags" value="{{tag.id}}">
-            {{tag.name}}
-            </input>
-            <br>
-            {% endif %}
+                {% if not tag.id in enabledtags %}
+                    <div id="assign_tag_{{tag.id}}">
+                        <a onclick="javascript:add_tag({{answer.id}},{{tag.id}},'{{tag.name}}');"/><i class="icon-ok"></i> {{tag.name}} </a>
+                    </div>
+                {% endif %}
             {% endfor %}
-        </label>
+        </div>
 
-
+        <br>
         <input type="submit" class="btn-primary btn" name="rating" value="Submit review">
     </div>
 </form>
