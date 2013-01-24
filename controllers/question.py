@@ -59,7 +59,7 @@ class QuestionController():
             
         return json.dumps({"still_available":((question is not None) and question.available),
                            "time_remaining":time_remaining,
-                           "question_deleted":(question is None),
+                           "question_deleted":(question is None) or not question.available,
                            "question_time":question_time})
 
     @staticmethod
