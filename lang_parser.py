@@ -26,7 +26,7 @@ class LanguageParser():
     LANG_NL = 'nl'
     LANG_DE = 'de'
     LANG_ES = 'es'
-    LANG_UNKNOWN = None
+    LANG_UNKNOWN = '00'
 
     def __init__(self, language, texts=[]):
         if language not in (self.LANG_EN, self.LANG_NL, self.LANG_DE,
@@ -66,6 +66,9 @@ class LanguageParser():
             from pattern.de import parse
         elif self.language == self.LANG_ES:
             from pattern.es import parse
+        elif self.language == self.LANG_UNKNOWN:
+            # Don't do any parsing.
+            return text.lower()
         else:
             raise Exception("Unsupported language: %s" % repr(self.language))
 
@@ -75,7 +78,7 @@ class LanguageParser():
         normalized = filter(lambda w: w not in string.punctuation, normalized)
         normalized = ' '.join(normalized)
         return normalized
-
+        
     def extract_keywords(self, text):
         """Extracts keywords from a given string.
 
@@ -84,8 +87,6 @@ class LanguageParser():
         If that set is empty, all verbs are returned.
         If even that set is empty, every word in the sentence is returned as
         keyword."""
-
-        # TODO: can there be double keywords?
 
         keyword_types = ('NN', 'NNS', 'NNP', 'NNPS', 'CD', 'FW')
         keyword_types_fallback = ('VBZ', 'VBP', 'VBD', 'VBN', 'VBG')
@@ -98,6 +99,10 @@ class LanguageParser():
             from pattern.de import parse
         elif self.language == self.LANG_ES:
             from pattern.es import parse
+        elif self.language == self.LANG_UNKNOWN:
+            # Don't do any language parsing depending on a specific language.
+            return text.lower().translate(string.maketrans("", ""),
+                                          string.punctuation).split()
         else:
             raise Exception("Unsupported language: %s" % repr(self.language))
 
@@ -110,5 +115,5 @@ class LanguageParser():
         if not keywords:
             keywords = parsed
         keywords = map(lambda w: w[-1], keywords)
-
+        keywords = {}.fromkeys(keywords).keys()
         return keywords
