@@ -56,35 +56,34 @@ function show_question(id, question, time_remaining, question_time, answer) {
     submit_interval_id[id] = setInterval(function(){
         check_remaining_time(id, question_time)
         },time_check_interval)
-    active_question_id = id;
- 
-
+    
     var austDay = new Date();
     austDay.setSeconds(austDay.getSeconds() + time_remaining);
     console.log(austDay);
-    $('#questions').append('<form id="answerform'+active_question_id+'" method="post" style="display:none;">\
+    $('#questions').append('<form id="answerform'+id+'" method="post" style="display:none;">\
         <br>\
-        <div id="questionArea'+active_question_id+'">\
-            <div id="question'+active_question_id+'"></div>\
+        <div id="questionArea'+id+'">\
+            <div id="question'+id+'"></div>\
             <textarea name="answerText" cols=50 rows=5></textarea>\
             <br>\
-            <button class="btn btn-info" onclick="submit_answer('+active_question_id+'); return false;" value="submit answer">submit answer</button>\
-            <div id="counter'+active_question_id+'" class="countdowntime"></div>\
-            <div id="prolongedText'+active_question_id+'" style="display: none;">Question has been prolonged</div>\
+            <button class="btn btn-info" onclick="submit_answer('+id+'); return false;" value="submit answer">submit answer</button>\
+            <div id="counter'+id+'" class="countdowntime"></div>\
+            <div id="prolongedText'+id+'" style="display: none;">Question has been prolonged</div>\
         </div>\
     </form>');
-    $('#answerform'+active_question_id+' #counter'+active_question_id).countdown({
+    
+    $('#answerform'+id+' #counter'+id).countdown({
         until: austDay,
         compact: true,
         onExpiry: function(){
-        check_submit_answer(active_question_id, question_time)}
-        
-        });
+        check_submit_answer(id, question_time)}
+        alert(id);
+    });
     
     $('#pleasewait').hide();
-    $('#answerform'+active_question_id+' #question'+active_question_id).text(question);
-    $('#answerform'+active_question_id+' textarea').val(answer);
-    $('#answerform'+active_question_id).show();
+    $('#answerform'+id+' #question'+id).text(question);
+    $('#answerform'+id+' textarea').val(answer);
+    $('#answerform'+id).show();
 }
 
 function check_submit_answer(id, question_time){
