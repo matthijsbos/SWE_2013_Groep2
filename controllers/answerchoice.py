@@ -65,7 +65,7 @@ class Answerchoice():
                                    answer1 = answer1,
                                    answer2 = answer2)
         else:
-            return redirect('/choicelobby?question_id=' + questionid))
+            return redirect('/choicelobby?question_id=' + questionid)
     
     def process(self):
         userid = g.lti.get_user_id()
@@ -113,9 +113,10 @@ class Answerchoice():
 
         userID = g.lti.get_user_id()
         questionID = int(request.values['question_id'])
-        validAnswers = getotheranswers(userID,questionID)
+        question = Question.by_id(questionID)
+        validAnswers = getotheranswers(userID, questionID)
         print ('userID: ' + str(userID) + '\nquestionID: ' + str(questionID) + '\nlen(validAnswers): ' + str(len(validAnswers)))
         if len(validAnswers) < 2:
-            return render_template('choicelobby.html',question=questionID)
+            return render_template('choicelobby.html',question=question)
         else:
             return redirect('/answerchoice?questionid='+str(questionID)+'&answerid1='+str(randpop(validAnswers).id)+'&answerid2='+str(randpop(validAnswers).id))
