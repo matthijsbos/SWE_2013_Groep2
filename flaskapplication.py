@@ -11,7 +11,6 @@ from controllers.answer import Answer
 from controllers.question import QuestionController as Question
 from controllers.tags import Modifytags, AssignTags
 from controllers.review import ReviewAnswer
-from models.sakai import SakaiData
 
 app = Flask(__name__)
 app.debug = True

@@ -24,7 +24,7 @@ class Answer():
             q = question.Question.by_id(qID)
             if q is not None:
                 qText = q.question
-                questionStartTime = q.modified;
+                questionStartTime = q.activate_time;
                 timerD = q.time
 
         if 'answerText' in self.request.form:
@@ -98,7 +98,7 @@ class Answer():
         if timerD == 0:
             return True
         else:
-            if seconds < timerD + 2:
+            if seconds < timerD + 20:
                 return True
             else:
                 return False

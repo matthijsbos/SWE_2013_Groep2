@@ -6,34 +6,24 @@
  *       Just alter has_new_question to has_new_action or something...
  */
 
-var has_active_question = false;
-var active_question_id;
 var query_interval = 1000 * 5; // Every 5 sec
 var query_interval_id;
-var time_delta;
-var submit_interval_id;
+var submit_interval_id= new Array();
 var time_check_interval = 5000;
 
 $(function() {
-    $("#answerform"+active_question_id).submit(submit_answer);
-    query_new_question();
-
-	
-    if (!has_active_question)
-        query_interval_id = setInterval(query_new_question, query_interval);
+    query_interval_id = setInterval(query_new_question, query_interval);
 });
 
 function query_new_question() {
-    if (has_active_question) {
-        clearInterval(query_interval_id);
-        return;
-    }
     $.getJSON("/has_new_question", {},
         function(data) {          
             if (data.has_new) {   
                 for (var i=0;i<data.len;i++){
-                    show_question(data.questions[i].question_id, data.questions[i].question_text,
-                        data.questions[i].time_remaining, data.questions[i].question_time);
+                    if($('#answerform'+data.questions[i].question_id).length == 0) {
+                        show_question(data.questions[i].question_id, data.questions[i].question_text,
+                            data.questions[i].time_remaining, data.questions[i].question_time);
+                    }
                 }
             }
              
@@ -62,84 +52,92 @@ function show_review_button(number) {
 
 function show_question(id, question, time_remaining, question_time) {
     console.log("GOT QUESTION", id, question, time_remaining);
-    clearInterval(query_interval_id);
-    submit_interval_id = setInterval(function(){check_remaining_time(id)},time_check_interval)
-
-    has_active_question = true;
+    submit_interval_id[id] = setInterval(function(){
+        check_remaining_time(id, question_time)
+        },time_check_interval)
     active_question_id = id;
-    time_delta = question_time;
+ 
 
-	var austDay = new Date();
-	austDay.setSeconds(austDay.getSeconds() + time_remaining);
+    var austDay = new Date();
+    austDay.setSeconds(austDay.getSeconds() + time_remaining);
     console.log(austDay);
-     $('#questions').append('<form id="answerform'+active_question_id+'" method="post" style="display:none;">\
+    $('#questions').append('<form id="answerform'+active_question_id+'" method="post" style="display:none;">\
         <br>\
-        <div id="questionArea">\
+        <div id="questionArea'+active_question_id+'">\
             <div id="question'+active_question_id+'"></div>\
             <textarea name="answerText" cols=50 rows=5></textarea>\
             <br>\
-            <button class="btn btn-info" type="submit" value="submit answer">submit answer</button>\
+            <button class="btn btn-info" onclick="submit_answer('+active_question_id+');" value="submit answer">submit answer</button>\
             <div id="counter'+active_question_id+'" class="countdowntime"></div>\
-            <div id="prolongedText" style="display: none;">Question has been prolonged</div>\
+            <div id="prolongedText'+active_question_id+'" style="display: none;">Question has been prolonged</div>\
         </div>\
     </form>');
-    $('#answerform'+active_question_id+' #counter'+active_question_id).countdown({until: new Date(),
-                                         compact: true,
-                                         onExpiry: check_submit_answer});
-	$('#answerform'+active_question_id+' #counter'+active_question_id).countdown('option', {until: austDay,
-                                         compact: true,
-                                         onExpiry: check_submit_answer});
+    $('#answerform'+active_question_id+' #counter'+active_question_id).countdown({
+        until: new Date(),
+        compact: true,
+        onExpiry: function(){
+        check_submit_answer(active_question_id, question_time)}
+        
+        });
+    $('#answerform'+active_question_id+' #counter'+active_question_id).countdown('option', {
+        until: austDay,
+        compact: true,
+        onExpiry: function(){
+        check_submit_answer(active_question_id, question_time)}
+        });
     $('#pleasewait').hide();
     $('#answerform'+active_question_id+' #question'+active_question_id).text(question);
     $('#answerform'+active_question_id+' textarea').val('');
     $('#answerform'+active_question_id).show();
 }
 
-function check_submit_answer(){
+function check_submit_answer(id, question_time){
     console.log("Check SUBMIT");
-    if (!check_remaining_time())
+    if (!check_remaining_time(id, question_time))
     {
-            submit_answer();
+        submit_answer(id);
     }
 }
 
-function check_remaining_time(id){
-    if(!has_active_question)
-    {
-        return false;
-    }
-
+function check_remaining_time(id, time_delta){
     var res = false;
-    $.getJSON("/question_remaining_time", {questionID:id},
-        function(data) {
-            if (data.still_available)
+    $.getJSON("/question_remaining_time", {
+        questionID:id
+    },
+    function(data) {
+        res = false;
+        if (data.still_available)
+        {
+            if (data.question_time > time_delta)
             {
-                if (data.question_time > time_delta)
+                var austDay = new Date();
+                austDay.setSeconds(austDay.getSeconds() + data.time_remaining);
+                console.log(austDay);
+
+                $('#answerform'+id+' #counter'+id).countdown('option',
                 {
-                    var austDay = new Date();
-                    austDay.setSeconds(austDay.getSeconds() + data.time_remaining);
-                    console.log(austDay);
+                    until: austDay
+                });
 
-                    $('#answerform #counter').countdown('option',
-                                                     {until: austDay});
+                popup_div('#answerform'+id+' #prolongedText'+id)
 
-                    popup_div('#answerform #prolongedText')
-
-                    time_delta = data.question_time;
-                    res = true;
-                }
+                time_delta = data.question_time;
+                submit_interval_id[id] = setInterval(function(){
+                    check_remaining_time(id, time_delta)
+                    },time_check_interval)
+                res = true;
             }
-            else
+        }
+        else
+        {
+            if(data.question_deleted)
             {
-                if(data.question_deleted)
-                {
-                    show_query_screen();
-                    activate_new_question_query();                
-                    popup_div('#questionWasDeleted',5000)
-                }
+                $('#pleasewait').show();
+                $('#answerform'+id).hide();             
+                popup_div('#questionWasDeleted',5000)
             }
-            res = false;
-        });
+        }
+    });
 
     return res;
 }
@@ -151,28 +149,13 @@ function popup_div(div,time)
     $(div).hide(time);
 }
 
-function show_query_screen()
-{
-    clearInterval(submit_interval_id);
-    has_active_question = false;
-    $('#pleasewait').show();
-    $('#answerform').hide();
-}
 
-function activate_new_question_query()
-{
-    query_new_question();
-    if (!has_active_question)
-        query_interval_id = setInterval(query_new_question, query_interval);
-}
-
-function submit_answer() {
+function submit_answer(id) {
     console.log("SUBMIT");
-    show_query_screen();
 
-    $.post("/answer", {"questionID": active_question_id,
-                       "answerText": $('#answerform'+active_question_id+' textarea').val()});
-
-    activate_new_question_query()
+    $.post("/answer", {
+        "questionID": id,
+        "answerText": $('#answerform'+id+' textarea').val()
+        });
     return false;
 }
