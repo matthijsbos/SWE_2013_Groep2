@@ -11,22 +11,23 @@ var query_interval_id;
 var submit_interval_id= new Array();
 var time_check_interval = 5000;
 
-$(function() {
-    query_interval_id = setInterval(query_new_question, query_interval);
+$(function() {    
+    query_new_question()
+    query_interval_id = setInterval(query_new_question, query_interval);    
 });
 
-function query_new_question() {
+function query_new_question() {    
     $.getJSON("/has_new_question", {},
         function(data) {          
             if (data.has_new) {   
                 for (var i=0;i<data.len;i++){
                     if($('#answerform'+data.questions[i].question_id).length == 0) {
                         show_question(data.questions[i].question_id, data.questions[i].question_text,
-                            data.questions[i].time_remaining, data.questions[i].question_time);
+                            data.questions[i].time_remaining, data.questions[i].question_time, 
+                            data.questions[i].answer);
                     }
                 }
-            }
-             
+            }             
         });
     /* Poll for reviewable questions */
     $.getJSON("/has_new_review", {},
@@ -50,7 +51,7 @@ function show_review_button(number) {
     }
 }
 
-function show_question(id, question, time_remaining, question_time) {
+function show_question(id, question, time_remaining, question_time, answer) {
     console.log("GOT QUESTION", id, question, time_remaining);
     submit_interval_id[id] = setInterval(function(){
         check_remaining_time(id, question_time)
@@ -67,36 +68,32 @@ function show_question(id, question, time_remaining, question_time) {
             <div id="question'+active_question_id+'"></div>\
             <textarea name="answerText" cols=50 rows=5></textarea>\
             <br>\
-            <button class="btn btn-info" onclick="submit_answer('+active_question_id+');" value="submit answer">submit answer</button>\
+            <button class="btn btn-info" onclick="submit_answer('+active_question_id+'); return false;" value="submit answer">submit answer</button>\
             <div id="counter'+active_question_id+'" class="countdowntime"></div>\
             <div id="prolongedText'+active_question_id+'" style="display: none;">Question has been prolonged</div>\
         </div>\
     </form>');
     $('#answerform'+active_question_id+' #counter'+active_question_id).countdown({
-        until: new Date(),
+        until: austDay,
         compact: true,
         onExpiry: function(){
         check_submit_answer(active_question_id, question_time)}
         
         });
-    $('#answerform'+active_question_id+' #counter'+active_question_id).countdown('option', {
-        until: austDay,
-        compact: true,
-        onExpiry: function(){
-        check_submit_answer(active_question_id, question_time)}
-        });
+    
     $('#pleasewait').hide();
     $('#answerform'+active_question_id+' #question'+active_question_id).text(question);
-    $('#answerform'+active_question_id+' textarea').val('');
+    $('#answerform'+active_question_id+' textarea').val(answer);
     $('#answerform'+active_question_id).show();
 }
 
 function check_submit_answer(id, question_time){
-    console.log("Check SUBMIT");
+    console.log("Check SUBMIT" + id);
     if (!check_remaining_time(id, question_time))
     {
         submit_answer(id);
     }
+    $('#answerform'+id).remove();
 }
 
 function check_remaining_time(id, time_delta){
@@ -108,7 +105,7 @@ function check_remaining_time(id, time_delta){
         res = false;
         if (data.still_available)
         {
-            if (data.question_time > time_delta)
+            if (data.question_time != time_delta)
             {
                 var austDay = new Date();
                 austDay.setSeconds(austDay.getSeconds() + data.time_remaining);
@@ -118,8 +115,8 @@ function check_remaining_time(id, time_delta){
                 {
                     until: austDay
                 });
-
-                popup_div('#answerform'+id+' #prolongedText'+id)
+                if (data.question_time > time_delta)
+                    popup_div('#answerform'+id+' #prolongedText'+id)
 
                 time_delta = data.question_time;
                 submit_interval_id[id] = setInterval(function(){
@@ -132,8 +129,11 @@ function check_remaining_time(id, time_delta){
         {
             if(data.question_deleted)
             {
-                $('#pleasewait').show();
-                $('#answerform'+id).hide();             
+                if ( $('#questions').is(':empty') )
+                {
+                    $('#pleasewait').show();
+                }
+                $('#answerform'+id).remove();             
                 popup_div('#questionWasDeleted',5000)
             }
         }
@@ -156,6 +156,5 @@ function submit_answer(id) {
     $.post("/answer", {
         "questionID": id,
         "answerText": $('#answerform'+id+' textarea').val()
-        });
-    return false;
+        });            
 }

@@ -26,9 +26,11 @@ class Answer():
                 qText = q.question
                 questionStartTime = q.activate_time;
                 timerD = q.time
-
+        
+        print 'Retrieved question information'
         if 'answerText' in self.request.form:
-            return self.saveAnswer(uID, qID, timerD, questionStartTime)
+            print self.saveAnswer(uID, qID, timerD, questionStartTime)
+            return True
         elif 'showall' in self.request.form:
             # Render all
             return self.render_all()
@@ -56,9 +58,10 @@ class Answer():
             else:
                 answer.AnswerModel.save(qID, uID, answerText)
             flag = "true"
-
+        print 'Saved answer'
         user.UserModel.save(uID,g.lti.get_user_name())
-        return render_template('answersaved.html', flag=flag)
+        print 'Dexter'
+        return True#render_template('answersaved.html', flag=flag)
 
     def viewAnswer(self):
         aid = int(self.request.form['id'])
