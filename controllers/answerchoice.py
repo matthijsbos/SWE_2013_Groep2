@@ -42,7 +42,6 @@ class Answerchoice():
             session.add(a32)
             session.add(a33)
             session.commit()
-            
 
     def render(self):
         try:
@@ -87,12 +86,12 @@ class Answerchoice():
             other = answer0
         else:
             return abort(404)
-        
-        try:
-            session.add(AnswerChoiceModel(userid,best,other))
-            session.commit()
-        except:
-            session.rollback()
+
+        #try:
+        session.add(AnswerChoiceModel(userid,best,other))
+        session.commit()
+        #except:
+        #    session.rollback()
 
         return redirect('/index_student')
         #return render_template('index_student.html', unansq_questions = AnswerModel.get_unanswered_questions(g.lti.get_user_id(),
