@@ -2,11 +2,13 @@ import numpy as np
 from math import *
 import random
 
+# test function for written classes
 def test():
   clustering_list = []
-  nr_tries = 1
+  nr_tries = 10
   best_error=99999999999
   best_clustering = nr_tries+1
+  
   
   lemma_answers = ["ja auto kapot","nee auto heel","ja auto kapot","nee auto kapot"
     ,"nee heel","nee","ja voertuig kapot","nee fietser ongeluk","ja fietser auto","ja"]
@@ -20,7 +22,7 @@ def test():
   
   for n in range(nr_tries):
     clustering_list.append(N_random())
-    for vector in data.term_frequency:
+    for vector in data.token_occurs:
       clustering_list[n].add_vector(vector)
     clustering_list[n].execute()
     if clustering_list[n].error < best_error:
@@ -31,8 +33,20 @@ def test():
   print best_error
   print best_clustering
   print clustering_list[best_clustering].clusters
-    
+  
+  best_clusters = clustering_list[best_clustering].clusters
+  text_clusters = []
+  for c in range(len(best_clusters)):
+    text_clusters.append([])
+    for v in range(len(best_clusters[c])):
+      vector = best_clusters[c][v]
+      for d in data.answers:
+        if np.array_equal(d.vector,vector):
+          text_clusters[c].append(d.answer)
+          break;
+  print text_clusters
 
+# contains an answer and its vector representation
 class Data():
   answer = ""
   vector = []
@@ -41,15 +55,16 @@ class Data():
     self.answer = ""
     self.vector = []
 
+# takes all answers and builds a matrix which shows which words are in which answer
 class DataClusterer():
   answers = []
   tokens = []
-  term_frequency = []
+  token_occurs = []
   
   def __init__(self):
     self.answers = []
     self.tokens = []
-    self.term_frequency = []
+    self.token_occurs = []
   
   # add answer to list
   def add_answer(self,answer):
@@ -71,7 +86,7 @@ class DataClusterer():
         if token not in self.tokens:
           self.tokens.append(token)
     # initialize term frequency matrix
-    self.term_frequency = np.zeros((len(self.answers),len(self.tokens)))
+    self.token_occurs = np.zeros((len(self.answers),len(self.tokens)))
   
   # counts the frequency of each term in each answer and adds them to the term frequency matrix
   def count_frequency(self):
@@ -81,18 +96,13 @@ class DataClusterer():
         match=False
         for token in toks:
           if token == self.tokens[j]:
-            self.term_frequency[i][j] = 1
+            self.token_occurs[i][j] += 1
             self.answers[i].vector.append(1)
             match=True
         if match==False:
           self.answers[i].vector.append(0)
-    print "---begin content of DataClusterer---"
-    print self.term_frequency
-    print self.tokens
-    for data in self.answers:
-      print data.vector
-    print "---end content of DataClusterer---"
-    
+
+# select some clusters n times and cluster all answers to those clusters
 class N_random():
   n = 0
   vectors = []
@@ -111,6 +121,7 @@ class N_random():
     self.clusters = []
     self.error = 0
     
+  # executes all functionalities of this class
   def execute(self):
     self.calc_n()
     self.select_n()
@@ -121,17 +132,21 @@ class N_random():
     print self.clusters
     print "---end clusters---"
     
+  # calculate distance between two vectors
   def distance(self,vector1,vector2):
     diff = np.abs(vector1 - vector2)
     length = np.sum(diff)
     return length
   
+  # add a vector to this class
   def add_vector(self,vector):
     self.vectors.append(vector)
   
+  # determine n
   def calc_n(self):
-    self.n = int(log(len(self.vectors)))
+    self.n = int(log(len(self.vectors))) + 2
     
+  # randomly select n clusters
   def select_n(self):
     if self.n < 1:
       self.calc_n()
@@ -147,6 +162,7 @@ class N_random():
     print self.selected_vectors
     print "---end selected vectors---"
   
+  # assign each answer to a cluster
   def assign_cluster(self):
     for v in self.vectors:
       best_dist = len(v)
@@ -157,7 +173,8 @@ class N_random():
           best_dist = dist
           best_selected = s
       self.clusters[best_selected].append(v)
-      
+   
+  # calculate the average error of a cluster and adds this to the total error of this clustering try
   def calc_average_error(self,cluster):
     average = np.average(np.array(cluster),0)
     print "---begin average---"
@@ -167,4 +184,4 @@ class N_random():
     for c in cluster:
       diff = np.abs(c - average)
       error += np.sum(diff)
-    self.error=error
+    self.error+=error
