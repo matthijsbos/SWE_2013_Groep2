@@ -1,4 +1,6 @@
 {% extends "_base.html" %}
 {% block content %}
-<p>Welcome {{username}}</p>
+<div class="alert alert-info">
+	<i class="icon-ok-circle"></i>&nbsp;Welcome {{lti.get_user_name()}}
+</div>
 {% endblock %}

@@ -4,7 +4,6 @@ body{
        font-family: sans-serif;
 }
 br { clear: both; }
-
 .cntSeparator {
     font-size: 54px;
     margin: 10px 7px;
@@ -23,6 +22,9 @@ br { clear: both; }
 .tags div{
     width:80px;
     display:inline-block;
+}
+#assigned_tags div{
+    display: inline-block;
 }
 #answerfilter-form input[type="text"]{
     margin-right: 20px;
@@ -75,5 +77,3 @@ textarea:focus{
     font-size: 18px;
     font-weight: bold;
     color:#009DCE;
-
-}

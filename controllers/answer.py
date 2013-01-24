@@ -1,5 +1,6 @@
-from models import answer, question
-from flask import render_template, g
+from models import answer, question,user
+from flask import g
+from utilities import render_template
 import datetime
 import time
 import sqlalchemy.orm.exc as sqlalchemyExp
@@ -23,7 +24,7 @@ class Answer():
             q = question.Question.by_id(qID)
             if q is not None:
                 qText = q.question
-                questionStartTime = q.modified;
+                questionStartTime = q.activate_time;
                 timerD = q.time
 
         if 'answerText' in self.request.form:
@@ -56,6 +57,7 @@ class Answer():
                 answer.AnswerModel.save(qID, uID, answerText)
             flag = "true"
 
+        user.UserModel.save(uID,g.lti.get_user_name())
         return render_template('answersaved.html', flag=flag)
 
     def viewAnswer(self):
@@ -96,7 +98,7 @@ class Answer():
         if timerD == 0:
             return True
         else:
-            if seconds < timerD + 2:
+            if seconds < timerD + 20:
                 return True
             else:
                 return False

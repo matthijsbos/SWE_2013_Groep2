@@ -148,13 +148,15 @@ def removetag_question(id):
     #return ctrler.render()
 
 
-@app.route("/removetaganswer/<aid><id>", methods=['POST', 'GET'])
-def removetag_answer(aid, id):
+@app.route("/removetaganswer", methods=['POST', 'GET'])
+def removetag_answer():
     ctrler = ReviewAnswer(request)
-    ctrler.remove_tag_answer(aid, id)
-    return ReviewAnswer.review(1)
+    return ctrler.remove_tag_answer(request.args['answerid'], request.args['tagid'])
 
-    
+@app.route("/addtaganswer", methods=['POST', 'GET'])
+def addtag_answer():
+    ctrler = ReviewAnswer(request)
+    return ctrler.add_tag_answer(request.args['answerid'], request.args['tagid'])    
     
 #@app.route("/reviewanswer",methods=['POST', 'GET'])
 #def handle_review_answer():

@@ -3,7 +3,8 @@
 # Changes:
 # Comment: call ReviewAnswer.review(x) to start reviewing a answer
 
-from flask import render_template, g, session as fsession
+from flask import g, session as fsession
+from utilities import render_template
 from models.tag import Tag, AnswerTag
 from models.answer import AnswerModel
 from models.review import Review
@@ -19,16 +20,13 @@ class ReviewAnswer():
         try:
             fsession['reviewanswer']
         except:
-            return self
+            return None
 
-        for tag_id in request.form.getlist('assign_tags'):
-            AnswerTag.add_answertag(fsession['reviewanswer'], tag_id)
+        #for tag_id in request.form.getlist('assign_tags'):
+        #    AnswerTag.add_answertag(fsession['reviewanswer'], tag_id)
 
         #for rating in request.form.getlist('rating'):
         #    Review.add(fsession['reviewanswer'], fsession['user_id'], rating, )
-
-        for tag_id in request.form.getlist('remove_tags'):
-            AnswerTag.remove(fsession['reviewanswer'], tag_id)
             
         for review in request.form.getlist('comments'):
             rating = request.form['rating']
@@ -43,9 +41,15 @@ class ReviewAnswer():
         del fsession['reviewanswer']
     
     @staticmethod
-    def remove_tag_answer(aid, id):
-        AnswerTag.remove(aid, id)
-    
+    def remove_tag_answer(aid, tagid):
+        AnswerTag.remove(aid, tagid)
+        return json.dumps({'deleted': True})
+
+    @staticmethod
+    def add_tag_answer(aid, tagid):
+        AnswerTag.add_answertag(aid, tagid)
+        return json.dumps({'deleted': True})
+        
     @staticmethod
     def review(answer_id):
 

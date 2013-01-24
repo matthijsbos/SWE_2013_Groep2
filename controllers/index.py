@@ -1,8 +1,8 @@
 import json
 import time
 from datetime import datetime, timedelta
-from flask import render_template, g
-
+from flask import g
+from utilities import render_template
 from models.answer import AnswerModel
 from controllers.answer import Answer
 
@@ -16,7 +16,7 @@ class Index():
             return render_template('index_debug.html',
                                    lti_dump=g.lti.dump_all())
         if g.lti.is_instructor():
-            return render_template('index_instructor.html', username=g.lti.get_user_name())
+            return render_template('index_instructor.html')
 
         return render_template('index_student.html')
 
@@ -25,20 +25,29 @@ class Index():
             return json.dumps({'has_new': False})
 
         answers = AnswerModel()
-        question = answers.get_unanswered_questions(g.lti.get_user_id(),
+        questions = answers.get_unanswered_questions(g.lti.get_user_id(),
                                                     g.lti.get_course_id())
 
-        if not len(question):
+        if len(questions) == 0:
             return json.dumps({'has_new': False})
-
-        question = question[0]
-
-        time_remaining = datetime.now() - (question.modified +
-                timedelta(seconds=question.time))
-        time_remaining = time_remaining.seconds + time_remaining.days * 86400
-        time_remaining = -time_remaining
-
-        return json.dumps({'has_new': True,
-                           'question_id': question.id,
-                           'question_text': question.question,
-                           'time_remaining': time_remaining})
+        
+        output = { 'has_new': True, 'len': len(questions) } 
+        array = []        
+        
+        for question in questions:        
+            time_remaining = datetime.now() - (question.activate_time +
+                    timedelta(seconds=question.time))
+            time_remaining = time_remaining.seconds + time_remaining.days * 86400
+            time_remaining = -time_remaining      
+            
+            object = {'question_id': question.id,
+                      'question_text': question.question,
+                      'time_remaining': time_remaining,
+                      'question_time': question.time}        
+                      
+            array.append(object)
+        
+        #qArray = {'questions': array}        
+        output['questions'] = array
+        
+        return json.dumps(output)
