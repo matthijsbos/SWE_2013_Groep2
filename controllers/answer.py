@@ -140,4 +140,3 @@ class Answer():
         
     def studenthistory_result(self):
         return render_template('studenthistory_result.html', studid=request.values['sid'])
-

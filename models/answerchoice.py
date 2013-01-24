@@ -6,6 +6,8 @@ from basemodel import BaseEntity
 from models import answer
 
 class AnswerChoiceModel(Base,BaseEntity):
+    K = 100
+
     __tablename__ = 'answerchoice'
 
     #inherited from BaseEntity
@@ -17,7 +19,6 @@ class AnswerChoiceModel(Base,BaseEntity):
     best_answer = relationship('AnswerModel', primaryjoin='AnswerChoiceModel.best_answer_id == AnswerModel.id')
     other_answer_id = Column(Integer, ForeignKey('answer.id'), nullable=False)
     other_answer = relationship('AnswerModel', primaryjoin='AnswerChoiceModel.other_answer_id == AnswerModel.id')
-    K = 100
 
     def __init__(self, user_id, best_answer_id, other_answer_id):
         self.user_id = user_id
