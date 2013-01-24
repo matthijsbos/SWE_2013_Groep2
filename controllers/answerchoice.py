@@ -82,13 +82,13 @@ class Answerchoice():
             best = answer1
             other = answer0
         else:
-            return 404
-        
-        try:
-            session.add(AnswerChoiceModel(userid,best,other))
-            session.commit()
-        except:
-            session.rollback()
+            return abort(404)
+                
+        #try:
+        session.add(AnswerChoiceModel(userid,best,other))
+        session.commit()
+        #except:
+        #    session.rollback()
 
         return render_template('index_student.html', unansq_questions = AnswerModel.get_unanswered_questions(g.lti.get_user_id(),
                                                     g.lti.get_course_id()), answ_questions = AnswerModel.get_answered_active_questions(g.lti.get_user_id(),
