@@ -5,7 +5,8 @@
 
 import yaml
 import json
-from flask import Flask, Response, request, render_template, g
+from flask import Flask, Response, request, g
+from utilities import render_template
 from lti import LTI, LTIException
 from controllers.index import Index
 from controllers.answer import Answer
@@ -120,7 +121,7 @@ def handle_question():
 
 @app.route("/question_list", methods=['GET', 'POST'])
 def list_questions():
-    return Question.get_list()
+    return render_template('question_list.html')
 
 @app.route("/question_list_table",methods=['GET','POST'])
 def list_questions_table():
