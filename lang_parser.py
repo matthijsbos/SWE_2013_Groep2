@@ -75,7 +75,7 @@ class LanguageParser():
         normalized = filter(lambda w: w not in string.punctuation, normalized)
         normalized = ' '.join(normalized)
         return normalized
-
+        
     def extract_keywords(self, text):
         """Extracts keywords from a given string.
 
@@ -84,8 +84,6 @@ class LanguageParser():
         If that set is empty, all verbs are returned.
         If even that set is empty, every word in the sentence is returned as
         keyword."""
-
-        # TODO: can there be double keywords?
 
         keyword_types = ('NN', 'NNS', 'NNP', 'NNPS', 'CD', 'FW')
         keyword_types_fallback = ('VBZ', 'VBP', 'VBD', 'VBN', 'VBG')
@@ -110,5 +108,5 @@ class LanguageParser():
         if not keywords:
             keywords = parsed
         keywords = map(lambda w: w[-1], keywords)
-
+        keywords = {}.fromkeys(keywords).keys()
         return keywords
