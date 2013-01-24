@@ -3,7 +3,7 @@
 # Changes:
 # Comment:
 
-from flask import session as fsession
+from flask import session as fsession, g
 from utilities import render_template
 from models.tag import Tag, AnswerTag
 from models.answer import AnswerModel
@@ -19,7 +19,7 @@ class Modifytags():
 
     def delete_tag_question(self, id):
         if g.lti.is_instructor():
-            Tag.remove_tag_question(id)
+            Tag.remove_tag(id)
         return json.dumps({'deleted': g.lti.is_instructor()})
 
     def render(self):

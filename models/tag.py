@@ -48,9 +48,9 @@ class Tag(Base, BaseEntity):
             
     @staticmethod
     def remove_tag(tag_id):
-        for tag in session.query(Tag).filter(Tag.id == tag_id):
-            session.delete(tag)
-            session.commit()
+        tag = session.query(Tag).filter(Tag.id == tag_id).first()
+        session.delete(tag)
+        session.commit()
 
 
 class AnswerTag(Base):

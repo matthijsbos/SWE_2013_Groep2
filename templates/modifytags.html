@@ -1,5 +1,19 @@
 {% extends "_base.html" %}
 {% block content %}
+
+<script>
+    function remove_tag(tid){
+        $.getJSON("/removetag",{tagid:tid},
+            function(data){
+                if (data.deleted)
+                    $('#remove_'+tid).remove();
+                else
+                    $('#error').html("Error while deleting question.");
+            });
+    }
+</script>
+<div id="error"></div>
+
 <form class="form-inline" action="/addtag" method="post">
   <b>New tag:</b>
   <br>
@@ -8,6 +22,18 @@
 </form>
 
 <form action="/removetag" method="post">
+	<b>Current tags:</b>
+	<br>
+    {% for tag in tags %}
+        <div class="tags" id="remove_{{tag.id}}">
+            <div>{{tag.name}}</div>
+            <a onclick="javascript:remove_tag({{tag.id}});"/><i class="icon-remove-sign"></i> delete </a>
+        </div>
+    {% endfor %}
+</form>
+
+
+<!--<form action="/removetag" method="post">
 	<b>Current tags:</b>
 	<br>
     <label class="checkbox">
@@ -19,5 +45,6 @@
         {% endfor %}
     </label>
     <input class="btn" type="submit" value="Delete">
-</form>
+</form>-->
+
 {% endblock %}
