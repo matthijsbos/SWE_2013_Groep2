@@ -42,3 +42,21 @@ class BaseEntity(object):
         if len(kws) > 0:
             return session.query(cls).filter_by(**kws).all()
         return cls.get_all()
+
+    @classmethod
+    def get_filtered_offset(cls,limit,offset=0,**kws):
+        count = session.query(cls).count()
+        curpage = (offset / limit)+1
+        if curpage == 0: curpage = 1
+        maxpages = (count/limit) if count % limit == 0 else (count/limit)+1
+        startpage = (curpage/5)*5 if curpage > 5 else 1
+        pagecount = startpage + 5 if maxpages >= startpage+5 else maxpages
+
+        if len(kws) > 0:
+            return session.query(cls).filter_by(**kws).offset(offset).limit(limit)
+        return (session.query(cls).offset(offset).limit(limit),
+                curpage,
+                maxpages,
+                startpage,
+                pagecount)
+

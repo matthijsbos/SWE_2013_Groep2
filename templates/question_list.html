@@ -2,6 +2,32 @@
 {% block content %}
 
 <script language="javascript" type="text/javascript">
+    var stdlimit = 10;
+    var currPage = 1;
+
+    $(document).ready(function() {
+        refresh_table(0,stdlimit);
+    });
+
+    function refresh_table(offset,limit){
+        $.get('/question_list_table',{offset:offset,limit:limit},
+            function(data){
+            $('#questListForm').html(data);});
+    }
+
+    function refresh_table_default(){
+        refresh_table(0,stdlimit);
+    }
+
+    function load_page(page){
+        currPage = page;
+        refresh_table((page-1)*stdlimit,stdlimit);
+    }
+
+    function reload(){
+        load_page(currPage);
+    }
+
     function edit_field(id){
         var elem = $('#question_' + id + ' a');
         var time_elem = $('#time_'+id);
@@ -95,65 +121,38 @@
         $('#addQ').hide()
         $('#qList tr:last').after(
         '<tr>\
-                        <td class="question-field"><input type="text" class="input-block-level" name="question" placeholder="your question"></td> \
-                        <td class="time-field"><input type="number" name="time" size="3" maxlength="3" placeholder="sec"></td> \
-                        <td><input type="checkbox" name="active"></td> \
-                        <td><input type="checkbox" name="comment" checked></td> \
-                        <td><input type="checkbox" name="tags" checked></td> \
-                        <td><input type="checkbox" name="rating" checked></td> \
-                        <td colspan=2><input type="submit" class="btn btn-block btn-primary" value="Add Question"></td>\
+                        <td class="question-field"><input id="qtext" type="text" class="input-block-level" name="question" placeholder="your question"></td> \
+                        <td class="time-field"><input id="qtime" type="number" name="time" size="3" maxlength="3" placeholder="sec"></td> \
+                        <td><input id="qact" type="checkbox" name="active"></td> \
+                        <td><input id="qcomm" type="checkbox" name="comment" checked></td> \
+                        <td><input id="qtag" type="checkbox" name="tags" checked></td> \
+                        <td><input id="qrat" type="checkbox" name="rating" checked></td> \
+                        <td colspan=2><input type="submit" onclick=save_question() class="btn btn-block btn-primary" value="Add Question"></td>\
                     </tr>');
+    }
+
+    function save_question(){
+        activev = ($('#qact').is(':checked') ? true : false);
+        commentv = ($('#qcomm').is(':checked') ? true : false);
+        tagsv = ($('#qtag').is(':checked') ? true : false);
+        timev = $('#qtime').val();
+        questionv = $('#qtext').val();
+
+        $.post('/handle_question',{active:activev,comment:commentv,tags:tagsv,
+                question:questionv,time:timev},
+                function(data){
+                    reload()
+                });
+
+        $('#addQ').show()
+        return false;
     }
 
 </script>
 
 <div id="error" style="background-color: #a33; color: white;"></div>
-<form action="/handle_question" method="post" style="display:block">
-<table id="qList" class="table table-hover table-bordered table-striped">
-    <thead>
-        <tr>
-            <!--<th>id</th>-->
-            <th>Question</th>
-            <th>Time</th>
-            <th>Active</th>
-            <th>Comments</th>
-            <th>Tags</th>
-            <th>Rating</th>
-            <th>Edit</th>
-            <th>Delete</th>
-        </tr>
-    </thead>
-    {% for question in questions %}
-    <tr id="row_{{question.id}}">
-        <td class="question-field" id="question_{{question.id}}">
-            <a href="/filteranswers/{{question.id}}" class="blue">{{question.question}}</a>
-        </td>
-        <td class="time-field" id="time_{{question.id}}">{{question.time}}</td>
-        <td id="available_{{question.id}}"><input type="checkbox" name="active{{question.id}}" onclick="toggle_question({{question.id}}, 'active')" {% if question.available %}checked{% endif %}></td>
-        <td id="comments_{{question.id}}"><input type="checkbox" name="comments{{question.id}}" onclick="toggle_question({{question.id}}, 'comments')" {% if question.comment %}checked{% endif %}></td>
-        <td id="tags_{{question.id}}"><input type="checkbox" name="tags{{question.id}}" onclick="toggle_question({{question.id}}, 'tags')" {% if question.tags %}checked{% endif %}></td>
-        <td id="rating_{{question.id}}"><input type="checkbox" name="rating{{question.id}}" onclick="toggle_question({{question.id}}, 'rating')" {% if question.rating %}checked{% endif %}></td>
-        <td class="edit-field">
-            <a href="#" id="edit_{{question.id}}" onclick=edit_field({{question.id}}) /><i class="icon-pencil"></i> edit</a>
-            <a href="#" id="sedit_{{question.id}}" style="display:none"><i class=" icon-ok-sign"></i> submit</a>
-        </td>
-        <td><a href="#delete_question{{question.id}}" data-toggle="modal" class="delete-question-link" /><i class="icon-remove-sign"></i> delete</a></td>
-    </tr>
-    <div id="delete_question{{question.id}}" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-        <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-            <h3 id="myModalLabel">Delete question</h3>
-        </div>
-        <div class="modal-body">
-            <p>Are you sure you want to delete question "{{question.question}}" ?</p>
-        </div>
-        <div class="modal-footer">
-            <button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
-            <button class="btn btn-danger" data-dismiss="modal" onclick="delete_question({{question.id}});">Delete question</button>
-        </div>
-    </div>
-    {% endfor %}
-</table>
-    </form>
+<div id="questListForm" style="display:block">
+
+</div>
 <button id="addQ" value="add" class="btn-primary btn" onclick=add_question() />Add Question</button>
 {% endblock %}

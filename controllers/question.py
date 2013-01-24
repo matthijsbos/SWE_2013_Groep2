@@ -74,14 +74,25 @@ class QuestionController():
 
     @staticmethod
     def get_list():
-        # TODO: pagination, etc..... same goes for get_questions
-        questions=session.query(Question).order_by(Question.available.desc())
+        questions = Question.get_filtered()
         for question in questions:
             if question is not None and question.activate_time is not None:
                 if QuestionController.calculate_remaining_time(question) < 0:            
                     question.available = False
         session.commit()
         return render_template('question_list.html', questions=questions)
+
+    @staticmethod
+    def get_list_table(limit,offset):
+        (questions, curpage, maxpages, startpage, pagecount) = Question.get_filtered_offset(limit,offset)
+        for question in questions:
+            if question is not None and question.activate_time is not None:
+                if QuestionController.calculate_remaining_time(question) < 0:            
+                    question.available = False
+        session.commit()
+
+        return render_template('question_list_tbl.html', questions=questions,
+                currentpage=curpage,startpage=startpage,pagecount=pagecount,maxpages=maxpages)
 
     @staticmethod
     def delete_question(qid):
@@ -108,8 +119,6 @@ class QuestionController():
         session.add(Question(instructor, course, question, active, time, comment, tags, rating))
         session.commit()
 
-        return QuestionController.get_list()
-    
     @staticmethod
     def calculate_remaining_time(question):
         time_remaining = datetime.now() - (question.activate_time +
