@@ -110,10 +110,14 @@ class AnswerModel(Base, BaseEntity):
         print tmp
         print [(x.modified + timedelta(seconds=x.time), datetime.now()) for x in tmp]
 
-
-
-
         return [x for x in tmp if x.modified + timedelta(seconds=x.time) >
+                datetime.now()]
+				
+    @staticmethod
+    def question_valid(questionid):
+        questionTmp = question.by_id(questionid)
+
+        return [questionTmp.modified + timedelta(seconds=questionTmp.time) >
                 datetime.now()]
 
 
