@@ -4,6 +4,7 @@
 #          the request.form field.
 
 import yaml
+import json
 from flask import Flask, Response, request, render_template, g
 from lti import LTI, LTIException
 from controllers.index import Index
@@ -83,31 +84,30 @@ def ask_question():
 def handle_question():
     if g.lti.is_instructor() == False:
         return render_template("access_restricted.html")
+
+    print request.form
+
     try:
-        request.form['active']
-        isActive = True
+        isActive = int(bool(request.form['active']))
     except:
         isActive = False
     
     try:
-        request.form['comment']
-        comment = True
+        comment = int(bool(request.form['comment']))
     except:
         comment = False
         
     try:
-        request.form['tags']
-        tags = True
+        tags = int(bool(request.form['tags']))
     except:
         tags = False
         
     try:
-        request.form['rating']
-        rating = True
+        rating = int(bool(request.form['rating']))
     except:
         rating = False
         
-    return Question.create_question(request.form['question'],
+    Question.create_question(request.form['question'],
                                     g.lti.get_user_id(),
                                     g.lti.get_course_id(),
                                     isActive,
@@ -115,11 +115,23 @@ def handle_question():
                                     comment,
                                     tags,
                                     rating)
+    return json.dumps({'done':True})
 
 
 @app.route("/question_list", methods=['GET', 'POST'])
 def list_questions():
     return Question.get_list()
+
+@app.route("/question_list_table",methods=['GET','POST'])
+def list_questions_table():
+    limit = 20
+    offset = 0
+
+    if 'limit' in request.args:
+        limit = int(request.args['limit'])
+    if 'offset' in request.args:
+        offset = int(request.args['offset'])
+    return Question.get_list_table(limit,offset)
 
 @app.route("/delete_question/<id>", methods=['GET', 'POST'])
 def delete_question(id):
@@ -151,12 +163,25 @@ def addtags():
     ctrler.addtag(request)
     return ctrler.render()
 
-@app.route("/removetag", methods=['POST'])
-def removetags():
-    ctrler = Modifytags()
-    ctrler.deletetag(request)
-    return ctrler.render()
 
+@app.route("/removetag/<id>", methods=['POST', 'GET'])
+def removetag_question(id):
+    ctrler = Modifytags()
+    return ctrler.delete_tag_question(id)
+
+
+@app.route("/removetaganswer", methods=['POST', 'GET'])
+def removetag_answer():
+    ctrler = ReviewAnswer(request)
+    return ctrler.remove_tag_answer(request.args['answerid'], request.args['tagid'])
+
+    
+@app.route("/addtaganswer", methods=['POST', 'GET'])
+def addtag_answer():
+    ctrler = ReviewAnswer(request)
+    return ctrler.add_tag_answer(request.args['answerid'], request.args['tagid'])    
+
+    
 @app.route("/answer", methods=['GET', 'POST'])
 def answerForm():
     ctrler = Answer(request)
@@ -213,6 +238,16 @@ def has_new_review():
 @app.route("/question_remaining_time",methods=['GET','POST'])
 def get_question_remaining_time():
     return Question().get_remaining_time(request.args['questionID'])
+
+@app.route("/pagination",methods=['GET'])
+def get_pagination():
+    curpage = int(request.args['currentpage'])
+    startpage = int(request.args['startpage'])
+    pagecount =  int(request.args['pagecount'])
+    maxpages = int(request.args['maxpages']) 
+
+    return render_template('pagination.html',currentpage=curpage,
+            startpage=startpage,pagecount=pagecount,maxpages=maxpages)
 
 @app.route("/logout")
 def logout():
