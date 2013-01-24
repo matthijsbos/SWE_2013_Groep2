@@ -21,16 +21,10 @@ class ReviewAnswer():
         try:
             fsession['reviewanswer']
         except:
-            return self
-
-        for tag_id in request.form.getlist('assign_tags'):
-            AnswerTag.add_answertag(fsession['reviewanswer'], tag_id)
+            return None
 
         #for rating in request.form.getlist('rating'):
         #    Review.add(fsession['reviewanswer'], fsession['user_id'], rating, )
-
-        for tag_id in request.form.getlist('remove_tags'):
-            AnswerTag.remove(fsession['reviewanswer'], tag_id)
             
         for review in request.form.getlist('comments'):
             rating = request.form['rating']
@@ -45,8 +39,19 @@ class ReviewAnswer():
         del fsession['reviewanswer']
     
     @staticmethod
-    def review(answer_id):
+    def remove_tag_answer(aid, tagid):
+        AnswerTag.remove(aid, tagid)
+        return json.dumps({'deleted': True})
 
+    @staticmethod
+    def add_tag_answer(aid, tagid):
+        AnswerTag.add_answertag(aid, tagid)
+        return json.dumps({'deleted': True})
+    
+    
+    
+    @staticmethod
+    def review(answer_id):
         # one of these checks can be removed once we merge and know what's what
         try:
             answer = AnswerModel.by_id(answer_id)
