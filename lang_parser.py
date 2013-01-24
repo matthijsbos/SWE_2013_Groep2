@@ -26,7 +26,7 @@ class LanguageParser():
     LANG_NL = 'nl'
     LANG_DE = 'de'
     LANG_ES = 'es'
-    LANG_UNKNOWN = None
+    LANG_UNKNOWN = '00'
 
     def __init__(self, language, texts=[]):
         if language not in (self.LANG_EN, self.LANG_NL, self.LANG_DE,
@@ -66,6 +66,9 @@ class LanguageParser():
             from pattern.de import parse
         elif self.language == self.LANG_ES:
             from pattern.es import parse
+        elif self.language == self.LANG_UNKNOWN:
+            # Don't do any parsing.
+            return text.lower()
         else:
             raise Exception("Unsupported language: %s" % repr(self.language))
 
@@ -98,6 +101,10 @@ class LanguageParser():
             from pattern.de import parse
         elif self.language == self.LANG_ES:
             from pattern.es import parse
+        elif self.language == self.LANG_UNKNOWN:
+            # Don't do any language parsing depending on a specific language.
+            return text.lower().translate(string.maketrans("", ""),
+                                          string.punctuation).split()
         else:
             raise Exception("Unsupported language: %s" % repr(self.language))
 
