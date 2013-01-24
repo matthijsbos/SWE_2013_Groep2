@@ -78,7 +78,7 @@ class LanguageParser():
         normalized = filter(lambda w: w not in string.punctuation, normalized)
         normalized = ' '.join(normalized)
         return normalized
-        
+
     def extract_keywords(self, text):
         """Extracts keywords from a given string.
 

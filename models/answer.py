@@ -83,6 +83,22 @@ class AnswerModel(Base, BaseEntity):
 
 
     @staticmethod
+    def get_answered_active_questions(userid, courseid):
+        """
+        Exactly the same as get_unanswered_questions except we want the answered
+        ones
+        """
+        anssub = session.query(AnswerModel).filter(AnswerModel.userID == userid).\
+            subquery()
+
+
+        tmp = session.query(Question).\
+                outerjoin(annsub, anssub.c.questionID == Question.id).\
+                filter(Question.available == True).\
+                filter(Question.course_id == courseid).\
+                filter(anssub.c.id != None).all()
+
+    @staticmethod
     def getTimeStamp(answerID):
         answer = session.query(AnswerModel).filter_by(id=answerID).one()
         return answer.created
