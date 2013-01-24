@@ -1,21 +1,19 @@
-<html>
-    <body>
-        <div id="container">
-            <a href="/question_list" class="blue">Back</a>
-            <table>
-                <tr>
-                    <th>Student</th>
-                    <th>Answer</th>
-                    <th>Rank</th>
-                </tr>		
-                {% for answer in answers %}
-                <tr>
-                    <td>{{answer.userID}}</td>
-                    <td>{{answer.text}}</td>
-                    <td>{{answer.ranking}}</td>
-                </tr>
-                {% endfor %}
-            </table>
-            <a href="/question_list" class="blue">Back</a>
-    </body>
-</html>
+{% extends "_base.html" %}
+{% block content %}
+    <a href="/question_list" class="blue">Back</a>
+    <table>
+        <tr>
+            <th>Student</th>
+            <th>Answer</th>
+            <th>Rank</th>
+        </tr>		
+        {% for answer in answers %}
+        <tr>
+            <td>{{answer.userID}}</td>
+            <td>{{answer.text}}</td>
+            <td>{{answer.ranking}}</td>
+        </tr>
+        {% endfor %}
+    </table>
+    <a href="/question_list" class="blue">Back</a>
+{% endblock %}
