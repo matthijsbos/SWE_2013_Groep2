@@ -63,10 +63,19 @@ class AnswerTag(Base):
     @staticmethod
     def add_answertag(aid, tid):
         if session.query(AnswerTag).filter(
-                    AnswerTag.answer_id==aid,
-                    AnswerTag.tag_id==tid).first() is None:
-                session.add(AnswerTag(aid, tid))
-                session.commit()
+                AnswerTag.answer_id==aid,
+                AnswerTag.tag_id==tid).first() is None:
+            session.add(AnswerTag(aid, tid))
+            session.commit()
+                
+    @staticmethod
+    def remove(answer_id, tag_id):
+        for at in session.query(AnswerTag).filter(
+                AnswerTag.answer_id==answer_id,
+                AnswerTag.tag_id==tag_id):
+            session.delete(at)
+            session.commit()
+            
 
     @staticmethod
     def get_tag_ids(answerID):

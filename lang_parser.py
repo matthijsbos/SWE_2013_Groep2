@@ -28,14 +28,15 @@ class LanguageParser():
     LANG_ES = 'es'
     LANG_UNKNOWN = '00'
 
-    def __init__(self, language, texts=[]):
+    def __init__(self, language = LANG_UNKNOWN, texts = [], detector = None):
         if language not in (self.LANG_EN, self.LANG_NL, self.LANG_DE,
                             self.LANG_ES, self.LANG_UNKNOWN):
             raise ValueError("Invalid language: %s" % repr(language))
 
-        self.language = language
         self.texts = []
         self.add_texts(texts)
+        self.language = language
+        self.lang_detector = detector
 
     def add_texts(self, texts):
         if isinstance(texts, (list, tuple)):
@@ -47,9 +48,11 @@ class LanguageParser():
                              repr(texts))
 
     def get_normalized(self):
+        self.detect_language()
         return map(self.normalize, self.texts)
 
     def get_keywords(self):
+        self.detect_language()
         return map(self.extract_keywords, self.texts)
 
     def normalize(self, text):
@@ -117,3 +120,7 @@ class LanguageParser():
         keywords = map(lambda w: w[-1], keywords)
         keywords = {}.fromkeys(keywords).keys()
         return keywords
+
+    def detect_language(self):
+        if detector:
+            self.language = self.lang_detector.parse_answers(texts)
