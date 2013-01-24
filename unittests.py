@@ -4,6 +4,7 @@ import os
 from dbconnection import Base, engine
 from tests.answerunittest import AnswerUnittest
 from tests.baseunittest import BaseUnittest
+from tests.lang_parser_test import TestLanguageParser
 
 
 directory_separator = ('/' if os.name == "posix" else '\\')
@@ -22,7 +23,7 @@ def setUp():
 def tearDown():
     #close db connection
     Base.metadata.drop_all(engine)
-    
+
     #restore backup 'production'
     dst = os.getcwd()+directory_separator+"db.sqlite"
     src = os.getcwd()+directory_separator+"db_backup.sqlite"
@@ -37,9 +38,12 @@ if __name__ == '__main__':
     setUp()
     base_test = unittest.TestLoader().loadTestsFromTestCase(BaseUnittest)
     answer_test = unittest.TestLoader().loadTestsFromTestCase(AnswerUnittest)
+    lang_parser_test = \
+            unittest.TestLoader().loadTestsFromTestCase(TestLanguageParser)
 
     unittest.TextTestRunner(verbosity=2).run(answer_test)
     unittest.TextTestRunner(verbosity=2).run(base_test)
-    tearDown()    
+    unittest.TextTestRunner(verbosity=2).run(lang_parser_test)
+    tearDown()
 
 
