@@ -1,4 +1,3 @@
-# Author : Dexter Drupsteen
 # Descrp : Contains routing and calling of the constrollers
 # Changes:
 # Comment: MultiDict with isinstructor,consumerkey,coursekey and coursename in
@@ -51,27 +50,20 @@ def home():
 def launch():
     ctrler = Index(debug=True)
     return ctrler.render()
-    
-@app.route("/is_instructor", methods=['GET', 'POST'])
-def is_instructor():
-    if g.lti.is_instructor() == False:
-        return "0";
-    else:
-        return "1";
 
 
 @app.route("/edit_question", methods=['GET', 'POST'])
 def edit_question():
     return Question.edit_question(request.args['id'],
                                   request.args['text'],
-                                  False)
+                                  request.args['time'])
 
 # this route is called to toggle a question's availability
 
 
 @app.route("/toggle_question", methods=['GET', 'POST'])
 def toggle_question():
-    return Question.toggle_question(request.args['id'])
+    return Question.toggle_question(request.args['id'], request.args['field'])
 
 # this route is used to ask a question to students
 
@@ -96,22 +88,42 @@ def handle_question():
         isActive = True
     except:
         isActive = False
+    
+    try:
+        request.form['comment']
+        comment = True
+    except:
+        comment = False
+        
+    try:
+        request.form['tags']
+        tags = True
+    except:
+        tags = False
+        
+    try:
+        request.form['rating']
+        rating = True
+    except:
+        rating = False
+        
     return Question.create_question(request.form['question'],
                                     g.lti.get_user_id(),
                                     g.lti.get_course_id(),
                                     isActive,
-                                    request.form['time'])
+                                    request.form['time'],
+                                    comment,
+                                    tags,
+                                    rating)
 
 
 @app.route("/question_list", methods=['GET', 'POST'])
 def list_questions():
     return Question.get_list()
 
-
 @app.route("/delete_question/<id>", methods=['GET', 'POST'])
 def delete_question(id):
     return Question.delete_question(id)
-
 
 @app.route("/question_export", methods=['GET', 'POST'])
 def question_export():
@@ -133,65 +145,38 @@ def managetags():
     ctrler = Modifytags()
     return ctrler.render()
 
-
 @app.route("/addtag", methods=['POST'])
 def addtags():
     ctrler = Modifytags()
     ctrler.addtag(request)
     return ctrler.render()
 
-
-@app.route("/removetag/<id>", methods=['POST', 'GET'])
-def removetag_question(id):
+@app.route("/removetag", methods=['POST'])
+def removetags():
     ctrler = Modifytags()
-    return ctrler.delete_tag_question(id)
-    #return ctrler.render()
-
-
-@app.route("/removetaganswer", methods=['POST', 'GET'])
-def removetag_answer():
-    ctrler = ReviewAnswer(request)
-    return ctrler.remove_tag_answer(request.args['answerid'], request.args['tagid'])
-
-@app.route("/addtaganswer", methods=['POST', 'GET'])
-def addtag_answer():
-    ctrler = ReviewAnswer(request)
-    return ctrler.add_tag_answer(request.args['answerid'], request.args['tagid'])    
-    
-#@app.route("/reviewanswer",methods=['POST', 'GET'])
-#def handle_review_answer():
-#    ctrler = ReviewAnswer(request)
-#    return ReviewAnswer.review(1)
+    ctrler.deletetag(request)
+    return ctrler.render()
 
 @app.route("/answer", methods=['GET', 'POST'])
 def answerForm():
     ctrler = Answer(request)
     return ctrler.render()
 
-
 @app.route("/assigntags", methods=['POST', 'GET'])
 def assign_tags():
     ctrler = AssignTags(1)
     return ctrler.render()
 
+@app.route("/assigntags_done", methods=['POST'])
+def handle_assign_tags():
+    ctrler = AssignTags.assign(request)
+    return "<a href='/'>back to main</a>"
     
 @app.route("/removetags_done",methods=['POST'])
 def handle_remove_tags():
     ctrler = AssignTags.remove(request)
     return Index(request).render()
-
     
-@app.route("/assignratings", methods=['POST', 'GET'])
-def assign_ratings():
-    ctrler = AssignRatings(1)
-    return ctrler.render()
-
-@app.route("/assignratings_done", methods=['POST'])
-def handle_assign_ratings():
-    ctrler = AssignRatings.assign(request)
-    return "<a href='/'>back to main</a>"
-    
-
 @app.route("/json/get_tags",methods=['POST', 'GET'])
 def json_get_tags():
     return Modifytags.json_get_tags()
@@ -206,21 +191,15 @@ def handle_review_answer():
     ctrler = ReviewAnswer(request)
     return ReviewAnswer.review(1)
 
-@app.route("/reviewanswer_stub", methods=["POST", "GET"])
-def do_review_answer_stub():
-    return ReviewAnswer.review(1)
-
 @app.route("/filteranswers", methods=['POST', 'GET'])
 def answerFilter():
     ctrler = Answer(request)
     return ctrler.render_filtered()
 
-
 @app.route("/filteranswers/<questionid>", methods=['POST', 'GET'])
 def answerFilterByQuestionID(questionid):
     ctrler = Answer(request)
     return ctrler.render_filtered_by_questionid(questionid)
-
 
 @app.route("/has_new_question", methods=['GET', 'POST'])
 def has_new_question():
@@ -230,6 +209,10 @@ def has_new_question():
 @app.route("/has_new_review", methods=['GET', 'POST'])
 def has_new_review():
     return ReviewAnswer.has_new_review()
+
+@app.route("/question_remaining_time",methods=['GET','POST'])
+def get_question_remaining_time():
+    return Question().get_remaining_time(request.args['questionID'])
 
 @app.route("/logout")
 def logout():

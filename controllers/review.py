@@ -8,6 +8,7 @@ from utilities import render_template
 from models.tag import Tag, AnswerTag
 from models.answer import AnswerModel
 from models.review import Review
+from models.question import Question
 from dbconnection import session
 import json
 
@@ -20,13 +21,16 @@ class ReviewAnswer():
         try:
             fsession['reviewanswer']
         except:
-            return None
+            return self
 
-        #for tag_id in request.form.getlist('assign_tags'):
-        #    AnswerTag.add_answertag(fsession['reviewanswer'], tag_id)
+        for tag_id in request.form.getlist('assign_tags'):
+            AnswerTag.add_answertag(fsession['reviewanswer'], tag_id)
 
         #for rating in request.form.getlist('rating'):
         #    Review.add(fsession['reviewanswer'], fsession['user_id'], rating, )
+
+        for tag_id in request.form.getlist('remove_tags'):
+            AnswerTag.remove(fsession['reviewanswer'], tag_id)
             
         for review in request.form.getlist('comments'):
             rating = request.form['rating']
@@ -41,32 +45,31 @@ class ReviewAnswer():
         del fsession['reviewanswer']
     
     @staticmethod
-    def remove_tag_answer(aid, tagid):
-        AnswerTag.remove(aid, tagid)
-        return json.dumps({'deleted': True})
-
-    @staticmethod
-    def add_tag_answer(aid, tagid):
-        AnswerTag.add_answertag(aid, tagid)
-        return json.dumps({'deleted': True})
-        
-    @staticmethod
     def review(answer_id):
 
         # one of these checks can be removed once we merge and know what's what
         try:
             answer = AnswerModel.by_id(answer_id)
         except:
-            return "Error answer not found"
+			return render_template('reviewanswer.html', error="true")
+            #return "<div class=\"alert alert-error\"><i class=\"icon-warning-sign\"></i>No answers found!</div>"
         if answer == None:
-            return "Error answer not found"
+			return render_template('reviewanswer.html', error="true")
+            #return "<div class=\"alert alert-error\"><i class=\"icon-warning-sign\"></i>No answers found!</div>"
+        try:
+            question = Question.by_id(answer.questionID)
+        except:
+            return "Error question not found"
+            
 
         fsession['reviewanswer'] = answer_id
 
         enabledtags = AnswerTag.get_tag_ids(answer_id)
 
         return render_template('reviewanswer.html', answer=answer,
-                               tags=Tag.get_all(), enabledtags=enabledtags)
+                               tags=Tag.get_all(), enabledtags=enabledtags,
+                               tagsOn = question.tags, commentOn = question.comment,
+                               ratingOn = question.rating)
 
     """
     Stub class, to be implemented by mustafa

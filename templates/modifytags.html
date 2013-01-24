@@ -1,30 +1,23 @@
 {% extends "_base.html" %}
 {% block content %}
-<script>
-    function remove_tag(id){
-        $.getJSON("/removetag/"+id,{},
-            function(data){
-                if (data.deleted)
-                    $('#'+id).remove();
-                else
-                    $('#error').html("Error while deleting question.");
-            });
-    }
-</script>
-
-
-
-<legend>These are the current tags</legend>
 <form class="form-inline" action="/addtag" method="post">
-  Add new tag:  <input type="text" name="newTag">
-  <input class="btn" type="submit" value="Add Tag">
+  <b>New tag:</b>
+  <br>
+  <input type="text" name="newTag">
+  <input class="btn-primary btn" type="submit" value="Add Tag">
 </form>
 
-<div id="error" style="background-color: #a33; color: white;"></div>
-{% for tag in tags %}
-    <div class="tags" id="{{tag.id}}">
-        <div>{{tag.name}}</div>
-        <div><a onclick="javascript:remove_tag({{tag.id}});"/><i class="icon-remove-sign"></i> delete </a></div>
-    </div>
-{% endfor %}
+<form action="/removetag" method="post">
+	<b>Current tags:</b>
+	<br>
+    <label class="checkbox">
+        {% for tag in tags %}
+            <input type="checkbox" name="remove_tags" value="{{tag.id}}">
+                {{tag.name}}
+            </input>
+            <br>
+        {% endfor %}
+    </label>
+    <input class="btn" type="submit" value="Delete">
+</form>
 {% endblock %}
