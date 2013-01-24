@@ -136,5 +136,3 @@ class Answer():
                 args["id"] = postdata["id"]
 
         return render_template('answerfilter_by_questionid.html', answers=answer.AnswerModel.get_filtered(**args))
-
-
