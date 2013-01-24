@@ -23,7 +23,8 @@ class LTI_OAuthDataStore(oauth.OAuthDataStore):
     It handles the 'users' (consumers) of our LTI api. Each consumer has a
     'password' (secret)."""
 
-    consumers = {'sakai': 'secret'}
+    consumers = {'sakai': 'secret',
+                 'blackboard': 'secret'}
 
     def lookup_consumer(self, key):
         if key not in self.consumers:
@@ -119,8 +120,17 @@ class LTI():
         return flask.session['course_name']
 
     def is_instructor(self):
-        return flask.session['role'] in ("Instructor", "Administrator",
-                                         "Mentor")
+        """Sakai uses the handle whereas Blackboard uses the full URN with the
+        entire namespace.
+        See http://www.imsglobal.org/lti/v2p0pd/ltiIMGv2p0pd.html#_Toc340229580
+        for a full list of roles."""
+
+        role = flask.session['role']
+        role = role.replace('urn:lti:role:ims/lis/', '')
+        role = role.replace('urn:lti:instrole:ims/lis/', '')
+        role = role.replace('urn:lti:sysrole:ims/lis/', '')
+        return role in ("Instructor", "Administrator", "Mentor",
+                        "TeachingAssistant")
 
     def dump_all(self):
         ret = ""
