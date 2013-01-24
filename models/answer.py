@@ -115,7 +115,7 @@ class AnswerModel(Base, BaseEntity):
 				
     @staticmethod
     def question_valid(questionid):
-        questionTmp = question.by_id(questionid)
+        questionTmp = Question.by_id(questionid)
 
         return [questionTmp.modified + timedelta(seconds=questionTmp.time) >
                 datetime.now()]

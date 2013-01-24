@@ -15,6 +15,7 @@ class Answerchoice():
     def __init__(self, request):        
         # lele add dummy questions le
         if len(Question.get_all()) == 0:
+            print "I MAEK DUMMY SHIZZLE"
             userID = g.lti.get_user_id()
             q1 = Question("1","1","What am I?",True,1000)
             q2 = Question("2","1","Who am I?",True,1000)
@@ -22,15 +23,15 @@ class Answerchoice():
             session.add(q1)
             session.add(q2)
             session.add(q3)
-            a11 = AnswerModel("einseins",1,userID,0)
-            a12 = AnswerModel("einszwei",1,1338,0)
-            a13 = AnswerModel("einsdrei",1,1339,0)
-            a21 = AnswerModel("zweieins",2,userID,0)
-            a22 = AnswerModel("zweizwei",2,1338,0)
-            a23 = AnswerModel("zweidrei",2,1339,0)
-            a31 = AnswerModel("dreieins",3,userID,0)
-            a32 = AnswerModel("dreizwei",3,1338,0)
-            a33 = AnswerModel("dreidrei",3,1339,0)
+            a11 = AnswerModel("einseins",1,userID,0,1000.0)
+            a12 = AnswerModel("einszwei",1,1338,  0,1000.0)
+            a13 = AnswerModel("einsdrei",1,1339,  0,1000.0)
+            a21 = AnswerModel("zweieins",2,userID,0,1000.0)
+            a22 = AnswerModel("zweizwei",2,1338,  0,1000.0)
+            a23 = AnswerModel("zweidrei",2,1339,  0,1000.0)
+            a31 = AnswerModel("dreieins",3,userID,0,1000.0)
+            a32 = AnswerModel("dreizwei",3,1338,  0,1000.0)
+            a33 = AnswerModel("dreidrei",3,1339,  0,1000.0)
             session.add(a11)
             session.add(a12)
             session.add(a13)
@@ -43,21 +44,24 @@ class Answerchoice():
             session.commit()
 
     def render(self):
-        questionID = request.values['questionid']
-        if question_valid(questionID):
-            return render_template('choice.html',question=Question.by_id[questionID], answer1=AnswerModel.by_id(request.values['answerid1']), answer2=AnswerModel.by_id(request.values['answerid2']))
+        try:
+            questionid = int(request.values['questionid'])
+            answerid1 = int(request.values['answerid1'])
+            answerid2 = int(request.values['answerid2'])
+        except:
+            return abort(404)
+            
+        try:
+            question = Question.by_id(questionid)
+            answer1 = AnswerModel.by_id(answerid1)
+            answer2 = AnswerModel.by_id(answerid2)
+        except:
+            return abort(404)
+            
+        if AnswerModel.question_valid(questionID):
+            return render_template('choice.html',question=question, answer1=answer1, answer2=answer2)
         else:
-            return render_template('/choicelobby')
-
-    def randpop(array):
-        return array.pop(randrange(0,len(array)))
-        
-    def getotheranswers(self,userid,questionid):
-        allanswers = (AnswerModel.get_all())
-        validAnswers = []
-        for current in allanswers:
-            if current.userID != userID and current.questionID == questionID:
-                validAnswers.append(current)
+            return redirect('/choicelobby?question_id='+str(questionid))
     
     def process(self):
         userid = g.lti.get_user_id()
@@ -89,11 +93,22 @@ class Answerchoice():
         return 'success' 
 
     def lobby(self):
+        def randpop(array):
+            return array.pop(randrange(0,len(array)))
+            
+        def getotheranswers(userID,questionID):
+            allanswers = (AnswerModel.get_all())
+            validAnswers = []
+            for current in allanswers:
+                if current.userID != userID and current.questionID == questionID:
+                    validAnswers.append(current)
+            return validAnswers
+
         userID = g.lti.get_user_id()
         questionID = int(request.values['question_id'])
         validAnswers = getotheranswers(userID,questionID)
-        
+        print ('userID: ' + str(userID) + '\nquestionID: ' + str(questionID) + '\nlen(validAnswers): ' + str(len(validAnswers)))
         if len(validAnswers) < 2:
             return render_template('choicelobby.html',question=questionID)
         else:
-            return redirect('/answerchoice?questionid='+str(questionID)+'&answerid1='+str(randpop(validAnswers))+'&answerid2='+str(randpop(validAnswers)))
+            return redirect('/answerchoice?questionid='+str(questionID)+'&answerid1='+str(randpop(validAnswers).id)+'&answerid2='+str(randpop(validAnswers).id))
