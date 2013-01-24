@@ -28,7 +28,7 @@ class LanguageParser():
     LANG_ES = 'es'
     LANG_UNKNOWN = '00'
 
-    def __init__(self, language, texts=[], detector = None):
+    def __init__(self, language = LANG_UNKNOWN, texts = [], detector = None):
         if language not in (self.LANG_EN, self.LANG_NL, self.LANG_DE,
                             self.LANG_ES, self.LANG_UNKNOWN):
             raise ValueError("Invalid language: %s" % repr(language))
