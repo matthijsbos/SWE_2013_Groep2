@@ -5,10 +5,11 @@ import random
 # test function for written classes
 def test():
   clustering_list = []
-  nr_tries = 10
+  nr_tries = 1000
   best_error=99999999999
   best_clustering = nr_tries+1
   
+  #lemma_answers = ["ja","nee","misschien","ja","nee","misschien","nee","ja","misschien","ja","misschien","nee","ja","misschien"]
   
   lemma_answers = ["ja auto kapot","nee auto heel","ja auto kapot","nee auto kapot"
     ,"nee heel","nee","ja voertuig kapot","nee fietser ongeluk","ja fietser auto","ja"]
@@ -30,9 +31,7 @@ def test():
       best_error=clustering_list[n].error
       
   print "---results---"
-  print best_error
-  print best_clustering
-  print clustering_list[best_clustering].clusters
+  print "error is ",best_error
   
   best_clusters = clustering_list[best_clustering].clusters
   text_clusters = []
@@ -81,7 +80,6 @@ class DataClusterer():
   def tokenize_all(self):
     for str in self.answers:
       toks = self.tokenize_string(str.answer)
-      print toks
       for token in toks:
         if token not in self.tokens:
           self.tokens.append(token)
@@ -128,9 +126,6 @@ class N_random():
     self.assign_cluster()
     for c in self.clusters:
       self.calc_average_error(c)
-    print "---begin clusters---"
-    print self.clusters
-    print "---end clusters---"
     
   # calculate distance between two vectors
   def distance(self,vector1,vector2):
@@ -144,7 +139,7 @@ class N_random():
   
   # determine n
   def calc_n(self):
-    self.n = int(log(len(self.vectors))) + 2
+    self.n = int(log(len(self.vectors[0]))) + 2
     
   # randomly select n clusters
   def select_n(self):
@@ -158,9 +153,6 @@ class N_random():
     for i in self.selected_indices:
       self.selected_vectors.append(self.vectors[i])
       self.clusters.append([])
-    print "---begin selected vectors---"
-    print self.selected_vectors
-    print "---end selected vectors---"
   
   # assign each answer to a cluster
   def assign_cluster(self):
@@ -176,12 +168,12 @@ class N_random():
    
   # calculate the average error of a cluster and adds this to the total error of this clustering try
   def calc_average_error(self,cluster):
-    average = np.average(np.array(cluster),0)
-    print "---begin average---"
-    print average
-    print "---end average---"
-    error = 0
-    for c in cluster:
-      diff = np.abs(c - average)
-      error += np.sum(diff)
-    self.error+=error
+    if cluster == []:
+      self.error += 0
+    else:
+      average = np.average(np.array(cluster),0)
+      error = 0
+      for c in cluster:
+        diff = np.abs(c - average)
+        error += np.sum(diff)
+      self.error+=error
