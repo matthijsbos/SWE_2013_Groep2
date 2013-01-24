@@ -12,11 +12,12 @@ from controllers.answer import Answer
 from controllers.question import QuestionController as Question
 from controllers.tags import Modifytags, AssignTags
 from controllers.ratings import AssignRatings
+from sakai_ldig import Ldig_parser
 
 app = Flask(__name__)
 app.debug = True
 app.secret_key = "Hurdygurdy"  # Used for Flask sessions, TODO: config?
-
+lang_detect = Ldig_parser("ldig_model.small")
 
 @app.before_request
 def init_lti():
