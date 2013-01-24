@@ -1,4 +1,6 @@
 from models import answer, question
+from models.question import Question
+from models.answer import AnswerModel
 from flask import render_template, g, request, redirect
 import datetime
 import time
@@ -38,6 +40,30 @@ class Answer():
         else:
             return self.answerQuestion(uID, qID, qText, timerD, questionStartTime)
 
+    @staticmethod
+    def renderanswerform():
+        try:
+            questionid = int(request.values['question_id'])
+            question = Question.by_id(questionid)
+        except:
+            return abort(404)
+        return render_template('student_answer.html', question = question)
+
+    @staticmethod
+    def save():
+        try:
+            questionid = int(request.values['questionid'])
+            question = Question.by_id(questionid)
+            text = request.values['text']
+            userid = g.lti.get_user_id()
+        except:
+            return abort(404)
+
+        if AnswerModel.question_valid(questionid):
+            AnswerModel.save(questionid, userid, text)
+
+        return redirect('/index_student')
+        
     def saveAnswer(self, uID, qID, timerD, questionStartTime):
         # save answer
         answerText = self.request.form['answerText']
@@ -65,7 +91,6 @@ class Answer():
         answer.AnswerModel.savereview(
             questionID, userID, reviewAnswer, edit)
         return redirect('/index_student')
-        #return render_template('answersaved.html', flag='true')
 
     def removeAnswer(self):
         id = int(self.request.form['id'])

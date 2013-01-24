@@ -90,7 +90,7 @@ class Answerchoice():
         except:
             session.rollback()
 
-        return 'success' 
+        return redirect('/index_student')
 
     def lobby(self):
         def randpop(array):
