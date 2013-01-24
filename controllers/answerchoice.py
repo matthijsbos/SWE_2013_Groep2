@@ -91,7 +91,9 @@ class Answerchoice():
         except:
             session.rollback()
 
-        return 'success' 
+        return render_template('index_student.html', unansq_questions = AnswerModel.get_unanswered_questions(g.lti.get_user_id(),
+                                                    g.lti.get_course_id()), answ_questions = AnswerModel.get_answered_active_questions(g.lti.get_user_id(),
+                                                    g.lti.get_course_id())) 
 
     def lobby(self):
         def randpop(array):
