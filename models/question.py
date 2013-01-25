@@ -29,9 +29,10 @@ class Question(Base, BaseEntity):
         self.archived = False
 
     def __repr__(self):
-        return "<Question ('%s','%s','%s')>" % (self.user_id,
+        return "<Question ('%s','%s','%s', '%s')>" % (self.user_id,
                                                 self.question,
-                                                self.available)
+                                                self.answeravailable,
+                                                self.reviewavailable)
 
     """
     Yay properties
