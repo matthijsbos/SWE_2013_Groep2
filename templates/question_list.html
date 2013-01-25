@@ -100,7 +100,6 @@
         });
     }
 
-<<<<<<< HEAD
     function toggle_question(id, field){
         $.getJSON("/toggle_question",{id:id, field:field},
         function(data){
@@ -117,7 +116,7 @@
             }
         });
     }
-=======
+
   function availability(id, type){
     answerable = "False"
     reviewable = "False"
@@ -143,7 +142,6 @@
       }
     });
   }
->>>>>>> groep_acht
 
     function add_question(){
         $('#addQ').hide()
@@ -179,53 +177,8 @@
 </script>
 
 <div id="error" style="background-color: #a33; color: white;"></div>
-<<<<<<< HEAD
 <div id="questListForm" style="display:block">
 
 </div>
 <button id="addQ" value="add" class="btn-primary btn" onclick=add_question() />Add Question</button>
-=======
-<table id="qList" border=1 class="black">
-    <tr>
-        <!--<th>id</th>-->
-        <th>Question</th>
-        <th>Answerable</th>
-        <th>Reviewable</th>
-        <th>Archived</th>
-        <th>Time</th>
-        <th>Edit</th>
-        <th>Delete</th>
-    </tr>
-    {% for question in questions %}
-        <tr id="row_{{question.id}}">
-            <td id="question_{{question.id}}">
-                <a href="/filteranswers/{{question.id}}" class="blue">{{question.question}}</a>
-            </td>
-            <td>
-                <button id="answerable_{{question.id}}" value="Answerable" 
-                        onclick=availability({{question.id}},"answerable") />
-                    {{question.answeravailable}}
-                </button>
-            </td>
-            <td>
-                <button id="reviewable_{{question.id}}" value="Reviewable" 
-                        onclick=availability({{question.id}},"reviewable") />
-                    {{question.reviewavailable}}
-                </button>
-            </td>
-            <td>
-                 <button id="archived_{{question.id}}" value="Archived" 
-                         onclick=availability({{question.id}},"archived") />
-                    {{question.archived}}
-                 </button>
-            </td>
-            <td id="time_{{question.id}}">{{question.time}}</td>
-            <td><button value="edit" onclick=edit_field({{question.id}}) />edit</button></td>
-            <td><button value="delete" onclick=delete_question({{question.id}}) />delete</button></td>
-        </tr>
-    {% endfor %}
-</table>
-<button id="addQ" value="add" onclick=add_question() />Add Question</button>
-<a href="/" class="blue">Back</a>
->>>>>>> groep_acht
 {% endblock %}

@@ -12,8 +12,8 @@ class QuestionController():
     def toggle_question(q_id, field):
         '''toggles a question between available and not available'''
         if g.lti.is_instructor():
-            available = Question.toggle_available(q_id, field)
-            return json.dumps({"toggle":available,"check": True})
+            QuestionController.availability({'id':q_id,'type':'reviewable'})
+            return json.dumps({"toggle":Question.by_id(q_id).reviewavailable,"check": True})
 
         else:
           return json.dumps({"toggle": True,"check": False})
