@@ -13,6 +13,19 @@ a:hover {
 }
 
 .btn-primary {
+    background-color: #545454;
+    background-image: -moz-linear-gradient(top, #545454, #747474);
+    background-image: -webkit-gradient(linear,0 0, 0 100%, from(#545454), to(#747474));
+    background-image: -webkit-linear-gradient(top, #545454, #747474);
+    background-image: -o-linear-gradient(top, #545454, #747474);
+    background-image: linear-gradient(to bottom, #545454, #747474);
+}
+
+.btn-primary:hover {
+    background-color: #747474;
+}
+
+.btn-info {
     background-color: #747474;
     background-image: -moz-linear-gradient(top, #747474, #949494);
     background-image: -webkit-gradient(linear,0 0, 0 100%, from(#747474), to(#949494));
@@ -21,7 +34,7 @@ a:hover {
     background-image: linear-gradient(to bottom, #747474, #949494);
 }
 
-.btn-primary:hover {
+.btn-info:hover {
     background-color: #949494;
 }
 
