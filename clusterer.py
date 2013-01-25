@@ -6,12 +6,14 @@ import sys
 
 def test():
   clusterer = Clusterer()
-  answer_strings=["yes, the car crashes","no, the car does not crash","no, it stays whole","yes, the cyclist gets run over by the car",
-    "no, the cyclist does not get run over by the vehicle","yes, the biker gets into an accident"]
+  answer_strings=["yes, the car crashes","yes, the car does crash","no, it stays whole","yes, the cyclist gets run over by the car",
+    "yes, the cyclist gets run over by the vehicle","yes, the cyclist gets into an accident"]
   for a in answer_strings:
     clusterer.add_answer(a)
+  #clusterer.change_nr_tries(3)
   print clusterer.run_clustering()
-  
+
+# initialize an instance of this class to do clustering
 class Clusterer():
   def __init__(self):
     self.answers = []
@@ -20,10 +22,15 @@ class Clusterer():
     self.nr_tries = 10
     self.best_clustering = self.nr_tries + 1
     self.clustering_list = []
+    self.n_clusters = 0
   
   # add answer to cluster module
   def add_answer(self,answer):
     self.answers.append(answer)
+  
+  # sets a number of clusters to add answers to
+  def set_number_of_clusters(self,nr):
+    self.n_clusters = nr
     
   # change number of tries to search for best cluster
   def change_nr_tries(self,new_value):
@@ -41,6 +48,8 @@ class Clusterer():
     
     for n in range(self.nr_tries):
       self.clustering_list.append(N_random())
+      if self.n_clusters != 0:
+        self.clustering_list[n].set_n(self.n_clusters)
       for vector in self.data.token_occurs:
         self.clustering_list[n].add_vector(vector)
       self.clustering_list[n].execute()
@@ -69,10 +78,6 @@ class Data():
 
 # takes all answers and builds a matrix which shows which words are in which answer
 class DataClusterer():
-  answers = []
-  tokens = []
-  token_occurs = []
-  
   def __init__(self):
     self.answers = []
     self.tokens = []
@@ -126,6 +131,7 @@ class N_random():
     self.selected_vectors = []
     self.clusters = []
     self.error = 0
+    self.static_n = False
     
   # executes all functionalities of this class
   def execute(self):
@@ -145,10 +151,15 @@ class N_random():
   def add_vector(self,vector):
     self.vectors.append(vector)
   
+  # let user set a n
+  def set_n(self,n):
+    self.static_n = n
+  
   # determine n
   def calc_n(self):
-    self.n = int(log(len(self.vectors[0]))) + 2
-    
+    if self.static_n == False:
+      self.n = min((int(log(len(self.vectors[0]),2)) + 1),(int(log(len(self.vectors),2)) + 1))
+  
   # randomly select n clusters
   def select_n(self):
     if self.n < 1:
