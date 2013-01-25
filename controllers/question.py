@@ -121,6 +121,8 @@ class QuestionController():
 
     @staticmethod
     def calculate_remaining_time(question):
+        if question.time == 0:
+            return 0
         time_remaining = datetime.now() - (question.activate_time +
                 timedelta(seconds=question.time))
         time_remaining = time_remaining.seconds + time_remaining.days * 86400

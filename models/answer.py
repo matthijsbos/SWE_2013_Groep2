@@ -32,9 +32,7 @@ class AnswerModel(Base, BaseEntity):
     def __repr__(self):
         return "<Answer('%s','%s','%s', %s, %s)>" % (self.id,
                                                 self.questionID,
-                                                self.userID,
-                                                self.edit,
-                                                self.ranking)
+                                                self.userID)
 
     def __str__(self):
         return self.text
@@ -124,13 +122,13 @@ class AnswerModel(Base, BaseEntity):
                 filter(Question.available == True).\
                 filter(Question.course_id == courseid).\
                 filter(anssub.c.id != None).all()
-
+				
         print tmp
         print [(x.modified + timedelta(seconds=x.time), datetime.now()) for x in tmp]
 
         return [x for x in tmp if x.modified + timedelta(seconds=x.time) >
                 datetime.now()]
-
+				
     @staticmethod
     def question_valid(questionid):
         questionTmp = Question.by_id(questionid)

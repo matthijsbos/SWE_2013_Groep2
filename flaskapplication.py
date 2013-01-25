@@ -95,22 +95,22 @@ def handle_question():
     if g.lti.is_instructor() == False:
         return render_template("access_restricted.html")
     try:
-        isActive = int(bool(request.form['active']))
+        isActive = request.form['active'] in ['true','True']
     except:
         isActive = False
     
     try:
-        comment = int(bool(request.form['comment']))
+        comment = request.form['comment'] in ['true','True'] 
     except:
         comment = False
         
     try:
-        tags = int(bool(request.form['tags']))
+        tags = request.form['tags'] in ['true','True']
     except:
         tags = False
         
     try:
-        rating = int(bool(request.form['rating']))
+        rating = request.form['rating'] in ['true','True']
     except:
         rating = False
         
