@@ -99,21 +99,21 @@ textarea:focus{
 .reviewanswer_right{
     float:right;
 }
-#question{
+.question{
     font-size: 18px;
     font-weight: bold;
     color:#009DCE;
 }
-#counter{
+.countdowntime{
     float: right;
     margin-top: 5px;
     margin-right: 5px;
     font-size: 25px;
 }
-#questionArea{
+.questionArea{
     width: 500px;
 }
-#questionArea textarea{
+.questionArea textarea{
     margin-top: 8px;
     width: 96%;
 }

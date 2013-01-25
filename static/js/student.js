@@ -62,8 +62,8 @@ function show_question(id, question, time_remaining, question_time, answer) {
     console.log(austDay);
     $('#questions').append('<form id="answerform'+id+'" method="post" style="display:none;">\
         <br>\
-        <div id="questionArea'+id+'">\
-            <div id="question'+id+'"></div>\
+        <div id="questionArea'+id+'" class="questionArea">\
+            <div id="question'+id+'" class="question"></div>\
             <textarea name="answerText" cols=50 rows=5></textarea>\
             <br>\
             <button class="btn btn-info" onclick="submit_answer('+id+'); return false;" value="submit answer">submit answer</button>\
