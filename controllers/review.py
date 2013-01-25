@@ -3,10 +3,13 @@
 # Changes:
 # Comment: call ReviewAnswer.review(x) to start reviewing a answer
 
-from flask import render_template, g, session as fsession
+from flask import g, session as fsession
+from utilities import render_template
 from models.tag import Tag, AnswerTag
 from models.answer import AnswerModel
 from models.review import Review
+from models.question import Question
+from dbconnection import session
 from models.schedule import Schedule
 import json
 
@@ -21,15 +24,12 @@ class ReviewAnswer():
         except:
             return self
 
-        for tag_id in request.form.getlist('assign_tags'):
-            AnswerTag.add_answertag(fsession['reviewanswer'], tag_id)
-
         # for rating in request.form.getlist('rating'):
         # Review.add(fsession['reviewanswer'], fsession['user_id'], rating, )
 
         for tag_id in request.form.getlist('remove_tags'):
             AnswerTag.remove(fsession['reviewanswer'], tag_id)
-            
+        
         try:
             request.form['rating']
         except KeyError:
@@ -43,6 +43,17 @@ class ReviewAnswer():
                                
         # revoke permission to review answer
         del fsession['reviewanswer']
+    
+    @staticmethod
+    def remove_tag_answer(aid, tagid):
+        AnswerTag.remove(aid, tagid)
+        return json.dumps({'deleted': True})
+
+    @staticmethod
+    def add_tag_answer(aid, tagid):
+        AnswerTag.add_answertag(aid, tagid)
+        return json.dumps({'deleted': True})
+    
     
     @staticmethod
     def review():

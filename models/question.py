@@ -1,7 +1,8 @@
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy import Column, String, Boolean, Integer
+from sqlalchemy import Column, String, Boolean, Integer,DateTime
 from dbconnection import engine, session, Base
 from basemodel import BaseEntity
+from datetime import datetime
 
 
 class Question(Base, BaseEntity):
@@ -17,6 +18,11 @@ class Question(Base, BaseEntity):
     _reviewavailable = Column(Boolean)
     _archived = Column(Boolean)
     time = Column(Integer)
+    activate_time = Column(DateTime,nullable=True)
+    
+    comment = Column(Boolean)
+    tags = Column(Boolean)
+    rating = Column(Boolean)
 
     def __init__(self, user_id, course_id, question, available, time):
         self.user_id = user_id

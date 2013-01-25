@@ -1,0 +1,15 @@
+{% extends "_base.html" %}
+{% block content %}
+<!-- Call the questions and answers from the database -->
+    <div id="quest">
+        {{ question.question }}
+    </div>
+    
+    <form action="/answerchoice" method="post">
+        <input type="hidden" name="answerzero" id="answerzero" value="{{ answer1.id }}">
+        <input type="hidden" name="answerone" id="answerone" value="{{ answer2.id }}">
+        <button type="submit" name="bestanswer" value="{{ answer1.id }}">{{ answer1.text }}</button>
+        <button type="submit" name="bestanswer" value="{{ answer2.id }}">{{ answer2.text }}</button>
+        <button type="button" onclick="window.location='/index_student'" class="submit-answer">back</button>
+    </form>
+{% endblock %}

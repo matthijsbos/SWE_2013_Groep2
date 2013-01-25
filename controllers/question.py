@@ -1,17 +1,18 @@
 import json
-from flask import escape, render_template, g
-
+from flask import escape, g
+from utilities import render_template
 from dbconnection import session
 from models.question import Question
+from datetime import datetime, timedelta
 from controllers.scheduler import Scheduler
 
 
 class QuestionController():
     @staticmethod
-    def toggle_question(q_id):
+    def toggle_question(q_id, field):
         '''toggles a question between available and not available'''
         if g.lti.is_instructor():
-            available = Question.toggle_available(q_id)
+            available = Question.toggle_available(q_id, field)
             return json.dumps({"toggle":available,"check": True})
 
         else:
@@ -54,24 +55,50 @@ class QuestionController():
                          })
 
     @staticmethod
-    def edit_question(q_id, question, activate):
+    def edit_question(q_id, question, time):
         """Updates a question with given contents and activation status."""
         if g.lti.is_instructor():
-            if question != None:
-                escaped_question = escape(question)
-                Question.by_id(q_id).question = question
-            else:
+            if question is None:
                 escaped_question = None
-            Question.by_id(q_id).available = activate
+            else:
+                escaped_question = escape(question)
+
+            escaped_time = escape(time)
+            q = Question.by_id(q_id)
+            q.question = escaped_question
+            q.time = int(time)
+            activate = q.available
+
+            session.add(q)
+            session.commit()
+
             return json.dumps({"id": q_id,
                                "text": escaped_question,
                                "available": activate,
+                               "time":time,
                                "check": g.lti.is_instructor()})
         else:
             return json.dumps({"id": q_id,
                                "text": question,
                                "available": activate,
+                               "time": time,
                                "check": g.lti.is_instructor()})
+    
+    @staticmethod
+    def get_remaining_time(q_id):
+        question = Question.by_id(q_id)
+        
+        if question is not None and question.activate_time is not None:
+            time_remaining = QuestionController.calculate_remaining_time(question)
+            question_time =  question.time
+        else:
+            time_remaining = 0
+            question_time =  0
+            
+        return json.dumps({"still_available":((question is not None) and question.available),
+                           "time_remaining":time_remaining,
+                           "question_deleted":(question is None) or not question.available,
+                           "question_time":question_time})
 
     @staticmethod
     def get_questions(n):
@@ -97,6 +124,27 @@ class QuestionController():
                                   questions=session.query(Question).filter_by(user_id=g.lti.get_user_id()  ) )
 
     @staticmethod
+    def get_list():
+        questions = Question.get_filtered()
+        for question in questions:
+            if question is not None and question.activate_time is not None:
+                if QuestionController.calculate_remaining_time(question) < 0:            
+                    question.available = False
+        session.commit()
+        return render_template('question_list.html', questions=questions)
+
+    @staticmethod
+    def get_list_table(limit,offset):
+        (questions, curpage, maxpages, startpage, pagecount) = Question.get_filtered_offset(limit,offset)
+        for question in questions:
+            if question is not None and question.activate_time is not None:
+                if QuestionController.calculate_remaining_time(question) < 0:            
+                    question.available = False
+        session.commit()
+
+        return render_template('question_list_tbl.html', questions=questions,
+                currentpage=curpage,startpage=startpage,pagecount=pagecount,maxpages=maxpages)
+
     def get_list_to_answer():
      """Retrieves questions to be answered by the instructor (all questions )"""
      if g.lti.is_instructor():
@@ -128,13 +176,19 @@ class QuestionController():
         return render_template('askQuestion.html', instr=instructor)
 
     @staticmethod
-    def create_question(question, instructor, course, active, time):
+    def create_question(question, instructor, course, active, time, comment, tags, rating):
         '''formats a question for database insertion and inserts it, calls a result screen afterwards'''
         try:
             time = int(time)
         except ValueError:
             time = 0
-        session.add(Question(instructor, course, question, active, time))
+        session.add(Question(instructor, course, question, active, time, comment, tags, rating))
         session.commit()
-
         return QuestionController.get_list_asked()
+
+    @staticmethod
+    def calculate_remaining_time(question):
+        time_remaining = datetime.now() - (question.activate_time +
+                timedelta(seconds=question.time))
+        time_remaining = time_remaining.seconds + time_remaining.days * 86400
+        return - time_remaining
