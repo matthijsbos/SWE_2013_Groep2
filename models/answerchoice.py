@@ -4,8 +4,11 @@ from dbconnection import engine, session, Base
 from datetime import datetime
 from basemodel import BaseEntity
 from models import answer
+from models.answer import AnswerModel
 
 class AnswerChoiceModel(Base,BaseEntity):
+    K = 100
+
     __tablename__ = 'answerchoice'
 
     #inherited from BaseEntity
@@ -22,10 +25,10 @@ class AnswerChoiceModel(Base,BaseEntity):
         self.user_id = user_id
         self.best_answer_id = best_answer_id
         self.other_answer_id = other_answer_id
-        calcNewRating()
+        self.calcNewRating()
 
     def calcNewRating(self):
-        newRating = answer.newRating(self.best_answer_id, self.other_answer_id)
-        answer.setRanking(self.best_answer_id, newRating[0])
-        answer.setRanking(self.other_answer_id, newRating[1])
+        newRating = AnswerModel.newRating(self.best_answer_id, self.other_answer_id)
+        AnswerModel.setRanking(self.best_answer_id, newRating[0])
+        AnswerModel.setRanking(self.other_answer_id, newRating[1])
 

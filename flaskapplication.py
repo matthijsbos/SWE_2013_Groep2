@@ -12,7 +12,7 @@ import models.rating
 from dbconnection import Base, engine
 from flask import Flask, request, render_template, g
 from lti import LTI, LTIException
-from controllers import index, answer, modifytags, answerchoice
+from controllers import index, answer, answerchoice
 import yaml
 from flask import Flask, Response, request, render_template, g
 from lti import LTI, LTIException
@@ -165,6 +165,11 @@ def answerChoice():
 def processanswerchoice():
     ctrler = answerchoice.Answerchoice(request)
     return ctrler.process()
+	
+@app.route("/choicelobby",methods=['GET'])
+def lobby():
+    ctrler = answerchoice.Answerchoice(request)
+    return ctrler.lobby()
 
 @app.route("/assigntags", methods=['POST', 'GET'])
 def assign_tags():
@@ -212,8 +217,8 @@ def answerFilter():
     ctrler = Answer(request)
     return ctrler.render_filtered()
 
-@app.route("/rankresults", methods=['GET'])
-def rankResults():
+@app.route("/rankresults", methods=['POST', 'GET'])
+def render_results():
     ctrler = answer.Answer(request)
     return ctrler.render_results()
 
@@ -229,15 +234,28 @@ def has_new_question():
     ctrler = Index()
     return ctrler.has_new_question()
 	
-@app.route("/answerit", methods=['GET', 'POST'])
-def answer_it():
-    ctrler = Index()
-    return ctrler.answer_it()
+@app.route("/answerit", methods=['GET'])
+def answer_it_GET():
+    return Answer.renderanswerform()
 	
+@app.route("/answerit", methods=['POST'])
+def answer_it_POST():
+    return Answer.save()
+
 @app.route("/index_student", methods=['GET', 'POST'])
 def render():
     ctrler = Index()
     return ctrler.render()
+    
+@app.route("/studenthistory", methods=['GET', 'POST'])
+def studenthistory():
+    ctrler = answer.Answer(request)
+    return ctrler.studenthistory()
+    
+@app.route("/studenthistory_result", methods=['GET', 'POST'])
+def studenthistory_result():
+    ctrler = answer.Answer(request)
+    return ctrler.studenthistory_result()
 
 @app.route("/logout")
 def logout():

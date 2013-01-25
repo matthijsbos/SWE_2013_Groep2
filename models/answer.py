@@ -110,10 +110,14 @@ class AnswerModel(Base, BaseEntity):
         print tmp
         print [(x.modified + timedelta(seconds=x.time), datetime.now()) for x in tmp]
 
-
-
-
         return [x for x in tmp if x.modified + timedelta(seconds=x.time) >
+                datetime.now()]
+				
+    @staticmethod
+    def question_valid(questionid):
+        questionTmp = Question.by_id(questionid)
+
+        return [questionTmp.modified + timedelta(seconds=questionTmp.time) >
                 datetime.now()]
 
 
@@ -140,8 +144,7 @@ class AnswerModel(Base, BaseEntity):
     @staticmethod
     def newRating(winner, loser) :
         K = 100
-        expectedScore = winningProbability(winner, loser)
-        winnerRating = winner + K * (1 - winningProbability(winner, loser))
-        loserRating = loser + K * (0 - winningProbability(loser, winner))
+        expectedScore = AnswerModel.winningProbability(winner, loser)
+        winnerRating = winner + K * (1 - AnswerModel.winningProbability(winner, loser))
+        loserRating = loser + K * (0 - AnswerModel.winningProbability(loser, winner))
         return winnerRating, loserRating
-
