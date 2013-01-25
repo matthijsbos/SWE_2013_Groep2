@@ -50,8 +50,8 @@ class Clusterer():
       self.clustering_list.append(N_random())
       if self.n_clusters != 0:
         self.clustering_list[n].set_n(self.n_clusters)
-      for vector in self.data.token_occurs:
-        self.clustering_list[n].add_vector(vector)
+      for data in self.data.answers:
+        self.clustering_list[n].add_data(data)
       self.clustering_list[n].execute()
       if self.clustering_list[n].error < self.best_error:
         self.best_clustering = n
@@ -62,11 +62,8 @@ class Clusterer():
     for c in range(len(best_clusters)):
       text_clusters.append([])
       for v in range(len(best_clusters[c])):
-        vector = best_clusters[c][v]
-        for d in self.data.answers:
-          if np.array_equal(d.vector,vector):
-            text_clusters[c].append(d.string)
-            break;
+        data = best_clusters[c][v]
+        text_clusters[c].append(data.string)
     return text_clusters
 
 # contains an answer and its vector representation
@@ -125,10 +122,10 @@ class DataClusterer():
 class N_random():  
   def __init__(self):
     self.n = 0
-    self.vectors = []
+    self.data = []
     self.set_n = 0
     self.selected_indices = []
-    self.selected_vectors = []
+    self.selected_data = []
     self.clusters = []
     self.error = 0
     self.static_n = False
@@ -143,13 +140,13 @@ class N_random():
     
   # calculate distance between two vectors
   def distance(self,vector1,vector2):
-    diff = np.abs(vector1 - vector2)
+    diff = np.abs(np.array(vector1) - np.array(vector2))
     length = np.sum(diff)
     return length
-  
-  # add a vector to this class
-  def add_vector(self,vector):
-    self.vectors.append(vector)
+    
+  # add data element to class
+  def add_data(self,data):
+    self.data.append(data)
   
   # let user set a n
   def set_n(self,n):
@@ -158,7 +155,7 @@ class N_random():
   # determine n
   def calc_n(self):
     if self.static_n == False:
-      self.n = min((int(log(len(self.vectors[0]),2)) + 1),(int(log(len(self.vectors),2)) + 1))
+      self.n = min((int(log(len(self.data[0].vector),2)) + 1),(int(log(len(self.data),2)) + 1))
   
   # randomly select n clusters
   def select_n(self):
@@ -166,33 +163,44 @@ class N_random():
       self.calc_n()
       if self.n < 1:
         self.n = 1
-    a = range(len(self.vectors))
+    a = range(len(self.data))
     random.shuffle(a)
     self.selected_indices = a[:self.n]
     for i in self.selected_indices:
-      self.selected_vectors.append(self.vectors[i])
+      self.selected_data.append(self.data[i])
       self.clusters.append([])
   
   # assign each answer to a cluster
   def assign_cluster(self):
-    for v in self.vectors:
-      best_dist = len(v)
+    for d in self.data:
+      best_dist = len(d.vector)
       best_selected = 0
-      for s in range(len(self.selected_vectors)):
-        dist = self.distance(v,self.selected_vectors[s])
+      for s in range(len(self.selected_data)):
+        dist = self.distance(d.vector,self.selected_data[s].vector)
         if dist < best_dist:
           best_dist = dist
           best_selected = s
-      self.clusters[best_selected].append(v)
-   
+      self.clusters[best_selected].append(d)
+  
+  # calcluates the average vector of a cluster
+  def average(self,cluster):
+    sum = []
+    for a in range(len(cluster[0].vector)):
+      sum.append(0)
+    sum = np.array(sum)
+    for c in cluster:
+      sum += np.array(c.vector)
+    sum /= len(cluster)
+    return sum
+  
   # calculate the average error of a cluster and adds this to the total error of this clustering try
   def calc_average_error(self,cluster):
     if cluster == []:
       self.error += 0
     else:
-      average = np.average(np.array(cluster),0)
+      avg = self.average(cluster)
       error = 0
       for c in cluster:
-        diff = np.abs(c - average)
+        diff = np.abs(c.vector - avg)
         error += np.sum(diff)
       self.error+=error
