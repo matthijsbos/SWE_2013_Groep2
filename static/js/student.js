@@ -92,6 +92,7 @@ function check_submit_answer(id, question_time){
         submit_answer(id);
     }
     $('#answerform'+id).remove();
+    clearInterval(submit_interval_id[id]);
     if ( $('#questions').is(':empty') )
     {
         $('#pleasewait').show();
@@ -135,7 +136,8 @@ function check_remaining_time(id, time_delta){
                 {
                     $('#pleasewait').show();
                 }
-                $('#answerform'+id).remove();             
+                $('#answerform'+id).remove();      
+                clearInterval(submit_interval_id[id]);
                 popup_div('#questionWasDeleted',5000)
             }
         }
