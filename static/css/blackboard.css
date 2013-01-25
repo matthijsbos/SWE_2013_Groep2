@@ -1,0 +1,30 @@
+body, a {
+    color: black;
+}
+
+a:hover {
+    color: black;
+    text-decoration: underline;
+}
+
+.nav-pills > .active > a, .nav-pills > .active > a:hover {
+    color: #efefef;
+    background-color: #949494;
+}
+
+.btn-primary {
+    background-color: #747474;
+    background-image: -moz-linear-gradient(top, #747474, #949494);
+    background-image: -webkit-gradient(linear,0 0, 0 100%, from(#747474), to(#949494));
+    background-image: -webkit-linear-gradient(top, #747474, #949494);
+    background-image: -o-linear-gradient(top, #747474, #949494);
+    background-image: linear-gradient(to bottom, #747474, #949494);
+}
+
+.btn-primary:hover {
+    background-color: #949494;
+}
+
+.alert-info {
+    color: #111;
+}
