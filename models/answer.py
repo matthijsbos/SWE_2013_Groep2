@@ -20,7 +20,7 @@ class AnswerModel(Base, BaseEntity):
         self.questionID = questionID
         self.userID = userID
         self.edit = edit
-        self.ranking = 1000.0
+        self.ranking = ranking
 
     def __repr__(self):
         return "<Answer('%s','%s','%s')>" % (self.id,
@@ -144,6 +144,8 @@ class AnswerModel(Base, BaseEntity):
     @staticmethod
     def newRating(winner, loser) :
         K = 100.0
-        winnerRating = winner + K * (1 - AnswerModel.winningProbability(winner, loser))
-        loserRating = loser + K * (0 - AnswerModel.winningProbability(loser, winner))
-        return winnerRating, loserRating
+        winnerRanking = AnswerModel.getRanking(winner)
+        loserRanking = AnswerModel.getRanking(loser)
+        newWinnerRanking = winnerRanking + (K * (1.0 - AnswerModel.winningProbability(winnerRanking, loserRanking)))
+        newLoserRanking = loserRanking + (K * (0.0 - AnswerModel.winningProbability(loserRanking, winnerRanking)))
+        return newWinnerRanking, newLoserRanking
