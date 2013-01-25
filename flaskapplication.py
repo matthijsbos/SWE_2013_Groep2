@@ -129,7 +129,6 @@ def handle_question():
 
 @app.route("/question_list", methods=['GET', 'POST'])                                            
 def list_questions():
-<<<<<<< HEAD
     return render_template('question_list.html')
 
 @app.route("/question_list_table",methods=['GET','POST'])
@@ -141,10 +140,6 @@ def list_questions_table():
         limit = int(request.args['limit'])
     if 'offset' in request.args:
         offset = int(request.args['offset'])
-    return Question.get_list_table(limit,offset)
-=======
-    return Question.get_list_asked()
-
 
 @app.route("/question_list/asked", methods=['GET', 'POST'])
 def list_questions_asked():
@@ -153,7 +148,6 @@ def list_questions_asked():
 @app.route("/question_list/to_answer", methods=['GET', 'POST'])
 def list_questions_answer():
     return Question.get_list_to_answer()
->>>>>>> groep_acht
 
 @app.route("/delete_question/<id>", methods=['GET', 'POST'])
 def delete_question(id):
@@ -255,11 +249,7 @@ in the database (given a user has permission to do so)
 @app.route("/reviewanswer",methods=['POST', 'GET'])
 def handle_review_answer():
     ctrler = ReviewAnswer(request)
-<<<<<<< HEAD
-    return ctrler.review(1)
-=======
     return ReviewAnswer.review()
->>>>>>> groep_acht
 
 @app.route("/reviewanswer_stub", methods=["POST", "GET"])
 def do_review_answer_stub():
