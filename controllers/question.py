@@ -38,9 +38,13 @@ class QuestionController():
         
         if t == 'answerable':
             question.answeravailable = not question.answeravailable
+            question.activate_time = datetime.now()
 
         elif t == 'reviewable':
             question.reviewavailable = not question.reviewavailable
+            question.activate_time = datetime.now()
+            if not question.reviewavailable:
+                Scheduler(args['id'])
 
         elif t == 'archived':
             question.archived = not question.archived
@@ -95,9 +99,9 @@ class QuestionController():
             time_remaining = 0
             question_time =  0
             
-        return json.dumps({"still_available":((question is not None) and question.available),
+        return json.dumps({"still_available":((question is not None) and question.reviewavailable),
                            "time_remaining":time_remaining,
-                           "question_deleted":(question is None) or not question.available,
+                           "question_deleted":(question is None) or not question.reviewavailable,
                            "question_time":question_time})
 
     @staticmethod

@@ -19,7 +19,7 @@ $(function() {
 function query_new_question() {    
     $.getJSON("/has_new_question", {},
         function(data) {          
-            if (data.has_new) {   
+            if (data.has_new) {
                 for (var i=0;i<data.len;i++){
                     if($('#answerform'+data.questions[i].question_id).length == 0) {
                         show_question(data.questions[i].question_id, data.questions[i].question_text,

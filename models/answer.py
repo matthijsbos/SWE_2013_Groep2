@@ -91,18 +91,21 @@ class AnswerModel(Base, BaseEntity):
         # Need to use the old Alias.c.[columname] when using subquery!
         tmp = session.query(Question).\
                 outerjoin(anssub, anssub.c.questionID == Question.id).\
-                filter(Question._answeravailable == True).\
-                filter(Question.course_id == courseid).\
-                filter(anssub.c.id == None).all()
+                filter(Question._reviewavailable == True).\
+                filter(Question.course_id == courseid)
 
-        print tmp
-        print [(x.modified + timedelta(seconds=x.time), datetime.now()) for x in tmp]
-
-
-
-
-        return [x for x in tmp if x.modified + timedelta(seconds=x.time) >
-                datetime.now()]
+        #print tmp
+        #print [(x.modified + timedelta(seconds=x.time), datetime.now()) for x in tmp]
+        
+        questions = []
+        
+        for x in tmp:
+            if x.time == 0:
+                questions.append(x)
+            elif x.modified + timedelta(seconds=x.time) > datetime.now():
+                questions.append(x)
+         
+        return questions
 
 
 
