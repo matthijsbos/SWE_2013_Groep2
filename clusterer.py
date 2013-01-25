@@ -1,57 +1,70 @@
 import numpy as np
 from math import *
 import random
+import lang_parser
+import sys
 
-# test function for written classes
 def test():
-  clustering_list = []
-  nr_tries = 1000
-  best_error=99999999999
-  best_clustering = nr_tries+1
+  clusterer = Clusterer()
+  answer_strings=["yes, the car crashes","no, the car does not crash","no, it stays whole","yes, the cyclist gets run over by the car",
+    "no, the cyclist does not get run over by the vehicle","yes, the biker gets into an accident"]
+  for a in answer_strings:
+    clusterer.add_answer(a)
+  print clusterer.run_clustering()
   
-  #lemma_answers = ["ja","nee","misschien","ja","nee","misschien","nee","ja","misschien","ja","misschien","nee","ja","misschien"]
+class Clusterer():
+  def __init__(self):
+    self.answers = []
+    self.data = DataClusterer()
+    self.best_error = sys.maxsize
+    self.nr_tries = 10
+    self.best_clustering = self.nr_tries + 1
+    self.clustering_list = []
   
-  lemma_answers = ["ja auto kapot","nee auto heel","ja auto kapot","nee auto kapot"
-    ,"nee heel","nee","ja voertuig kapot","nee fietser ongeluk","ja fietser auto","ja"]
+  # add answer to cluster module
+  def add_answer(self,answer):
+    self.answers.append(answer)
+    
+  # change number of tries to search for best cluster
+  def change_nr_tries(self,new_value):
+    self.nr_tries = new_value
   
-  data=DataClusterer()
-  
-  for answer in lemma_answers:
-    data.add_answer(answer)
-  data.tokenize_all()
-  data.count_frequency()
-  
-  for n in range(nr_tries):
-    clustering_list.append(N_random())
-    for vector in data.token_occurs:
-      clustering_list[n].add_vector(vector)
-    clustering_list[n].execute()
-    if clustering_list[n].error < best_error:
-      best_clustering = n
-      best_error=clustering_list[n].error
-      
-  print "---results---"
-  print "error is ",best_error
-  
-  best_clusters = clustering_list[best_clustering].clusters
-  text_clusters = []
-  for c in range(len(best_clusters)):
-    text_clusters.append([])
-    for v in range(len(best_clusters[c])):
-      vector = best_clusters[c][v]
-      for d in data.answers:
-        if np.array_equal(d.vector,vector):
-          text_clusters[c].append(d.answer)
-          break;
-  print text_clusters
+  # runs clustering over the data
+  def run_clustering(self):
+    lp = lang_parser.LanguageParser('en',self.answers)
+    lemma_answers = lp.get_keywords()
+    
+    for i in range(len(lemma_answers)):
+      self.data.add_answer(lemma_answers[i],self.answers[i])
+    self.data.tokenize_all()
+    self.data.count_frequency()
+    
+    for n in range(self.nr_tries):
+      self.clustering_list.append(N_random())
+      for vector in self.data.token_occurs:
+        self.clustering_list[n].add_vector(vector)
+      self.clustering_list[n].execute()
+      if self.clustering_list[n].error < self.best_error:
+        self.best_clustering = n
+        self.best_error=self.clustering_list[n].error
+    
+    best_clusters = self.clustering_list[self.best_clustering].clusters
+    text_clusters = []
+    for c in range(len(best_clusters)):
+      text_clusters.append([])
+      for v in range(len(best_clusters[c])):
+        vector = best_clusters[c][v]
+        for d in self.data.answers:
+          if np.array_equal(d.vector,vector):
+            text_clusters[c].append(d.string)
+            break;
+    return text_clusters
 
 # contains an answer and its vector representation
-class Data():
-  answer = ""
-  vector = []
-  
+class Data():  
   def __init__(self):
     self.answer = ""
+    self.string = ""
     self.vector = []
 
 # takes all answers and builds a matrix which shows which words are in which answer
@@ -66,9 +79,10 @@ class DataClusterer():
     self.token_occurs = []
   
   # add answer to list
-  def add_answer(self,answer):
+  def add_answer(self,answer,string):
     data = Data()
-    data.answer = answer.lower()
+    data.answer = answer
+    data.string = string
     # lemmatization goes here
     self.answers.append(data)
   
@@ -79,8 +93,9 @@ class DataClusterer():
   # tokenize all answers, generate list of tokens and create term frequency matrix
   def tokenize_all(self):
     for str in self.answers:
-      toks = self.tokenize_string(str.answer)
-      for token in toks:
+      #toks = self.tokenize_string(str.answer)
+      print str.answer
+      for token in str.answer:
         if token not in self.tokens:
           self.tokens.append(token)
     # initialize term frequency matrix
@@ -89,7 +104,8 @@ class DataClusterer():
   # counts the frequency of each term in each answer and adds them to the term frequency matrix
   def count_frequency(self):
     for i in range(len(self.answers)):
-      toks = self.tokenize_string(self.answers[i].answer)
+      #toks = self.tokenize_string(self.answers[i].answer)
+      toks = self.answers[i].answer
       for j in range(len(self.tokens)):
         match=False
         for token in toks:
@@ -101,15 +117,7 @@ class DataClusterer():
           self.answers[i].vector.append(0)
 
 # select some clusters n times and cluster all answers to those clusters
-class N_random():
-  n = 0
-  vectors = []
-  set_n = 0
-  selected_indices = []
-  selected_vectors = []
-  clusters = []
-  error=0
-  
+class N_random():  
   def __init__(self):
     self.n = 0
     self.vectors = []
