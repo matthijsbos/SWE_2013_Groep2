@@ -54,7 +54,7 @@ function show_review_button() {
 	$('#reviewform').show();
 }
 
-function hide_review_buttion(){
+function hide_review_button() {
 	$('#reviewform').hide();
 }
 
