@@ -3,7 +3,7 @@
 # Changes:
 # Comment:
 
-from flask import render_template, g, request, abort, redirect
+from flask import g, request, abort, redirect
 from models.question import Question
 from models.answer import AnswerModel
 from models.answerchoice import AnswerChoiceModel
@@ -11,6 +11,7 @@ from models import answer
 from dbconnection import session
 from random import randrange
 from collections import Counter
+from utilities import render_template
 
 class Answerchoice():
     def __init__(self, request):        
