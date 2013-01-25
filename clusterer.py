@@ -4,6 +4,7 @@ import random
 import lang_parser
 import sys
 
+# test function for the classes, also shows basic way to use clusterer
 def test():
   clusterer = Clusterer()
   answer_strings=["yes, the car crashes","yes, the car does crash","no, it stays whole","yes, the cyclist gets run over by the car",
@@ -41,11 +42,13 @@ class Clusterer():
     lp = lang_parser.LanguageParser('en',self.answers)
     lemma_answers = lp.get_keywords()
     
+    # add lemmatized answers to data analyzer
     for i in range(len(lemma_answers)):
       self.data.add_answer(lemma_answers[i],self.answers[i])
     self.data.tokenize_all()
     self.data.count_frequency()
     
+    # determine best cluster found in n tries
     for n in range(self.nr_tries):
       self.clustering_list.append(N_random())
       if self.n_clusters != 0:
@@ -57,6 +60,7 @@ class Clusterer():
         self.best_clustering = n
         self.best_error=self.clustering_list[n].error
     
+    # change best cluster into list of string lists for easier reading
     best_clusters = self.clustering_list[self.best_clustering].clusters
     text_clusters = []
     for c in range(len(best_clusters)):
