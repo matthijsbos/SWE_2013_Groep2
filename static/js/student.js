@@ -71,7 +71,7 @@ function show_question(id, question, time_remaining, question_time, answer) {
             <div id="prolongedText'+id+'" style="display: none;">Question has been prolonged</div>\
         </div>\
     </form>');
-    alert(question_time)
+    
     if (question_time != 0) {
         $('#answerform'+id+' #counter'+id).countdown({
             until: austDay,
