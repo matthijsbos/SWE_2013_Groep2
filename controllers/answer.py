@@ -85,9 +85,7 @@ class Answer():
             else:
                 answer.AnswerModel.save(qID, uID, answerText)
             flag = "true"
-        print 'Saved answer'
         user.UserModel.save(uID,g.lti.get_user_name())
-        print 'Dexter'
         return True#render_template('answersaved.html', flag=flag)
 
     def viewAnswer(self):
@@ -167,4 +165,8 @@ class Answer():
 
         return render_template('answerfilter_by_questionid.html', answers=answer.AnswerModel.get_filtered(**args))
 
-
+    def studenthistory(self):
+        return render_template('studenthistory.html')
+        
+    def studenthistory_result(self):
+        return render_template('studenthistory_result.html', studid=answer.AnswerModel.get_answers_by_userid(request.values['sid']))
