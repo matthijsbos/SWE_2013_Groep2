@@ -8,6 +8,7 @@ from sqlalchemy import Column, Integer, String, ForeignKey
 
 from dbconnection import engine, session, Base
 from models.basemodel import BaseEntity
+from models.answer import AnswerModel
 
 class Schedule(Base, BaseEntity):
     __tablename__ = "Schedule"
@@ -21,8 +22,13 @@ class Schedule(Base, BaseEntity):
         
     @staticmethod
     def get_answer(user_id):
-        return session.query(Schedule).filter(
-            Schedule.user_id == user_id).first()
+        answer_id = session.query(Schedule.answer_id).filter(
+            Schedule.user_id = user_id).first()
+
+        if answer_id is not None:
+            return AnswerModel.by_id(answer_id[0])
+        
+        return None
             
     @staticmethod
     def add(answer_id, user_id):

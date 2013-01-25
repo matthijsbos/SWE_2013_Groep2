@@ -10,7 +10,7 @@ class AnswerModel(Base, BaseEntity):
 
     text = Column(String)
     questionID = Column(Integer)
-    userID = Column(Integer)
+    userID = Column(String)
     edit = Column(Integer)
 
     def __repr__(self):
@@ -34,7 +34,8 @@ class AnswerModel(Base, BaseEntity):
 
     @staticmethod
     def get_question_answers(question_id):
-        return session.query(AnswerModel).filter(AnswerModel.questionID==question_id)
+        return session.query(AnswerModel).filter(
+            AnswerModel.questionID==question_id).all()
 
     @staticmethod
     def updateAnswer(answerID, answerText):
