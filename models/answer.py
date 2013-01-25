@@ -142,7 +142,6 @@ class AnswerModel(Base, BaseEntity):
     def winningProbability(rating1, rating2) :
         return 1.0 / (1.0 + (10.0**((rating2 - rating1) / 400.0)))
 
-
     @staticmethod
     def newRating(winner, loser) :
         K = 100.0
@@ -151,7 +150,7 @@ class AnswerModel(Base, BaseEntity):
         newWinnerRanking = winnerRanking + (K * (1.0 - AnswerModel.winningProbability(winnerRanking, loserRanking)))
         newLoserRanking = loserRanking + (K * (0.0 - AnswerModel.winningProbability(loserRanking, winnerRanking)))
         return newWinnerRanking, newLoserRanking
-        
+
     @staticmethod
     def get_answers_by_userid(uId):
         return session.query(AnswerModel).filter_by(userID=uId).all()
