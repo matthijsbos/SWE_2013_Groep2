@@ -22,8 +22,9 @@ class Schedule(Base, BaseEntity):
         
     @staticmethod
     def get_answer(user_id):
+        print user_id
         answer_id = session.query(Schedule.answer_id).filter(
-            Schedule.user_id = user_id).first()
+            Schedule.user_id == user_id).first()
 
         if answer_id is not None:
             return AnswerModel.by_id(answer_id[0])
