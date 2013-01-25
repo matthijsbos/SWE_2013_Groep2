@@ -2,114 +2,157 @@
 {% block content %}
 
 <script language="javascript" type="text/javascript">
+    var stdlimit = 10;
+    var currPage = 1;
+
+    $(document).ready(function() {
+        refresh_table(0,stdlimit);
+    });
+
+    function refresh_table(offset,limit){
+        $.get('/question_list_table',{offset:offset,limit:limit},
+            function(data){
+            $('#questListForm').html(data);});
+    }
+
+    function refresh_table_default(){
+        refresh_table(0,stdlimit);
+    }
+
+    function load_page(page){
+        currPage = page;
+        refresh_table((page-1)*stdlimit,stdlimit);
+    }
+
+    function reload(){
+        load_page(currPage);
+    }
+
     function edit_field(id){
         var elem = $('#question_' + id + ' a');
+        var time_elem = $('#time_'+id);
         if (elem.hasClass('activated')){
             return;
         }
         var text = elem.text();
+        var time = time_elem.text();
         elem.addClass('activated');
         elem.text('');
-        var edit_field = $('<input type="text" size="50"/>').val(text);
-        edit_field.blur(function(){
-            edit_question(id, $(this).val());
+        elem.hide();
+        time_elem.text('');
+        var edit_field = $('<input type="text" class="input-block-level" placeholder="your question">').val(text);
+        var time_field = $('<input type="number" size="3" maxlength="3" placeholder="sec">').val(time);
+
+        var editelem = $('#sedit_'+id);
+
+        editelem.click(function(){
+            $('#edit_'+id).show();
+            $('#sedit_'+id).hide();
+            
+            var newTime = time_field.val();
+            edit_question(id,edit_field.val(),newTime);
+
             var newText = elem.val();
-            $(this).parent().text(newText).removeClass('activated');
-            $(this).remove();
+            elem.text(newText);
+            elem.removeClass('activated');
+
+            time_elem.text(newTime);
+            
+            $(time_field).remove();
+            $(edit_field).remove();
+            $('#sedit_'+id).unbind('click');
         });
-        edit_field.appendTo(elem).focus();
+        $('#sedit_'+id).show();
+        editelem.css('color', '');
+        editelem.css('font-weight', 'normal');
+
+        $('#edit_'+id).hide();
+        
+        edit_field.blur(function() {
+            editelem.css('color', 'darkorange');
+            editelem.css('font-weight', 'bold');
+        });
+        
+        edit_field.appendTo(elem.parent()).focus();
+        time_field.appendTo(time_elem);
     }
 
-  function edit_question(id,text){
-    $.getJSON("/edit_question",{id:id,text:text},
-    function(data){
-      if(data.check){
-        if(!data.available){
-          temp="False"
-        }
-        else{
-          temp="True"
-        }
-        $('#available_'+id).html(temp);
-        $('#question_'+id).html('<a href=\"/filteranswer/'+data.text+'\">'+data.text+'</a>');
-      }
-      else{
-        $('#error').html("Error while editing question question.");
-      }
-    });
-  }
+    function edit_question(id,text,time){
+        $.getJSON("/edit_question",{id:id,text:text,time:time},
+        function(data){
+            if(data.check){
+                $('#question_'+id).html('<a href=\"/filteranswers/'+data.id+'\">'+data.text+'</a>');
+                $('#time_'+id).html(data.time)
+            }
+            else{
+                $('#error').html("Error while editing question question.");
+            }
+        });
+    }
 
     function delete_question(id){
         $.getJSON("/delete_question/"+id,{},
-            function(data){
-                if (data.deleted)
-                    $('#row_'+id).remove();
-                else
-                    $('#error').html("Error while deleting question.");
-            });
+        function(data){
+            if (data.deleted)
+                $('#row_'+id).remove();
+            else
+                $('#error').html("Error while deleting question.");
+        });
     }
 
-  function toggle_question(id){
-    $.getJSON("/toggle_question",{id:id},
-    function(data){
-      if(data.check){
-        if(!data.toggle){
-          temp="False"
-        }
-        else{
-          temp="True"
-        }
-        $('#available_'+id).html(temp);
-      }
-      else{
-        $('#error').html("Error while togging question question.");
-      }
-    });
-  }
+    function toggle_question(id, field){
+        $.getJSON("/toggle_question",{id:id, field:field},
+        function(data){
+            if(data.check){
+                if(!data.toggle){
+                    $('input[name='+field+''+id+']').attr('checked', false);
+                }
+                else{
+                    $('input[name='+field+''+id+']').attr('checked', true);
+                }
+            }
+            else{
+                $('#error').html("Error while togging question question.");
+            }
+        });
+    }
 
     function add_question(){
         $('#addQ').hide()
-            $('#qList tr:last').after(
-                    '<tr><td colspan="6"><center>FIREFOX MURDERS FORM IN TD //mustfix</center></td></tr> \
-                <tr><th colspan="6"> \
-                    <form action="/handle_question" method="post" style="display:block"> \
-                        <input type="textbox" name="question"> \
-                        <input type="number" name="time" size="3" maxlength="3"> \
-                        <input type="checkbox" name="active"> \
-                        <input type="submit" value="Submit">\
-                    </form> \
-                </th></tr>');
+        $('#qList tr:last').after(
+        '<tr>\
+                        <td class="question-field"><input id="qtext" type="text" class="input-block-level" name="question" placeholder="your question"></td> \
+                        <td class="time-field"><input id="qtime" type="number" name="time" size="3" maxlength="3" placeholder="sec"></td> \
+                        <td><input id="qact" type="checkbox" name="active"></td> \
+                        <td><input id="qcomm" type="checkbox" name="comment" checked></td> \
+                        <td><input id="qtag" type="checkbox" name="tags" checked></td> \
+                        <td><input id="qrat" type="checkbox" name="rating" checked></td> \
+                        <td colspan=2><input type="submit" onclick=save_question() class="btn btn-block btn-primary" value="Add Question"></td>\
+                    </tr>');
+    }
+
+    function save_question(){
+        activev = ($('#qact').is(':checked') ? true : false);
+        commentv = ($('#qcomm').is(':checked') ? true : false);
+        tagsv = ($('#qtag').is(':checked') ? true : false);
+        timev = $('#qtime').val();
+        questionv = $('#qtext').val();
+
+        $.post('/handle_question',{active:activev,comment:commentv,tags:tagsv,
+                question:questionv,time:timev},
+                function(data){
+                    reload()
+                });
+
+        $('#addQ').show()
+        return false;
     }
 
 </script>
 
 <div id="error" style="background-color: #a33; color: white;"></div>
-<table id="qList" border=1 class="black">
-    <tr>
-        <!--<th>id</th>-->
-        <th>Question</th>
-        <th>Active</th>
-        <th>Time</th>
-        <th>Activate</th>
-        <th>Edit</th>
-        <th>Delete</th>
-        <th>Ranking</th>
-    </tr>
-    {% for question in questions %}
-        <tr id="row_{{question.id}}">
-            <!--<td id="id_{{question.id}}">{{question.id}}</td>-->
-            <td id="question_{{question.id}}">
-                <a href="/filteranswers/{{question.id}}" class="blue">{{question.question}}</a>
-            </td>
-            <td id="available_{{question.id}}">{{question.available}}</td>
-            <td id="time_{{question.id}}">{{question.time}}</td>
-            <td><button value="edit" onclick=edit_field({{question.id}}) />edit</button></td>
-            <td><button value="toggle" onclick=toggle_question({{question.id}}) />toggle</button></td>
-            <td><button value="delete" onclick=delete_question({{question.id}}) />delete</button></td>
-            <td><a href="/rankresults?questionid={{question.id}}">view</a></td>
-        </tr>
-    {% endfor %}
-</table>
-<button id="addQ" value="add" onclick=add_question() />Add Question</button>
-<a href="/" class="blue">Back</a>
+<div id="questListForm" style="display:block">
+
+</div>
+<button id="addQ" value="add" class="btn-primary btn" onclick=add_question() />Add Question</button>
 {% endblock %}

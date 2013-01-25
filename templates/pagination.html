@@ -1,0 +1,25 @@
+{% if pagecount-startpage > 0 %}
+    <div class="pagination pagination-centered">
+        <ul>
+            {% if currentpage-1 >= 1 %}
+                <li class="active"><a href="#" onclick=load_page({{ currentpage - 1}})>Prev</a></li>
+            {% else %}
+                <li class="disabled"><a href="#">Prev</a></li>
+            {% endif %}
+            {% for i in range(startpage,pagecount+1)%} 
+                {% if i == currentpage %}
+                <li class='disabled'>
+                {% else %}
+                <li class='active'>
+                {% endif %}
+                <a href="#" onclick=load_page({{i}})>{{i}}</a>
+                </li>
+            {% endfor %}
+            {% if currentpage+1 <= maxpages %}
+            <li class="active"><a href="#" onclick=load_page({{ currentpage + 1 }})>Next</a></li>
+            {% else %}
+            <li class="disabled"><a href="#" >Next</a></li>
+            {% endif %}
+        </ul>
+    </div>
+{% endif %}

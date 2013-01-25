@@ -1,9 +1,11 @@
-from models import answer, question
+from models import answer, question, user
 from models.question import Question
 from models.answer import AnswerModel
-from flask import render_template, g, request, redirect
+from flask import g, request, redirect
+from utilities import render_template
 import datetime
 import time
+import json
 import sqlalchemy.orm.exc as sqlalchemyExp
 
 
@@ -12,20 +14,26 @@ class Answer():
         self.request = request
 
     def render(self):
-        try:
-            qID = int(self.request.values['questionID'])
-            uID = g.lti.get_user_id()
-        except:
-            return abort(404)
+        # dummy shit, get some real data
+        qText = 'wat is het antwoord op deze dummy vraag?'
+        questionStartTime = datetime.datetime.now();
+        uID = g.lti.get_user_id()
+        qID = -1
+        timerD = 25
 
-        q = question.Question.by_id(qID)
-        if q is not None:
-            qText = q.question
-            questionStartTime = q.modified;
-            timerD = q.time
-
+        # Post should be real data
+        if self.request.method == 'POST' and 'questionID' in self.request.form:
+            qID = int(self.request.form['questionID'])
+            q = question.Question.by_id(qID)
+            if q is not None:
+                qText = q.question
+                questionStartTime = q.activate_time;
+                timerD = q.time
+        
+        print 'Retrieved question information'
         if 'answerText' in self.request.values:
-            return self.saveAnswer(uID, qID, timerD, questionStartTime)
+            print self.saveAnswer(uID, qID, timerD, questionStartTime)
+            return json.dumps({"result":True})
         elif 'showall' in self.request.values:
             # Render all
             return self.render_all()
@@ -66,18 +74,21 @@ class Answer():
         
     def saveAnswer(self, uID, qID, timerD, questionStartTime):
         # save answer
+        print "ANSW", uID, qID, timerD
         answerText = self.request.form['answerText']
 
         flag = "false"
-        if self.timeLeft(timerD, 0, questionStartTime):
+        if self.timeLeft(timerD, questionStartTime):
             if answer.AnswerModel.checkAnswerExist(uID, qID):
                 aID = answer.AnswerModel.getAnswerID(uID, qID)
                 answer.AnswerModel.updateAnswer(aID, answerText)
             else:
                 answer.AnswerModel.save(qID, uID, answerText)
             flag = "true"
-
-        return redirect('/index_student')
+        print 'Saved answer'
+        user.UserModel.save(uID,g.lti.get_user_name())
+        print 'Dexter'
+        return True#render_template('answersaved.html', flag=flag)
 
     def viewAnswer(self):
         aid = int(self.request.form['id'])
@@ -90,41 +101,37 @@ class Answer():
         edit = int(self.request.form['edit'])
         answer.AnswerModel.savereview(
             questionID, userID, reviewAnswer, edit)
-        return redirect('/index_student')
+        return render_template('answersaved.html', flag='true')
 
     def removeAnswer(self):
         id = int(self.request.form['id'])
         answer.AnswerModel.remove_by_id(id)
-        return redirect('/index_student')
-        #return render_template('answersaved.html', flag='removed')
+        return render_template('answersaved.html', flag='removed')
 
     def answerQuestion(self, uID, qID, qText, timerD, questionStartTime):
         if answer.AnswerModel.checkAnswerExist(uID, qID):
             aID = answer.AnswerModel.getAnswerID(uID, qID)
-            if self.timeLeft(timerD, 0, questionStartTime):
-                return redirect('/index_student')
-                #return render_template('answer.html', questionID=qID, userID=uID, questionText=qText, timerDuration=timerD, date=time.mktime(questionStartTime.timetuple()), go="true")
+            if self.timeLeft(timerD, questionStartTime):
+                return render_template('answer.html', questionID=qID, userID=uID, questionText=qText, timerDuration=timerD, date=time.mktime(questionStartTime.timetuple()), go="true")
             else:
-                return redirect('/index_student')
-                #return render_template('answer.html', questionID=qID, userID=uID, questionText=qText, timerDuration=timerD, date=time.mktime(questionStartTime.timetuple()), go="false")
+                return render_template('answer.html', questionID=qID, userID=uID, questionText=qText, timerDuration=timerD, date=time.mktime(questionStartTime.timetuple()), go="false")
         else:
             #answer.AnswerModel.save(qID, uID, "")
-            return redirect('/index_student')
-            #return render_template('answer.html', questionID=qID, userID=uID, questionText=qText, timerDuration=timerD, date=time.mktime(questionStartTime.timetuple()), go="true")
+            return render_template('answer.html', questionID=qID, userID=uID, questionText=qText, timerDuration=timerD, date=time.mktime(questionStartTime.timetuple()), go="true")
 
-    def timeLeft(self, timerD, giveTime, questionStartTime):
+    def timeLeft(self, timerD, questionStartTime):
         currentTime = datetime.datetime.now()
         timeAnswered = questionStartTime
         difference = currentTime - timeAnswered
         seconds = difference.days * 86400 + difference.seconds
-
-        if giveTime == 1:
-            return timerD - seconds
-
-        if seconds < timerD + 2:
+        
+        if timerD == 0:
             return True
         else:
-            return False
+            if seconds < timerD + 20:
+                return True
+            else:
+                return False
 
     def render_filtered(self):
         postdata = self.request.form
@@ -160,8 +167,4 @@ class Answer():
 
         return render_template('answerfilter_by_questionid.html', answers=answer.AnswerModel.get_filtered(**args))
 
-    def studenthistory(self):
-        return render_template('studenthistory.html')
-        
-    def studenthistory_result(self):
-        return render_template('studenthistory_result.html', studid=answer.AnswerModel.getRanking(request.values['sid']))
+

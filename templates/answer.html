@@ -19,7 +19,24 @@
             <input type="submit" value="submit answer" class="submit-answer"/>
         </form>
         <div id="counter" class="countdowntime"></div>
+        <div class="desc">
+            <div>Minutes</div>
+            <div>Seconds</div>
+        </div>
     </div>
+    
+    <div>
+      <input type="text" id="demo-input-facebook-theme" name="blah2" />
+      <input type="button" value="Submit" />
+      <script type="text/javascript">
+        $(document).ready(function() {
+        $("#demo-input-facebook-theme").tokenInput("http://localhost:5000/json/get_tags", {
+        theme: "facebook"
+        });
+        });
+      </script>
+    </div>
+    
 {% else %}
 <p>You have already answered this question.</p>
 {% endif %}

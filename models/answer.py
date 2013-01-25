@@ -4,13 +4,13 @@ from sqlalchemy.orm import relationship
 from dbconnection import engine, session, Base, exc
 from basemodel import BaseEntity
 from question import Question
+from user import UserModel
 
 class AnswerModel(Base, BaseEntity):
     __tablename__ = 'answer'
 
     text = Column(String)
-    questionID = Column(Integer,ForeignKey('questions.id'))
-    question = relationship('Question')
+    questionID = Column(Integer)
     userID = Column(Integer)
     edit = Column(Integer)
     ranking = Column(Float)
@@ -22,6 +22,13 @@ class AnswerModel(Base, BaseEntity):
         self.edit = edit
         self.ranking = ranking
 
+    @property
+    def username(self):
+        user = UserModel.by_user_id(self.userID)
+        if user is None:
+            return self.userID
+        return user.username
+
     def __repr__(self):
         return "<Answer('%s','%s','%s')>" % (self.id,
                                                 self.questionID,
@@ -31,11 +38,17 @@ class AnswerModel(Base, BaseEntity):
         return self.text
 
     @staticmethod
+    def get_rating(questionID):
+        rating = 1
+        return rating
+    
+    @staticmethod
     def savereview(questionID, userID, answerText, edit):
         session.add(AnswerModel(questionID=questionID,
                     userID=userID, text=answerText, edit=edit + 1))
         session.commit()
 
+    @staticmethod
     def get_question_answers(question_id):
         return session.query(AnswerModel).filter(AnswerModel.questionID==question_id)
 
@@ -67,7 +80,7 @@ class AnswerModel(Base, BaseEntity):
             return 0
 
     @staticmethod
-    def get_unanswered_questions(userid,courseid):
+    def get_active_questions(userid,courseid):
         anssub = session.query(AnswerModel).filter(AnswerModel.userID == userid).\
             subquery()
 
@@ -78,31 +91,34 @@ class AnswerModel(Base, BaseEntity):
         tmp = session.query(Question).\
                 outerjoin(anssub, anssub.c.questionID == Question.id).\
                 filter(Question.available == True).\
-                filter(Question.course_id == courseid).\
-                filter(anssub.c.id == None).all()
+                filter(Question.course_id == courseid)        
 
-        print tmp
-        print [(x.modified + timedelta(seconds=x.time), datetime.now()) for x in tmp]
-
-
-
-
-        return [x for x in tmp if x.modified + timedelta(seconds=x.time) >
-                datetime.now()]
-
-
-
+        #print tmp
+        #print [(x.modified + timedelta(seconds=x.time), datetime.now()) for x in tmp]
+        
+        questions = []
+        
+        for x in tmp:           
+            if x.time == 0:
+                questions.append(x)
+            elif x.modified + timedelta(seconds=x.time) > datetime.now():
+                questions.append(x)
+         
+        return questions
+    
     @staticmethod
     def get_answered_active_questions(userid, courseid):
+        """
+        Exactly the same as get_unanswered_questions except we want the answered
+        ones
+        """
         anssub = session.query(AnswerModel).filter(AnswerModel.userID == userid).\
             subquery()
 
-        # HACK: I can't figure out how to do timedelta stuff inside a filter,
-        #       so that is done after pulling all data... Slow!
 
         # Need to use the old Alias.c.[columname] when using subquery!
         tmp = session.query(Question).\
-                outerjoin(anssub, anssub.c.questionID == Question.id).\
+                outerjoin(annsub, anssub.c.questionID == Question.id).\
                 filter(Question.available == True).\
                 filter(Question.course_id == courseid).\
                 filter(anssub.c.id != None).all()
