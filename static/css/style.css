@@ -1,8 +1,9 @@
 body{
       color:#009DCE;
-      width: 500px;
-       font-family: sans-serif;
+      width: 1000px;
+      font-family: sans-serif;
 }
+
 br { clear: both; }
 
 #qList input, #addQuestion-table input{
