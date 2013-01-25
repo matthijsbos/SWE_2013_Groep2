@@ -108,6 +108,7 @@ textarea:focus{
     color:#009DCE;
     cursor: pointer;
 }
+
 .question:hover{
     text-decoration: underline;
 }
@@ -122,17 +123,23 @@ right: -134px;
 float:none;
 }
 .countdowntime{
-    float: right;
-    margin-top: -25px;
-    margin-right: 5px;
+    display: inline;
+    margin:0;
+    margin-left: 15px;
     font-size: 25px;
 }
+
+.countdowntimesmall{
+    float: left;
+    font-size: 15px;
+}
+
 .questionArea{
     width: 500px;
 }
 .questionArea textarea{
     margin-top: 8px;
-    width: 96%;
+    width: 500px;
 }
 #answer{
     font-size: 18px;
