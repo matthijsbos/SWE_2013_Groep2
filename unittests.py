@@ -4,6 +4,7 @@ import os
 from dbconnection import Base, engine, session
 from tests.answerunittest import AnswerUnittest
 from tests.baseunittest import BaseUnittest
+from tests.lang_parser_test import TestLanguageParser
 
 
 directory_separator = ('/' if os.name == "posix" else '\\')
@@ -37,12 +38,25 @@ def tearDown():
 if __name__ == '__main__':
     # tests dont take eachother in account, for now just rebuild the db for each test
 
-    setUp()
     base_test = unittest.TestLoader().loadTestsFromTestCase(BaseUnittest)
+    answer_test = unittest.TestLoader().loadTestsFromTestCase(AnswerUnittest)
+    lang_parser_test = \
+            unittest.TestLoader().loadTestsFromTestCase(TestLanguageParser)
+
+    setUp()
+    unittest.TextTestRunner(verbosity=2).run(answer_test)
+    tearDown()
+
+    setUp()
     unittest.TextTestRunner(verbosity=2).run(base_test)
     tearDown()
 
     setUp()
-    answer_test = unittest.TestLoader().loadTestsFromTestCase(AnswerUnittest)
+    unittest.TextTestRunner(verbosity=2).run(base_test)
+    tearDown()
+
+    setUp()
     unittest.TextTestRunner(verbosity=2).run(answer_test)
     tearDown()
+
+    unittest.TextTestRunner(verbosity=2).run(lang_parser_test)
