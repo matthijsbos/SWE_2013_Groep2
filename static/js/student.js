@@ -70,18 +70,17 @@ function show_question(id, question, time_remaining, question_time, answer) {
         <br>\
         <div class="accordion-group no-border" id="questionArea'+id+'" class="questionArea">\
             <div id="question'+id+'" class="question accordion-header"></div>\
-            <div id="answer'+id+'"  class="accordion-body collapse">\
+            <div id="answer'+id+'"  class="accordion-body collapse in">\
             <div class="accordion-inner"><textarea name="answerText" cols=50 rows=5></textarea>\
             <br>\
             <button class="btn btn-info" onclick="submit_answer('+id+'); return false;" value="submit answer">submit answer</button>\
             <div id="submitted'+id+'" style="display:none" class="submitted alert alert-success"><button type="button" class="close close-submitted" onclick="document.getElementById(\'submitted'+id+'\').style.display = \'none\';">&times;</button><b>Answer saved!</b></div>\
             </div></div>\
-            <div id="counter'+id+'" class="countdowntimesmall"></div>\
+            <div id="counter'+id+'" class="countdowntime"></div>\
             <div id="prolongedText'+id+'" style="display: none;">Question has been prolonged</div>\
         </div>\
     </form>');
     
-	
     if (question_time != 0) {
         $('#answerform'+id+' #counter'+id).countdown({
             until: austDay,
@@ -92,19 +91,9 @@ function show_question(id, question, time_remaining, question_time, answer) {
     }
     
     $('#pleasewait').hide();
-    $('#answerform'+id+' #question'+id).html("<a class='accordion-toggle' onclick='javascript:collapse_timer("+id+")' data-toggle='collapse' data-parent='#questions' href='#answer"+id+"'>"+question+"</a>");
+    $('#answerform'+id+' #question'+id).html("<a class='accordion-toggle' data-toggle='collapse' data-parent='#questions' href='#answer"+id+"'>"+question+"</a>");
     $('#answerform'+id+' textarea').val(answer);
     $('#answerform'+id).show();
-}
-
-function collapse_timer(id){
-	if ($('#answer'+id).hasClass("in")){
-		$('#counter'+id).addClass('countdowntimesmall');
-		$('#counter'+id).removeClass('countdowntime');
-    } else{
-		$('#counter'+id).addClass('countdowntime');
-		$('#counter'+id).removeClass('countdowntimesmall');
-	}
 }
 
 function check_submit_answer(id, question_time){
@@ -168,13 +157,11 @@ function check_remaining_time(id, time_delta){
     return res;
 }
 
-function popup_div(div,time)
-{
+function popup_div(div,time) {
     time = (typeof time === "undefined") ? 1500 : time;
     $(div).show();
-    $(div).hide(time);
+    $(div).delay(time).hide(1);
 }
-
 
 function submit_answer(id) {
     console.log("SUBMIT");
@@ -184,4 +171,14 @@ function submit_answer(id) {
         "questionID": id,
         "answerText": $('#answerform'+id+' textarea').val()
         });            
+}
+
+function collapse_timer(id){
+	if ($('#answer'+id).hasClass("in")){
+		$('#counter'+id).addClass('countdowntimesmall');
+		$('#counter'+id).removeClass('countdowntime');
+    } else{
+		$('#counter'+id).addClass('countdowntime');
+		$('#counter'+id).removeClass('countdowntimesmall');
+	}
 }

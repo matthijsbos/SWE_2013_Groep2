@@ -1,7 +1,7 @@
 body{
-    color:#009DCE;
-    width: 950px;
-    font-family: sans-serif;
+      color:#009DCE;
+      width: 950px;
+      font-family: sans-serif;
 }
 br { clear: both; }
 
@@ -15,14 +15,33 @@ br { clear: both; }
 .time-field{
     width: 71px;
 }
+.available-field{
+    width: 50px;
+}
+.comment-field{
+    width: 70px;
+}
+.tags-field{
+    width: 40px;
+}
+.rating-field{
+    width: 50px;
+}
 .edit-field{
-    width: 65px;
+    width: 70px;
+}
+.delete-field{
+    width: 70px; 
 }
 .delete-question-link{
     color: #c40f0f;
 }
 .delete-question-link:hover{
     color:#c40f0f;
+}
+
+.welcome-message{
+    width: 640px;
 }
 
 #qList td, #addQuestion-table td{
@@ -54,6 +73,11 @@ br { clear: both; }
 .tags div{
     width:80px;
     display:inline-block;
+}
+.tags a:hover{ 
+	text-decoration: none; 
+	font-weight: bold;
+	cursor: pointer;
 }
 #assigned_tags div{
     display: inline-block;
@@ -108,7 +132,6 @@ textarea:focus{
     color:#009DCE;
     cursor: pointer;
 }
-
 .question:hover{
     text-decoration: underline;
 }
@@ -133,13 +156,12 @@ float:none;
     float: left;
     font-size: 15px;
 }
-
 .questionArea{
     width: 500px;
 }
 .questionArea textarea{
     margin-top: 8px;
-    width: 500px;
+    width: 96%;
 }
 #answer{
     font-size: 18px;

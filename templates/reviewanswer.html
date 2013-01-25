@@ -54,16 +54,17 @@
     }
 </script>
 
-<legend>Review the following answer and rate it on a scale of 1 to 5</legend>
 <div id="error"></div>
 <form action="/reviewanswer" method="POST">
     <div class="reviewanswer_left">
-        {{ answer }} <br>
+		<div id="answer" class="question accordion-header">
+			{{ answer }} <br>
+		</div>
         <textarea name="comments" rows="4" cols="50" placeholder="Insert your comment here..."></textarea>
 
         <input type="hidden" name="rating" id="input_rating" value="3">
         <div class="starRate">
-            <div>Rate this answer<b></b></div>
+            <div><b></b></div>
             <ul>
                 <li><a href="#" onclick="javascript:rating2(5);" id="5" value="5"><span>Rate it 5 stars</span></a></li>
                 <li><a href="#" onclick="javascript:rating2(4);" id="4" value="4"><span>Rate it 4 stars</span></a></li>
@@ -71,21 +72,9 @@
                 <li><a href="#" onclick="javascript:rating2(2);" id="2" value="2"><span>Rate it 2 stars</span></a></li>
                 <li><a href="#" onclick="javascript:rating2(1);" id="1" value="1"><span>Rate it 1 star</span></a></li>
             </ul>
-        </div>
-    </div>
-    <div class="reviewanswer_right">
-
-        <h4>This answer has been tagged as:</h4>
-            <div id="assigned_tags">
-            {% for tag in tags %}
-                {% if tag.id in enabledtags %}
-                    <div class="assigned_tags" id="assigned_tag_{{tag.id}}">{{ tag.name }}, </div>
-                {% endif %}
-            {% endfor %}
-            </div>
-        
-        <h4>Remove tags:</h4>
+        </div>        
         <div id="remove_tags">
+		<b>Current tags:</b>
         {% for tag in tags %}
             {% if tag.id in enabledtags %}
                 <div class="tags" id="remove_{{tag.id}}">
@@ -95,12 +84,11 @@
             {% endif %}
         {% endfor %}
         </div>
-        
-        <h4>Assign tags:</h4>
         <div id="available_tags">
+		<b>Assign tags:</b>
             {% for tag in tags %}
                 {% if not tag.id in enabledtags %}
-                    <div id="assign_tag_{{tag.id}}">
+                    <div class="tags" id="assign_tag_{{tag.id}}">
                         <a onclick="javascript:add_tag({{answer.id}},{{tag.id}},'{{tag.name}}');"/><i class="icon-ok"></i> {{tag.name}} </a>
                     </div>
                 {% endif %}

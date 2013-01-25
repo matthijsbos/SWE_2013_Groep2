@@ -4,7 +4,6 @@ from sqlalchemy import Column, Integer, DateTime
 from dbconnection import engine, session
 from datetime import datetime
 
-
 class BaseEntity(object):
     __table_args__ = {'sqlite_autoincrement': True}
 
@@ -44,7 +43,7 @@ class BaseEntity(object):
         return cls.get_all()
 
     @classmethod
-    def get_filtered_offset(cls,limit,offset=0,**kws):
+    def get_filtered_offset(cls,limit,offset=0,orderby='id',**kws):
         count = session.query(cls).count()
         curpage = (offset / limit)+1
         if curpage == 0: curpage = 1
@@ -53,8 +52,8 @@ class BaseEntity(object):
         pagecount = startpage + 5 if maxpages >= startpage+5 else maxpages
 
         if len(kws) > 0:
-            return session.query(cls).filter_by(**kws).offset(offset).limit(limit)
-        return (session.query(cls).offset(offset).limit(limit),
+            return session.query(cls).filter_by(**kws).order_by(getattr(cls,orderby).desc()).offset(offset).limit(limit)
+        return (session.query(cls).order_by(getattr(cls,orderby).desc()).offset(offset).limit(limit),
                 curpage,
                 maxpages,
                 startpage,

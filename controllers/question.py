@@ -84,7 +84,7 @@ class QuestionController():
 
     @staticmethod
     def get_list_table(limit,offset):
-        (questions, curpage, maxpages, startpage, pagecount) = Question.get_filtered_offset(limit,offset)
+        (questions, curpage, maxpages, startpage, pagecount) = Question.get_filtered_offset(limit,offset,orderby='created')
         for question in questions:
             if question is not None and question.activate_time is not None:
                 if QuestionController.calculate_remaining_time(question) < 0:            
@@ -121,6 +121,8 @@ class QuestionController():
 
     @staticmethod
     def calculate_remaining_time(question):
+        if question.time == 0:
+            return 0
         time_remaining = datetime.now() - (question.activate_time +
                 timedelta(seconds=question.time))
         time_remaining = time_remaining.seconds + time_remaining.days * 86400

@@ -23,4 +23,45 @@
 <form action="/review" id="reviewform" method="post" style="display:none;">
     <input type="submit" value="You can review answers!" id="review-answer"/>
 </form>
+
+  <!---
+        Check to see if there are questions to answer
+        or questions to rank. If so link to the appropriate
+        answer or rank page by posting the question_id.
+        If not print a simple line saying there is no
+        question to answer or question to rank.
+     -->
+	{% if unansq_questions == [] %}
+		<p>There are currently no questions to answer.</p>
+	{% else %}
+		<table border="1" width="400">
+		{% for question in unansq_questions %}
+			<tr width="50%">
+			<td width="50%">
+				{{ question.question }}
+			</td>
+			<td>
+				<p id="answerit"><a href="/answerit?question_id={{ question.id }}">Answer it!</a></p>
+			</td>
+			</tr>
+		{% endfor %}
+		</table>
+	{% endif %}
+	<br>
+	{% if answ_questions == [] %}
+		<p>There are currently no questions to rank.</p>
+	{% else %}
+		<table border="1" width="400">
+		{% for question in answ_questions %}
+			<tr width="50%">
+			<td width="50%">
+				{{ question.question }}
+			</td>
+			<td>
+				<p id="rankit"><a href="/choicelobby?question_id={{ question.id }}">Rank it!</a></p>
+			</td>
+			</tr>
+		{% endfor %}
+		</table>
+	{% endif %}
 {% endblock %}

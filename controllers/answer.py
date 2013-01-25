@@ -1,5 +1,7 @@
-from models import answer, question,user
-from flask import g
+from models import answer, question, user
+from models.question import Question
+from models.answer import AnswerModel
+from flask import g, request, redirect
 from utilities import render_template
 import datetime
 import time
@@ -29,23 +31,47 @@ class Answer():
                 timerD = q.time
         
         print 'Retrieved question information'
-        if 'answerText' in self.request.form:
+        if 'answerText' in self.request.values:
             print self.saveAnswer(uID, qID, timerD, questionStartTime)
             return json.dumps({"result":True})
-        elif 'showall' in self.request.form:
+        elif 'showall' in self.request.values:
             # Render all
             return self.render_all()
-        elif 'viewanswer' in self.request.form:
+        elif 'viewanswer' in self.request.values:
             # show answer
             return self.viewAnswer()
-        elif 'reviewAnswer' in self.request.form:
+        elif 'reviewAnswer' in self.request.values:
             # save review answer
             return self.saveReviewAnswer()
-        elif 'removeAnswer' in self.request.form:
+        elif 'removeAnswer' in self.request.values:
             return self.removeAnswer()
         else:
             return self.answerQuestion(uID, qID, qText, timerD, questionStartTime)
 
+    @staticmethod
+    def renderanswerform():
+        try:
+            questionid = int(request.values['question_id'])
+            question = Question.by_id(questionid)
+        except:
+            return abort(404)
+        return render_template('student_answer.html', question = question)
+
+    @staticmethod
+    def save():
+        try:
+            questionid = int(request.values['questionid'])
+            question = Question.by_id(questionid)
+            text = request.values['text']
+            userid = g.lti.get_user_id()
+        except:
+            return abort(404)
+
+        if AnswerModel.question_valid(questionid):
+            AnswerModel.save(questionid, userid, text)
+
+        return redirect('/index_student')
+        
     def saveAnswer(self, uID, qID, timerD, questionStartTime):
         # save answer
         print "ANSW", uID, qID, timerD
@@ -121,6 +147,10 @@ class Answer():
 
         return render_template('answerfilter.html', answers=answer.AnswerModel.get_filtered(**args))
 
+    def render_results(self):
+        args = {"questionID": request.values["questionid"]}
+        return render_template('rankresults.html', answers=answer.AnswerModel.get_filtered(**args))
+        
     def render_all(self):
         # Render all
         return render_template('showanswers.html', answers=answer.AnswerModel.get_all())

@@ -96,5 +96,3 @@ class AnswerTag(Base):
         for x in tlist:
             endlist.append(x[0])
         return endlist 
-
-Base.metadata.create_all(engine)

@@ -73,8 +73,9 @@
             editelem.css('font-weight', 'bold');
         });
         
-        edit_field.appendTo(elem.parent()).focus();
+        edit_field.appendTo(elem.parent());
         time_field.appendTo(time_elem);
+        edit_field.focus();
     }
 
     function edit_question(id,text,time){
@@ -129,6 +130,7 @@
                         <td><input id="qrat" type="checkbox" name="rating" checked></td> \
                         <td colspan=2><input type="submit" onclick=save_question() class="btn btn-block btn-primary" value="Add Question"></td>\
                     </tr>');
+        $('#qtext').focus();
     }
 
     function save_question(){

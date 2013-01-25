@@ -74,4 +74,3 @@ class Question(Base, BaseEntity):
             session.commit()
             return question.rating
 
-Base.metadata.create_all(engine)

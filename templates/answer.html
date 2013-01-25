@@ -3,24 +3,6 @@
     <script type="text/javascript" src="../static/js/jquery.min.js"></script>
     <script type="text/javascript" src="../static/js/jquery.countdown.js"></script>
     <link rel="stylesheet" type="text/css" href="../static/css/style.css" media="screen" />
-	<script type="text/javascript">
-var countdownCurrent = {{timerDuration}} //number of seconds
-
-
-$(function () {
-
-	var austDay = new Date({{date}} * 1000);
-	austDay.setSeconds(austDay.getSeconds() + countdownCurrent);
-	$('#counter').countdown({until: austDay, compact: true, onExpiry: submitForm, format: 'MS'});
-
-    if ($('#counter').countdown('getTimes') == '0,0,0,0,0,0,0') document.getElementById("answer_form").innerHTML = "you cannot answer this question anymore";
-
-
-});
-function submitForm() {
-    document.getElementById("answerform").submit();
-}
-	</script>
 </head>
 
 <body>
