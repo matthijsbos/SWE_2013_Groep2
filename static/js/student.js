@@ -74,7 +74,8 @@ function show_question(id, question, time_remaining, question_time, answer) {
             <div class="accordion-inner"><textarea name="answerText" cols=50 rows=5></textarea>\
             <br>\
             <button class="btn btn-info" onclick="submit_answer('+id+'); return false;" value="submit answer">submit answer</button>\
-            <div id="submitted'+id+'" style="display:none" class="submitted alert alert-success"><button type="button" class="close close-submitted" onclick="document.getElementById(\'submitted'+id+'\').style.display = \'none\';">&times;</button><b>Answer saved!</b><br/><a href="/choicelobby?question_id='+id+'" >rank it!</a></div>\
+            <div id="submitted'+id+'" style="display:none" class="submitted alert alert-success"><button type="button" class="close close-submitted" onclick="document.getElementById(\'submitted'+id+'\').style.display = \'none\';">&times;</button><b>Answer saved!</b><br/></div>\
+            <div id="ranking'+id+'"><a href="/choicelobby?question_id='+id+'" >rank it!</a></div>
             </div></div>\
             <div id="counter'+id+'" class="countdowntime"></div>\
             <div id="prolongedText'+id+'" style="display: none;">Question has been prolonged</div>\
@@ -93,6 +94,9 @@ function show_question(id, question, time_remaining, question_time, answer) {
     $('#pleasewait').hide();
     $('#answerform'+id+' #question'+id).html("<a class='accordion-toggle' data-toggle='collapse' data-parent='#questions' href='#answer"+id+"'>"+question+"</a>");
     $('#answerform'+id+' textarea').val(answer);
+    if (answer == '') {
+        $('ranking'+id).hide();
+    }
     $('#answerform'+id).show();
 }
 
@@ -168,6 +172,7 @@ function popup_div(div,time)
 function submit_answer(id) {
     console.log("SUBMIT");
     document.getElementById('submitted'+id).style.display = ""
+    $('ranking'+id).show();
     $('#submitted'+id).delay(5000).hide("slow")
     $.post("/answer", {
         "questionID": id,
