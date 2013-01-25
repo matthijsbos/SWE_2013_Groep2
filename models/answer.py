@@ -20,7 +20,7 @@ class AnswerModel(Base, BaseEntity):
         self.questionID = questionID
         self.userID = userID
         self.edit = edit
-        self.ranking = ranking
+        self.ranking = 1000.0
 
     def __repr__(self):
         return "<Answer('%s','%s','%s')>" % (self.id,
@@ -106,13 +106,13 @@ class AnswerModel(Base, BaseEntity):
                 filter(Question.available == True).\
                 filter(Question.course_id == courseid).\
                 filter(anssub.c.id != None).all()
-				
+
         print tmp
         print [(x.modified + timedelta(seconds=x.time), datetime.now()) for x in tmp]
 
         return [x for x in tmp if x.modified + timedelta(seconds=x.time) >
                 datetime.now()]
-				
+
     @staticmethod
     def question_valid(questionid):
         questionTmp = Question.by_id(questionid)
@@ -143,8 +143,7 @@ class AnswerModel(Base, BaseEntity):
 
     @staticmethod
     def newRating(winner, loser) :
-        K = 100
-        expectedScore = AnswerModel.winningProbability(winner, loser)
+        K = 100.0
         winnerRating = winner + K * (1 - AnswerModel.winningProbability(winner, loser))
         loserRating = loser + K * (0 - AnswerModel.winningProbability(loser, winner))
         return winnerRating, loserRating
