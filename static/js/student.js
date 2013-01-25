@@ -157,13 +157,11 @@ function check_remaining_time(id, time_delta){
     return res;
 }
 
-function popup_div(div,time)
-{
+function popup_div(div,time) {
     time = (typeof time === "undefined") ? 1500 : time;
     $(div).show();
-    $(div).hide(time);
+    $(div).delay(time).hide(1);
 }
-
 
 function submit_answer(id) {
     console.log("SUBMIT");
