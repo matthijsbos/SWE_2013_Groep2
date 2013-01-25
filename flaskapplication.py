@@ -21,7 +21,6 @@ from controllers.index import Index
 from controllers.answer import Answer
 from controllers.question import QuestionController as Question
 from controllers.tags import Modifytags, AssignTags
-from controllers.ratings import AssignRatings
 from controllers.review import ReviewAnswer
 
 app = Flask(__name__)
@@ -241,7 +240,7 @@ in the database (given a user has permission to do so)
 @app.route("/reviewanswer",methods=['POST', 'GET'])
 def handle_review_answer():
     ctrler = ReviewAnswer(request)
-    return Index(request).render()
+    return ctrler.review(1)
 
 @app.route("/reviewanswer_stub", methods=["POST", "GET"])
 def do_review_answer_stub():
