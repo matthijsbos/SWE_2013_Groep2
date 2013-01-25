@@ -140,6 +140,7 @@ def list_questions_table():
         limit = int(request.args['limit'])
     if 'offset' in request.args:
         offset = int(request.args['offset'])
+    return Question.get_list_table(limit,offset)
 
 @app.route("/question_list/asked", methods=['GET', 'POST'])
 def list_questions_asked():

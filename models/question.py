@@ -24,7 +24,7 @@ class Question(Base, BaseEntity):
     tags = Column(Boolean)
     rating = Column(Boolean)
 
-    def __init__(self, user_id, course_id, question, available, time):
+    def __init__(self, user_id, course_id, question, available, time, x, y, z):
         self.user_id = user_id
         self.course_id = course_id
         self.question = question
