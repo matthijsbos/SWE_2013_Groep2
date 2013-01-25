@@ -55,6 +55,11 @@ br { clear: both; }
     width:80px;
     display:inline-block;
 }
+.tags a:hover{ 
+	text-decoration: none; 
+	font-weight: bold;
+	cursor: pointer;
+}
 #assigned_tags div{
     display: inline-block;
 }
@@ -139,4 +144,10 @@ float:none;
     font-weight: bold;
 	margin-bottom: 5px;
     color:#009DCE;
+}
+#remove_tags{
+	margin-top: 6px;
+}
+#available_tags{
+	margin-top: 12px;
 }
