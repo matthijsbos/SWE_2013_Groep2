@@ -74,7 +74,7 @@ class AnswerModel(Base, BaseEntity):
         # Need to use the old Alias.c.[columname] when using subquery!
         tmp = session.query(Question).\
                 outerjoin(anssub, anssub.c.questionID == Question.id).\
-                filter(Question.answeravailable == True).\
+                filter(Question._answeravailable == True).\
                 filter(Question.course_id == courseid).\
                 filter(anssub.c.id == None).all()
 
