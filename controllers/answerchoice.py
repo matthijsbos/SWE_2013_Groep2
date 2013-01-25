@@ -10,6 +10,7 @@ from models.answerchoice import AnswerChoiceModel
 from models import answer
 from dbconnection import session
 from random import randrange
+from collections import Counter
 
 class Answerchoice():
     def __init__(self, request):        
@@ -42,7 +43,6 @@ class Answerchoice():
             session.add(a32)
             session.add(a33)
             session.commit()
-            
 
     def render(self):
         try:
@@ -60,9 +60,12 @@ class Answerchoice():
             return abort(404)
             
         if AnswerModel.question_valid(questionid):
-            return render_template('choice.html',question=question, answer1=answer1, answer2=answer2)
+            return render_template('choice.html',
+                                   question = question,
+                                   answer1 = answer1,
+                                   answer2 = answer2)
         else:
-            return redirect('/choicelobby?question_id='+str(questionid))
+            return redirect('/choicelobby?question_id=' + questionid)
     
     def process(self):
         userid = g.lti.get_user_id()
@@ -77,23 +80,24 @@ class Answerchoice():
             return abort(404)
         
         if answer0 == bestanswer:
-            best = answer0
+            best  = answer0
             other = answer1
         elif answer1 == bestanswer:
-            best = answer1
+            best  = answer1
             other = answer0
         else:
-            return 404
-        
-        try:
-            session.add(AnswerChoiceModel(userid,best,other))
-            session.commit()
-        except:
-            session.rollback()
+            return abort(404)
 
-        return render_template('index_student.html', unansq_questions = AnswerModel.get_unanswered_questions(g.lti.get_user_id(),
-                                                    g.lti.get_course_id()), answ_questions = AnswerModel.get_answered_active_questions(g.lti.get_user_id(),
-                                                    g.lti.get_course_id())) 
+        #try:
+        session.add(AnswerChoiceModel(userid,best,other))
+        session.commit()
+        #except:
+        #    session.rollback()
+
+        return redirect('/index_student')
+        #return render_template('index_student.html', unansq_questions = AnswerModel.get_unanswered_questions(g.lti.get_user_id(),
+        #                                            g.lti.get_course_id()), answ_questions = AnswerModel.get_answered_active_questions(g.lti.get_user_id(),
+        #                                            g.lti.get_course_id())) 
 
     def lobby(self):
         def randpop(array):
@@ -101,17 +105,42 @@ class Answerchoice():
             
         def getotheranswers(userID,questionID):
             allanswers = (AnswerModel.get_all())
+            allanswerchoices = (AnswerChoiceModel.get_all())
             validAnswers = []
-            for current in allanswers:
-                if current.userID != userID and current.questionID == questionID:
-                    validAnswers.append(current)
+            for currentanswer in allanswers:
+                # if relevant answer and not submitted by the current user
+                if currentanswer.userID != userID and currentanswer.questionID == questionID:
+                    shouldadd = True
+                    for currentanswerchoice in allanswerchoices:
+                        # if answer was not rated before by the current user
+                        if (currentanswerchoice.best_answer_id == currentanswer.id or currentanswerchoice.other_answer_id == currentanswer.id) and currentanswerchoice.user_id == userID:
+                            break
+                    else: validAnswers.append(currentanswer.id)
+                
             return validAnswers
+        
+        def getuncommons(answers):
+            answerchoices = (AnswerChoiceModel.get_all())
+            cnt = Counter()
+            for answerchoice in answerchoices:
+                if answerchoice.best_answer_id in answers:
+                    cnt[answerchoice.best_answer_id] += 1
+                if answerchoice.other_answer_id in answers:
+                    cnt[answerchoice.other_answer_id] += 1
+            
+            if len(cnt) > 1:
+                return(cnt.most_common()[-1][0],cnt.most_common()[-2][0])
+            else: return False
 
         userID = g.lti.get_user_id()
         questionID = int(request.values['question_id'])
+
         validAnswers = getotheranswers(userID,questionID)
+        uncommons = getuncommons(validAnswers)
+        
         print ('userID: ' + str(userID) + '\nquestionID: ' + str(questionID) + '\nlen(validAnswers): ' + str(len(validAnswers)))
-        if len(validAnswers) < 2:
+        if uncommons == False:
             return render_template('choicelobby.html',question=questionID)
         else:
-            return redirect('/answerchoice?questionid='+str(questionID)+'&answerid1='+str(randpop(validAnswers).id)+'&answerid2='+str(randpop(validAnswers).id))
+            #return redirect('/answerchoice?questionid='+str(questionID)+'&answerid1='+str(randpop(validAnswers))+'&answerid2='+str(randpop(validAnswers)))
+            return redirect('/answerchoice?questionid='+str(questionID)+'&answerid1='+str(randpop(uncommons))+'&answerid2='+str(randpop(uncommons)))
