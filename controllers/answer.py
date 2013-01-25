@@ -3,6 +3,7 @@ from flask import g
 from utilities import render_template
 import datetime
 import time
+import json
 import sqlalchemy.orm.exc as sqlalchemyExp
 
 
@@ -30,7 +31,7 @@ class Answer():
         print 'Retrieved question information'
         if 'answerText' in self.request.form:
             print self.saveAnswer(uID, qID, timerD, questionStartTime)
-            return True
+            return json.dumps({"result":True})
         elif 'showall' in self.request.form:
             # Render all
             return self.render_all()

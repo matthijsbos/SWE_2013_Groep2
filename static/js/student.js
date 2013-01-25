@@ -51,6 +51,12 @@ function show_review_button(number) {
     }
 }
 
+function toggleQ(id){
+    if(document.getElementById('answer'+id).style.display == 'none')
+        document.getElementById('answer'+id).style.display = ''
+    else
+        document.getElementById('answer'+id).style.display = 'none'
+}
 function show_question(id, question, time_remaining, question_time, answer) {
     console.log("GOT QUESTION", id, question, time_remaining);
     submit_interval_id[id] = setInterval(function(){
@@ -62,11 +68,14 @@ function show_question(id, question, time_remaining, question_time, answer) {
     console.log(austDay);
     $('#questions').append('<form id="answerform'+id+'" method="post" style="display:none;">\
         <br>\
-        <div id="questionArea'+id+'" class="questionArea">\
-            <div id="question'+id+'" class="question"></div>\
-            <textarea name="answerText" cols=50 rows=5></textarea>\
+        <div class="accordion-group no-border" id="questionArea'+id+'" class="questionArea">\
+            <div id="question'+id+'" class="question accordion-header"></div>\
+            <div id="answer'+id+'"  class="accordion-body collapse in">\
+            <div class="accordion-inner"><textarea name="answerText" cols=50 rows=5></textarea>\
             <br>\
             <button class="btn btn-info" onclick="submit_answer('+id+'); return false;" value="submit answer">submit answer</button>\
+            <div id="submitted'+id+'" style="display:none" class="submitted alert alert-success"><button type="button" class="close close-submitted" onclick="document.getElementById(\'submitted'+id+'\').style.display = \'none\';">&times;</button><b>Answer saved!</b></div>\
+            </div></div>\
             <div id="counter'+id+'" class="countdowntime"></div>\
             <div id="prolongedText'+id+'" style="display: none;">Question has been prolonged</div>\
         </div>\
@@ -82,7 +91,7 @@ function show_question(id, question, time_remaining, question_time, answer) {
     }
     
     $('#pleasewait').hide();
-    $('#answerform'+id+' #question'+id).text(question);
+    $('#answerform'+id+' #question'+id).html("<a class='accordion-toggle' data-toggle='collapse' data-parent='#questions' href='#answer"+id+"'>"+question+"</a>");
     $('#answerform'+id+' textarea').val(answer);
     $('#answerform'+id).show();
 }
@@ -158,7 +167,8 @@ function popup_div(div,time)
 
 function submit_answer(id) {
     console.log("SUBMIT");
-
+    document.getElementById('submitted'+id).style.display = ""
+    $('#submitted'+id).delay(5000).hide("slow")
     $.post("/answer", {
         "questionID": id,
         "answerText": $('#answerform'+id+' textarea').val()

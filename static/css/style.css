@@ -99,14 +99,31 @@ textarea:focus{
 .reviewanswer_right{
     float:right;
 }
+.no-border{
+    border:none !important
+}
 .question{
     font-size: 18px;
     font-weight: bold;
     color:#009DCE;
+    cursor: pointer;
+}
+.question:hover{
+    text-decoration: underline;
+}
+.submitted{
+    display: inline;
+    margin:0;
+    margin-left: 10px;
+}
+#questions .submitted button.close-submitted{
+    top: -1px;
+right: -134px;
+float:none;
 }
 .countdowntime{
     float: right;
-    margin-top: 5px;
+    margin-top: -25px;
     margin-right: 5px;
     font-size: 25px;
 }
