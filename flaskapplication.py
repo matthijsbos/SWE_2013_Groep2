@@ -98,22 +98,22 @@ def handle_question():
         isActive = int(bool(request.form['active']))
     except:
         isActive = False
-    
+
     try:
         comment = int(bool(request.form['comment']))
     except:
         comment = False
-        
+
     try:
         tags = int(bool(request.form['tags']))
     except:
         tags = False
-        
+
     try:
         rating = int(bool(request.form['rating']))
     except:
         rating = False
-        
+
     Question.create_question(request.form['question'],
                                     g.lti.get_user_id(),
                                     g.lti.get_course_id(),
@@ -185,18 +185,18 @@ def removetag_answer():
     ctrler = ReviewAnswer(request)
     return ctrler.remove_tag_answer(request.args['answerid'], request.args['tagid'])
 
-    
+
 @app.route("/addtaganswer", methods=['POST', 'GET'])
 def addtag_answer():
     ctrler = ReviewAnswer(request)
-    return ctrler.add_tag_answer(request.args['answerid'], request.args['tagid'])    
+    return ctrler.add_tag_answer(request.args['answerid'], request.args['tagid'])
 
-    
+
 @app.route("/answer", methods=['GET', 'POST'])
 def answerForm():
     ctrler = Answer(request)
     return ctrler.render()
-	
+
 @app.route("/answerchoice",methods=['GET'])
 def answerChoice():
     ctrler = answerchoice.Answerchoice(request)
@@ -206,7 +206,7 @@ def answerChoice():
 def processanswerchoice():
     ctrler = answerchoice.Answerchoice(request)
     return ctrler.process()
-	
+
 @app.route("/choicelobby",methods=['GET'])
 def lobby():
     ctrler = answerchoice.Answerchoice(request)
@@ -222,12 +222,12 @@ def assign_tags():
 def handle_assign_tags():
     ctrler = AssignTags.assign(request)
     return "<a href='/'>back to main</a>"
-    
+
 @app.route("/removetags_done",methods=['POST'])
 def handle_remove_tags():
     ctrler = AssignTags.remove(request)
     return Index(request).render()
-    
+
 @app.route("/json/get_tags",methods=['POST', 'GET'])
 def json_get_tags():
     return Modifytags.json_get_tags()
@@ -267,11 +267,11 @@ def answerFilterByQuestionID(questionid):
 def has_new_question():
     ctrler = Index()
     return ctrler.has_new_question()
-	
+
 @app.route("/answerit", methods=['GET'])
 def answer_it_GET():
     return Answer.renderanswerform()
-	
+
 @app.route("/answerit", methods=['POST'])
 def answer_it_POST():
     return Answer.save()
@@ -289,7 +289,7 @@ def get_pagination():
     curpage = int(request.args['currentpage'])
     startpage = int(request.args['startpage'])
     pagecount =  int(request.args['pagecount'])
-    maxpages = int(request.args['maxpages']) 
+    maxpages = int(request.args['maxpages'])
 
     return render_template('pagination.html',currentpage=curpage,
             startpage=startpage,pagecount=pagecount,maxpages=maxpages)
@@ -301,4 +301,4 @@ def logout():
 
 if __name__ == '__main__':
     Base.metadata.create_all(engine)
-    app.run()
+    app.run(host='0.0.0.0')
