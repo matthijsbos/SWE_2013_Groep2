@@ -80,13 +80,15 @@ function show_question(id, question, time_remaining, question_time, answer) {
             <div id="prolongedText'+id+'" style="display: none;">Question has been prolonged</div>\
         </div>\
     </form>');
-    
-    $('#answerform'+id+' #counter'+id).countdown({
-        until: austDay,
-        compact: true,
-        onExpiry: function(){
-        check_submit_answer(id, question_time)}        
-    });
+    alert(question_time)
+    if (question_time != 0) {
+        $('#answerform'+id+' #counter'+id).countdown({
+            until: austDay,
+            compact: true,
+            onExpiry: function(){
+            check_submit_answer(id, question_time)}        
+        });
+    }
     
     $('#pleasewait').hide();
     $('#answerform'+id+' #question'+id).html("<a class='accordion-toggle' data-toggle='collapse' data-parent='#questions' href='#answer"+id+"'>"+question+"</a>");
