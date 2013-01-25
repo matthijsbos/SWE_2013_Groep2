@@ -23,9 +23,11 @@ class AnswerModel(Base, BaseEntity):
         self.ranking = ranking
 
     def __repr__(self):
-        return "<Answer('%s','%s','%s')>" % (self.id,
+        return "<Answer('%s','%s','%s', %s, %s)>" % (self.id,
                                                 self.questionID,
-                                                self.userID)
+                                                self.userID,
+                                                self.edit,
+                                                self.ranking)
 
     def __str__(self):
         return self.text
@@ -148,3 +150,7 @@ class AnswerModel(Base, BaseEntity):
         winnerRating = winner + K * (1 - winningProbability(winner, loser))
         loserRating = loser + K * (0 - winningProbability(loser, winner))
         return winnerRating, loserRating
+        
+    @staticmethod
+    def get_answers_by_userid(uId):
+        return session.query(AnswerModel).filter_by(userID=uId).all()
