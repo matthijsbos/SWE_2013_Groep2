@@ -12,13 +12,13 @@ from controllers.answer import Answer
 from controllers.question import QuestionController as Question
 from controllers.tags import Modifytags, AssignTags
 from controllers.ratings import AssignRatings
-from sakai_ldig import Ldig_parser
 from controllers.review import ReviewAnswer
+from controllers.stats import Stats
 
 app = Flask(__name__)
 app.debug = True
 app.secret_key = "Hurdygurdy"  # Used for Flask sessions, TODO: config?
-lang_detect = Ldig_parser("ldig_model.small")
+
 
 @app.before_request
 def init_lti():
@@ -53,6 +53,12 @@ def home():
 def launch():
     ctrler = Index(debug=True)
     return ctrler.render()
+
+@app.route("/stats", methods=['GET', 'POST'])
+def show_stats():
+  ctrler = Stats()
+  return ctrler.render()
+  
 
 
 @app.route("/edit_question", methods=['GET', 'POST'])
@@ -159,7 +165,7 @@ def assign_tags():
 def handle_assign_tags():
     ctrler = AssignTags.assign(request)
     return "<a href='/'>back to main</a>"
-
+    
 @app.route("/removetags_done",methods=['POST'])
 def handle_assign_tags():
     ctrler = AssignTags.remove(request)
