@@ -122,6 +122,8 @@ class Answerchoice():
         def getuncommons(answers):
             answerchoices = (AnswerChoiceModel.get_all())
             cnt = Counter()
+            for answer in answers:
+                cnt[answer] = 0
             for answerchoice in answerchoices:
                 if answerchoice.best_answer_id in answers:
                     cnt[answerchoice.best_answer_id] += 1
@@ -129,16 +131,17 @@ class Answerchoice():
                     cnt[answerchoice.other_answer_id] += 1
             
             if len(cnt) > 1:
-                return(cnt.most_common()[-1][0],cnt.most_common()[-2][0])
+                return [cnt.most_common()[-1][0],cnt.most_common()[-2][0]]
             else: return False
 
         userID = g.lti.get_user_id()
         questionID = int(request.values['question_id'])
 
         validAnswers = getotheranswers(userID,questionID)
+        print validAnswers
         uncommons = getuncommons(validAnswers)
+        print uncommons
         
-        print ('userID: ' + str(userID) + '\nquestionID: ' + str(questionID) + '\nlen(validAnswers): ' + str(len(validAnswers)))
         if uncommons == False:
             return render_template('choicelobby.html',question=questionID)
         else:
