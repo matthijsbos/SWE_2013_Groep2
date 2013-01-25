@@ -4,6 +4,8 @@ from utilities import render_template
 from dbconnection import session
 from models.question import Question
 from datetime import datetime, timedelta
+from controllers.scheduler import Scheduler
+
 
 class QuestionController():
     @staticmethod
@@ -15,6 +17,42 @@ class QuestionController():
 
         else:
           return json.dumps({"toggle": True,"check": False})
+
+    @staticmethod
+    def availability(args):
+        """
+        Handles availability via the question_list form
+        """
+        try:
+            question = Question.by_id(args['id'])
+        except KeyError:
+            return 
+
+        if not g.lti.is_instructor():
+            return
+
+        try:
+            t = args['type']
+        except KeyError:
+            return 
+        
+        if t == 'answerable':
+            question.answeravailable = not question.answeravailable
+
+        elif t == 'reviewable':
+            question.reviewavailable = not question.reviewavailable
+
+        elif t == 'archived':
+            question.archived = not question.archived
+
+        if question.reviewavailable:
+            Scheduler(args['id'])
+            
+        return json.dumps({"answerable": question.answeravailable,
+                           "reviewable": question.reviewavailable,
+                           "archived"  : question.archived,
+                           "check"     : True,
+                         })
 
     @staticmethod
     def edit_question(q_id, question, time):
@@ -71,6 +109,19 @@ class QuestionController():
     def export_course(course_id):
         questions = Question.by_course_id(course_id)
         return [{'question': question.question} for question in questions]
+    
+    @staticmethod
+    def get_list_asked():
+       """Retrieves questions asked by the user currently logged in."""
+       if g.lti.is_instructor():
+           # TODO: pagination, etc..... same goes for get_questions
+           session.commit()
+           return render_template('question_list.html',
+                                  questions=session.query(Question).filter_by(user_id=g.lti.get_user_id()  ) )
+       else:
+           session.commit()
+           return render_template('question_list.html',
+                                  questions=session.query(Question).filter_by(user_id=g.lti.get_user_id()  ) )
 
     @staticmethod
     def get_list():
@@ -93,6 +144,21 @@ class QuestionController():
 
         return render_template('question_list_tbl.html', questions=questions,
                 currentpage=curpage,startpage=startpage,pagecount=pagecount,maxpages=maxpages)
+
+    def get_list_to_answer():
+     """Retrieves questions to be answered by the instructor (all questions )"""
+     if g.lti.is_instructor():
+         # TODO: pagination, etc..... same goes for get_questions
+         session.commit()
+         return render_template('answer_student_questions.html',
+                                questions=session.query(Question).\
+                                    filter(Question.course_id == g.lti.get_course_id() ).\
+                                    filter(Question.course_id != g.lti.get_user_id() ))         #Filter questions by instructor                                    
+
+     #Only instructors can answer these questions
+     else:
+         return render_template('access_restricted.html')
+        
 
     @staticmethod
     def delete_question(qid):
@@ -118,6 +184,7 @@ class QuestionController():
             time = 0
         session.add(Question(instructor, course, question, active, time, comment, tags, rating))
         session.commit()
+        return QuestionController.get_list_asked()
 
     @staticmethod
     def calculate_remaining_time(question):

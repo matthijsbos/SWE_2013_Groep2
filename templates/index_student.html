@@ -20,10 +20,11 @@
 <div id="questions" class="accordion"></div>
 
 <!-- For the review button. -->
-<form action="/review" id="reviewform" method="post" style="display:none;">
+<form action="/reviewanswer_stub" id="reviewform" method="post" style="display:none;">
     <input type="submit" value="You can review answers!" id="review-answer"/>
 </form>
 
+<<<<<<< HEAD
   <!---
         Check to see if there are questions to answer
         or questions to rank. If so link to the appropriate
@@ -64,4 +65,10 @@
 		{% endfor %}
 		</table>
 	{% endif %}
+=======
+<!-- For asking questions to instructor -->
+<ul>
+    <li><a href="/question_list/asked" class="blue">Ask a question</a></li>
+</ul>
+>>>>>>> groep_acht
 {% endblock %}

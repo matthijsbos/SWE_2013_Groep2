@@ -11,7 +11,7 @@ class AnswerModel(Base, BaseEntity):
 
     text = Column(String)
     questionID = Column(Integer)
-    userID = Column(Integer)
+    userID = Column(String)
     edit = Column(Integer)
     ranking = Column(Float)
 
@@ -50,7 +50,8 @@ class AnswerModel(Base, BaseEntity):
 
     @staticmethod
     def get_question_answers(question_id):
-        return session.query(AnswerModel).filter(AnswerModel.questionID==question_id)
+        return session.query(AnswerModel).filter(
+            AnswerModel.questionID==question_id).all()
 
     @staticmethod
     def updateAnswer(answerID, answerText):
@@ -90,22 +91,21 @@ class AnswerModel(Base, BaseEntity):
         # Need to use the old Alias.c.[columname] when using subquery!
         tmp = session.query(Question).\
                 outerjoin(anssub, anssub.c.questionID == Question.id).\
-                filter(Question.available == True).\
-                filter(Question.course_id == courseid)        
+                filter(Question._answeravailable == True).\
+                filter(Question.course_id == courseid).\
+                filter(anssub.c.id == None).all()
 
-        #print tmp
-        #print [(x.modified + timedelta(seconds=x.time), datetime.now()) for x in tmp]
-        
-        questions = []
-        
-        for x in tmp:           
-            if x.time == 0:
-                questions.append(x)
-            elif x.modified + timedelta(seconds=x.time) > datetime.now():
-                questions.append(x)
-         
-        return questions
-    
+        print tmp
+        print [(x.modified + timedelta(seconds=x.time), datetime.now()) for x in tmp]
+
+
+
+
+        return [x for x in tmp if x.modified + timedelta(seconds=x.time) >
+                datetime.now()]
+
+
+
     @staticmethod
     def get_answered_active_questions(userid, courseid):
         """
@@ -119,7 +119,7 @@ class AnswerModel(Base, BaseEntity):
         # Need to use the old Alias.c.[columname] when using subquery!
         tmp = session.query(Question).\
                 outerjoin(annsub, anssub.c.questionID == Question.id).\
-                filter(Question.available == True).\
+                filter(Question.reviewavailable == True).\
                 filter(Question.course_id == courseid).\
                 filter(anssub.c.id != None).all()
 				
