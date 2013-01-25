@@ -108,13 +108,13 @@ class AnswerModel(Base, BaseEntity):
                 filter(Question.available == True).\
                 filter(Question.course_id == courseid).\
                 filter(anssub.c.id != None).all()
-				
+
         print tmp
         print [(x.modified + timedelta(seconds=x.time), datetime.now()) for x in tmp]
 
         return [x for x in tmp if x.modified + timedelta(seconds=x.time) >
                 datetime.now()]
-				
+
     @staticmethod
     def question_valid(questionid):
         questionTmp = Question.by_id(questionid)
@@ -145,11 +145,12 @@ class AnswerModel(Base, BaseEntity):
 
     @staticmethod
     def newRating(winner, loser) :
-        K = 100
-        expectedScore = AnswerModel.winningProbability(winner, loser)
-        winnerRating = winner + K * (1 - AnswerModel.winningProbability(winner, loser))
-        loserRating = loser + K * (0 - AnswerModel.winningProbability(loser, winner))
-        return winnerRating, loserRating
+        K = 100.0
+        winnerRanking = AnswerModel.getRanking(winner)
+        loserRanking = AnswerModel.getRanking(loser)
+        newWinnerRanking = winnerRanking + (K * (1.0 - AnswerModel.winningProbability(winnerRanking, loserRanking)))
+        newLoserRanking = loserRanking + (K * (0.0 - AnswerModel.winningProbability(loserRanking, winnerRanking)))
+        return newWinnerRanking, newLoserRanking
         
     @staticmethod
     def get_answers_by_userid(uId):
