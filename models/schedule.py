@@ -22,7 +22,6 @@ class Schedule(Base, BaseEntity):
         
     @staticmethod
     def get_answer(user_id):
-        print user_id
         answer_id = session.query(Schedule.answer_id).filter(
             Schedule.user_id == user_id).first()
 

@@ -35,11 +35,11 @@ class ReviewAnswer():
         except KeyError:
             pass
         else:
-            Review.add(fsession['reviewanswer'], fsession['user_id'],
+            Review.add(fsession['reviewanswer'], g.lti.get_user_id(),
                        request.form['rating'], request.form['comments'])
                        
             # users can review only once per answer so delete from schdule list
-            Schedule.delete(fsession['reviewanswer'], fsession['user_id'])
+            Schedule.delete(fsession['reviewanswer'], g.lti.get_user_id())
                                
         # revoke permission to review answer
         del fsession['reviewanswer']
@@ -57,7 +57,7 @@ class ReviewAnswer():
     
     @staticmethod
     def review():
-        answer = Schedule.get_answer(fsession['user_id'])
+        answer = Schedule.get_answer(g.lti.get_user_id())
         if answer == None:
             return "No answers to review."
 
@@ -75,7 +75,7 @@ class ReviewAnswer():
     """
     @staticmethod 
     def has_new_review():
-        answer = Schedule.get_answer(fsession['user_id'])
+        answer = Schedule.get_answer(g.lti.get_user_id())
         
         if g.lti.is_instructor() or answer is None:
             return json.dumps({'has_new': False})
