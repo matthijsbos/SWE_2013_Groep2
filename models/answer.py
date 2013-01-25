@@ -159,8 +159,9 @@ class AnswerModel(Base, BaseEntity):
 
     @staticmethod
     def newRating(winner, loser) :
-        K = 100
-        expectedScore = AnswerModel.winningProbability(winner, loser)
-        winnerRating = winner + K * (1 - AnswerModel.winningProbability(winner, loser))
-        loserRating = loser + K * (0 - AnswerModel.winningProbability(loser, winner))
-        return winnerRating, loserRating
+        K = 100.0
+        winnerRanking = AnswerModel.getRanking(winner)
+        loserRanking = AnswerModel.getRanking(loser)
+        newWinnerRanking = winnerRanking + (K * (1.0 - AnswerModel.winningProbability(winnerRanking, loserRanking)))
+        newLoserRanking = loserRanking + (K * (0.0 - AnswerModel.winningProbability(loserRanking, winnerRanking)))
+        return newWinnerRanking, newLoserRanking
