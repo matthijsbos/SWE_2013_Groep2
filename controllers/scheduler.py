@@ -16,7 +16,7 @@ class Scheduler():
         
         answers = AnswerModel.get_question_answers(question_id)
         for a in answers:
-            scores.append((a.get_rating(), a))
+            scores.append((a.get_rating(question_id), a))
             user_list.append(a.userID)
             
         scores.sort(key=lambda tup: tup[0])
@@ -32,7 +32,7 @@ class Scheduler():
         for x in xrange(0, len(scores)):
             a_id = scores[x][1].id
             u_id = user_list[x]
-            schedule_list.append(a_id, u_id)
+            schedule_list.append((a_id, u_id))
         
         Schedule.add_list(schedule_list)
             
