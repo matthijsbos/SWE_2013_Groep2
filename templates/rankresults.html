@@ -1,19 +1,19 @@
 {% extends "_base.html" %}
 {% block content %}
-    <a href="/question_list" class="blue">Back</a>
-    <table>
+<table class="table table-hover table-bordered table-striped">
+    <thead>
         <tr>
-            <th>Student</th>
-            <th>Answer</th>
-            <th>Rank</th>
-        </tr>		
-        {% for answer in answers %}
-        <tr>
-            <td>{{answer.userID}}</td>
-            <td>{{answer.text}}</td>
-            <td>{{answer.ranking}}</td>
+            <th>student</th>
+            <th>answer</th>
+            <th>rankscore</th>
         </tr>
-        {% endfor %}
-    </table>
-    <a href="/question_list" class="blue">Back</a>
+    </thead>
+    {% for answer in answers %}
+    <tr>
+        <td>{{ answer.username }}</td>
+        <td>{{ answer.text }}</td>
+        <td>{{ answer.ranking }}</td>
+    </tr>
+    {% endfor %}
+</table>
 {% endblock %}
