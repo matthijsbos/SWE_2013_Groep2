@@ -5,16 +5,63 @@ from dbconnection import session
 from models.question import Question
 from datetime import datetime, timedelta
 
+from controllers.scheduler import Scheduler
+
+
 class QuestionController():
+	# TODO: remove toggle_question, fix availability
     @staticmethod
-    def toggle_question(q_id, field):
+    def toggle_question(q_id, type):
         '''toggles a question between available and not available'''
         if g.lti.is_instructor():
-            available = Question.toggle_available(q_id, field)
-            return json.dumps({"toggle":available,"check": True})
-
+            active = QuestionController.availability({'id':q_id,'type':type})
+            return json.dumps({"toggle":active, "check": True})
         else:
-          return json.dumps({"toggle": True,"check": False})
+          return json.dumps({"toggle": True, "check": False})
+
+    @staticmethod
+    def availability(args):
+        """
+        Handles availability via the question_list form
+        """
+        question = Question.by_id(args['id'])
+        if question is None:
+            return 
+
+        if not g.lti.is_instructor():
+            return
+
+        try:
+            type = args['type']
+        except KeyError:
+            return 
+        
+		rv = None
+        if type == 'answerable':
+            rv = question.answerable = not question.answerable
+            question.activate_time = datetime.now()
+
+        elif type == 'reviewable':
+            rv = question.reviewable = not question.reviewable
+
+        elif type == 'archived':
+            rv = question.archived = not question.archived
+			
+		elif type == 'comments':
+            rv = question.comment = not question.comment
+			
+        elif type == 'tags':
+            rv = question.tags = not question.tags
+			
+        elif type == 'rating':
+            rv = question.rating = not question.rating
+            
+		session.commit()
+		
+        if question.reviewable:
+            Scheduler(args['id'])
+            
+        return rv
 
     @staticmethod
     def edit_question(q_id, question, time):
@@ -51,15 +98,22 @@ class QuestionController():
         question = Question.by_id(q_id)
         
         if question is not None and question.activate_time is not None:
-            time_remaining = QuestionController.calculate_remaining_time(question)
+			if question.time == 0:
+				time_remaining = 0
+			else:
+				time_remaining = datetime.now() - (question.activate_time +
+						timedelta(seconds=question.time))
+				time_remaining = time_remaining.seconds + time_remaining.days * 86400
+				time_remaining = -time_remaining
+			
             question_time =  question.time
         else:
             time_remaining = 0
             question_time =  0
-            
-        return json.dumps({"still_available":((question is not None) and question.available),
+
+        return json.dumps({"still_available":((question is not None) and question.answerable),
                            "time_remaining":time_remaining,
-                           "question_deleted":(question is None) or not question.available,
+                           "question_deleted":(question is None) or not question.answerable,
                            "question_time":question_time})
 
     @staticmethod
@@ -71,6 +125,19 @@ class QuestionController():
     def export_course(course_id):
         questions = Question.by_course_id(course_id)
         return [{'question': question.question} for question in questions]
+
+    @staticmethod
+    def get_list_asked():
+       """Retrieves questions asked by the user currently logged in."""
+       if g.lti.is_instructor():
+           # TODO: pagination, etc..... same goes for get_questions
+           session.commit()
+           return render_template('question_list.html',
+                                  questions=session.query(Question).filter_by(user_id=g.lti.get_user_id()  ) )
+       else:
+           session.commit()
+           return render_template('question_list.html',
+                                  questions=session.query(Question).filter_by(user_id=g.lti.get_user_id()  ) )
 
     @staticmethod
     def get_list():
@@ -85,6 +152,7 @@ class QuestionController():
     @staticmethod
     def get_list_table(limit,offset):
         (questions, curpage, maxpages, startpage, pagecount) = Question.get_filtered_offset(limit,offset,orderby='created')
+		
         for question in questions:
             if question is not None and question.activate_time is not None:
                 if QuestionController.calculate_remaining_time(question) < 0:            
@@ -93,6 +161,20 @@ class QuestionController():
 
         return render_template('question_list_tbl.html', questions=questions,
                 currentpage=curpage,startpage=startpage,pagecount=pagecount,maxpages=maxpages)
+
+    def get_list_to_answer():
+     """Retrieves questions to be answered by the instructor (all questions )"""
+     if g.lti.is_instructor():
+         # TODO: pagination, etc..... same goes for get_questions
+         session.commit()
+         return render_template('answer_student_questions.html',
+                                questions=session.query(Question).\
+                                    filter(Question.course_id == g.lti.get_course_id() ).\
+                                    filter(Question.course_id != g.lti.get_user_id() ))         #Filter questions by instructor                                    
+
+     #Only instructors can answer these questions
+     else:
+         return render_template('access_restricted.html')
 
     @staticmethod
     def delete_question(qid):
@@ -118,12 +200,3 @@ class QuestionController():
             time = 0
         session.add(Question(instructor, course, question, active, time, comment, tags, rating))
         session.commit()
-
-    @staticmethod
-    def calculate_remaining_time(question):
-        if question.time == 0:
-            return 0
-        time_remaining = datetime.now() - (question.activate_time +
-                timedelta(seconds=question.time))
-        time_remaining = time_remaining.seconds + time_remaining.days * 86400
-        return - time_remaining

@@ -10,6 +10,7 @@ from models.answer import AnswerModel
 from models.review import Review
 from models.question import Question
 from dbconnection import session
+from models.schedule import Schedule
 import json
 
 
@@ -21,22 +22,27 @@ class ReviewAnswer():
         try:
             fsession['reviewanswer']
         except:
-            return None
-
-        #for rating in request.form.getlist('rating'):
-        #    Review.add(fsession['reviewanswer'], fsession['user_id'], rating, )
+            pass
+        else:
+            # for rating in request.form.getlist('rating'):
+            # Review.add(fsession['reviewanswer'], fsession['user_id'], rating, )
+    
+            for tag_id in request.form.getlist('remove_tags'):
+                AnswerTag.remove(fsession['reviewanswer'], tag_id)
             
-        for review in request.form.getlist('comments'):
-            rating = request.form['rating']
-            if review is not '':
-                Review.add(fsession['reviewanswer'], fsession['user_id'], rating,
-                            review)
+            try:
+                request.form['rating']
+            except KeyError:
+                pass
             else:
-                Review.add(fsession['reviewanswer'], fsession['user_id'], rating,
-                '')
-
-        # revoke permission to review answer
-        del fsession['reviewanswer']
+                Review.add(fsession['reviewanswer'], g.lti.get_user_id(),
+                           request.form['rating'], request.form['comments'])
+                           
+                # users can review only once per answer so delete from schdule list
+                Schedule.delete(fsession['reviewanswer'], g.lti.get_user_id())
+                                   
+            # revoke permission to review answer
+            del fsession['reviewanswer']
     
     @staticmethod
     def remove_tag_answer(aid, tagid):
@@ -49,40 +55,29 @@ class ReviewAnswer():
         return json.dumps({'deleted': True})
     
     
-    
     @staticmethod
-    def review(answer_id):
-        # one of these checks can be removed once we merge and know what's what
-        try:
-            answer = AnswerModel.by_id(answer_id)
-        except:
-			return render_template('reviewanswer.html', error="true")
-            #return "<div class=\"alert alert-error\"><i class=\"icon-warning-sign\"></i>No answers found!</div>"
+    def review():
+        answer = Schedule.get_answer(g.lti.get_user_id())
         if answer == None:
-			return render_template('reviewanswer.html', error="true")
-            #return "<div class=\"alert alert-error\"><i class=\"icon-warning-sign\"></i>No answers found!</div>"
-        try:
-            question = Question.by_id(answer.questionID)
-        except:
-            return "Error question not found"
-            
+            return "No answers to review."
 
-        fsession['reviewanswer'] = answer_id
+        fsession['reviewanswer'] = answer.id
 
-        enabledtags = AnswerTag.get_tag_ids(answer_id)
+        enabledtags = AnswerTag.get_tag_ids(answer.id)
+        reviews = Review.get_list(answer.id)
 
         return render_template('reviewanswer.html', answer=answer,
                                tags=Tag.get_all(), enabledtags=enabledtags,
-                               tagsOn = question.tags, commentOn = question.comment,
-                               ratingOn = question.rating)
+                               reviews=reviews)
 
     """
     Stub class, to be implemented by mustafa
     """
     @staticmethod 
     def has_new_review():
-        if g.lti.is_instructor():
+        answer = Schedule.get_answer(g.lti.get_user_id())
+        
+        if g.lti.is_instructor() or answer is None:
             return json.dumps({'has_new': False})
 
-        return json.dumps({'has_new': True,
-                           'number': 5 })
+        return json.dumps({'has_new': True})

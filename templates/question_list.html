@@ -118,6 +118,32 @@
         });
     }
 
+  function availability(id, type){
+    answerable = "False"
+    reviewable = "False"
+    archived = "False"
+    $.getJSON("/questionavailability",{id:id, type:type},
+    function(data){
+      if(data.check){
+        if(data.answerable){
+          answerable="True"
+        }
+        if(data.reviewable){
+          reviewable="True"
+        }
+        if(data.archived){
+          archived="True"
+        }
+        $('#answerable_'+id).html(answerable);
+        $('#reviewable_'+id).html(reviewable);
+        $('#archived_'+id).html(archived);
+      }
+      else{
+        $('#error').html("Error while togging question question.");
+      }
+    });
+  }
+
     function add_question(){
         $('#addQ').hide()
         $('#qList tr:last').after(

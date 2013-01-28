@@ -76,6 +76,10 @@ def edit_question():
 def toggle_question():
     return Question.toggle_question(request.args['id'], request.args['field'])
 
+@app.route("/questionavailability", methods=['GET', 'POST'])
+def questionavailability():
+    return Question.availability(request.args)
+
 # this route is used to ask a question to students
 
 
@@ -92,8 +96,6 @@ def ask_question():
 
 @app.route("/handle_question", methods=['POST'])
 def handle_question():
-    if g.lti.is_instructor() == False:
-        return render_template("access_restricted.html")
     try:
         isActive = request.form['active'] in ['true','True']
     except:
@@ -125,7 +127,7 @@ def handle_question():
     return json.dumps({'done':True})
 
 
-@app.route("/question_list", methods=['GET', 'POST'])
+@app.route("/question_list", methods=['GET', 'POST'])                                            
 def list_questions():
     return render_template('question_list.html')
 
@@ -139,6 +141,14 @@ def list_questions_table():
     if 'offset' in request.args:
         offset = int(request.args['offset'])
     return Question.get_list_table(limit,offset)
+
+@app.route("/question_list/asked", methods=['GET', 'POST'])
+def list_questions_asked():
+    return Question.get_list_asked()
+
+@app.route("/question_list/to_answer", methods=['GET', 'POST'])
+def list_questions_answer():
+    return Question.get_list_to_answer()
 
 @app.route("/delete_question/<id>", methods=['GET', 'POST'])
 def delete_question(id):
@@ -240,11 +250,11 @@ in the database (given a user has permission to do so)
 @app.route("/reviewanswer",methods=['POST', 'GET'])
 def handle_review_answer():
     ctrler = ReviewAnswer(request)
-    return ctrler.review(1)
+    return ReviewAnswer.review()
 
 @app.route("/reviewanswer_stub", methods=["POST", "GET"])
 def do_review_answer_stub():
-    return ReviewAnswer.review(1)
+    return ReviewAnswer.review()
 
 @app.route("/filteranswers", methods=['POST', 'GET'])
 def answerFilter():
