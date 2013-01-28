@@ -24,17 +24,17 @@ class QuestionController():
         """
         Handles availability via the question_list form
         """
-        question = Question.by_id(args['id'])
-        if question is None:
-            return 
-
-        if not g.lti.is_instructor():
-            return
-
         try:
             type = args['type']
         except KeyError:
             return 
+            
+        question = Question.by_id(args['id'])
+        if question is None:
+            return 
+
+        if not g.lti.is_instructor() and type != 'reviewable':
+            return
         
         rv = None
         if type == 'answerable':
@@ -42,7 +42,11 @@ class QuestionController():
             question.activate_time = datetime.now()
 
         elif type == 'reviewable':
-            rv = question.reviewable = not question.reviewable
+            if not question.reviewable:
+                Scheduler(args['id'])
+                question.reviewable = True
+            rv = question.reviewable
+
 
         elif type == 'archived':
             rv = question.archived = not question.archived
@@ -57,9 +61,6 @@ class QuestionController():
             rv = question.rating = not question.rating
             
         session.commit()
-        
-        if question.reviewable:
-            Scheduler(args['id'])
             
         return rv
 
@@ -98,7 +99,7 @@ class QuestionController():
         question = Question.by_id(q_id)
         
         if question is not None and question.activate_time is not None:
-            time_remaining = QuestionController.calculate_remaining_time(question)            
+            time_remaining = question.get_time_left()
             question_time =  question.time
         else:
             time_remaining = 0
@@ -108,18 +109,6 @@ class QuestionController():
                            "time_remaining":time_remaining,
                            "question_deleted":(question is None) or not question.answerable,
                            "question_time":question_time})
-    
-    @staticmethod
-    def calculate_remaining_time(question):
-        if question.time == 0:
-            time_remaining = 0
-        else:
-            time_remaining = datetime.now() - (question.activate_time +
-                    timedelta(seconds=question.time))
-            time_remaining = time_remaining.seconds + time_remaining.days * 86400
-            time_remaining = -time_remaining
-            
-        return time_remaining
 
     @staticmethod
     def get_questions(n):
@@ -149,7 +138,7 @@ class QuestionController():
         questions = Question.get_filtered()
         for question in questions:
             if question is not None and question.activate_time is not None:
-                if QuestionController.calculate_remaining_time(question) < 0:            
+                if question.get_time_left() < 0:          
                     question.answerable = False
         session.commit()
         return render_template('question_list.html', questions=questions)
@@ -160,7 +149,7 @@ class QuestionController():
         
         for question in questions:
             if question is not None and question.activate_time is not None:
-                if QuestionController.calculate_remaining_time(question) < 0:            
+                if question.get_time_left() < 0:         
                     question.answerable = False
         session.commit()
 

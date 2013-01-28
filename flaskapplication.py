@@ -286,6 +286,10 @@ def answer_it_GET():
 def answer_it_POST():
     return Answer.save()
 
+@app.route("/start_review", methods=['POST'])
+def start_review():
+    return ReviewAnswer.start_review(request)
+
 @app.route("/has_new_review", methods=['GET', 'POST'])
 def has_new_review():
     return ReviewAnswer.has_new_review()

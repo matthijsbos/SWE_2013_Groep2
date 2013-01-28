@@ -89,7 +89,9 @@ function show_question(id, question, time_remaining, question_time, answer) {
             until: austDay,
             compact: true,
             onExpiry: function(){
-            check_submit_answer(id, question_time)}        
+				check_submit_answer(id, question_time)
+				$.post('/start_review', {'question_id': id});
+			}        
         });
     }
     

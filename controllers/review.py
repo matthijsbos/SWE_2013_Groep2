@@ -1,4 +1,4 @@
-# Authors : Victor Azizi & David Schoorisse & Mustafa Karaalioglu
+﻿# Authors : Victor Azizi & David Schoorisse & Mustafa Karaalioglu
 # Descrp : Controls the reviewing of answers
 # Changes:
 # Comment: call ReviewAnswer.review(x) to start reviewing a answer
@@ -11,6 +11,8 @@ from models.review import Review
 from models.question import Question
 from dbconnection import session
 from models.schedule import Schedule
+from controllers.question import QuestionController
+from controllers.answer import Answer as AnswerController
 import json
 
 
@@ -70,9 +72,23 @@ class ReviewAnswer():
                                tags=Tag.get_all(), enabledtags=enabledtags,
                                reviews=reviews)
 
-    """
-    Stub class, to be implemented by mustafa
-    """
+    @staticmethod
+    def start_review(request):
+        try:
+            question_id = request.form['question_id']
+        except:
+            return json.dumps({'reviewable':False})
+        
+        question = Question.by_id(question_id)
+        reviewable = False
+        if question is not None:
+            if g.lti.is_instructor() or \
+                    (question.get_time_left() <= 0 and question.time > 0):
+                reviewable = QuestionController.availability(
+                {'id':question_id, 'type':'reviewable'})
+            
+        return json.dumps({'reviewable':reviewable})
+        
     @staticmethod 
     def has_new_review():
         answer = Schedule.get_answer(g.lti.get_user_id())

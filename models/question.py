@@ -2,7 +2,7 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import Column, String, Boolean, Integer,DateTime
 from dbconnection import engine, session, Base
 from basemodel import BaseEntity
-from datetime import datetime
+from datetime import datetime, timedelta
 
 
 class Question(Base, BaseEntity):
@@ -49,6 +49,17 @@ class Question(Base, BaseEntity):
                                                 self.answerable,
                                                 self.reviewable)
 
+    def get_time_left(self):
+        if self.time == 0 or self.activate_time == None:
+            time_remaining = 0
+        else:
+            time_remaining = datetime.now() - (self.activate_time +
+                    timedelta(seconds=self.time))
+            time_remaining = time_remaining.seconds + time_remaining.days*86400
+            time_remaining = -time_remaining
+            
+        return time_remaining
+    
     """
     Yay properties
     """
