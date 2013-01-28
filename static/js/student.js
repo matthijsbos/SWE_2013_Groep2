@@ -28,29 +28,29 @@ function query_new_question() {
                     }
                 }
             }
-			else {
-				/* Poll for reviewable questions */
-				$.getJSON("/has_new_review", {},
-				function(data) {
-					if (data.has_new) {
-						show_review_button();
-					}
-					else {
-						hide_review_button();
-					}            
-				});
-			}
+            else {
+                /* Poll for reviewable questions */
+                $.getJSON("/has_new_review", {},
+                    function(data) {
+                        if (data.has_new) {
+                            show_review_button();
+                        }
+                        else {
+                            hide_review_button();
+                        }            
+                    });
+            }
         });
 }
 
 function show_review_button() {
     console.log("GOT REVIEW");
-	$('#reviewform #review-answer').val('You have a reviewable answer waiting for you!');
-	$('#reviewform').show();
+    $('#reviewform #review-answer').val('You have a reviewable answer waiting for you!');
+    $('#reviewform').show();
 }
 
 function hide_review_button() {
-	$('#reviewform').hide();
+    $('#reviewform').hide();
 }
 
 function toggleQ(id){
@@ -63,7 +63,7 @@ function show_question(id, question, time_remaining, question_time, answer) {
     console.log("GOT QUESTION", id, question, time_remaining);
     submit_interval_id[id] = setInterval(function(){
         check_remaining_time(id, question_time)
-        },time_check_interval)
+    },time_check_interval)
     
     var austDay = new Date();
     austDay.setSeconds(austDay.getSeconds() + time_remaining);
@@ -72,14 +72,14 @@ function show_question(id, question, time_remaining, question_time, answer) {
         <br>\
         <div class="accordion-group no-border" id="questionArea'+id+'" class="questionArea">\
             <div id="question'+id+'" class="question accordion-header"></div>\
-            <div id="answer'+id+'"  class="accordion-body collapse in">\
+            <div id="answer'+id+'"  class="accordion-body collapse">\
             <div class="accordion-inner"><textarea name="answerText" cols=50 rows=5></textarea>\
             <br>\
             <button class="btn btn-info" onclick="submit_answer('+id+'); return false;" value="submit answer">submit answer</button>\
             <div id="submitted'+id+'" style="display:none" class="submitted alert alert-success"><button type="button" class="close close-submitted" onclick="document.getElementById(\'submitted'+id+'\').style.display = \'none\';">&times;</button><b>Answer saved!</b><br/></div>\
             <div id="ranking'+id+'"><a href="/choicelobby?question_id='+id+'" >rank it!</a></div>\
             </div></div>\
-            <div id="counter'+id+'" class="countdowntime"></div>\
+            <div id="counter'+id+'" class="countdowntimesmall"></div>\
             <div id="prolongedText'+id+'" style="display: none;">Question has been prolonged</div>\
         </div>\
     </form>');
@@ -89,12 +89,13 @@ function show_question(id, question, time_remaining, question_time, answer) {
             until: austDay,
             compact: true,
             onExpiry: function(){
-            check_submit_answer(id, question_time)}        
+                check_submit_answer(id, question_time)
+                }        
         });
     }
     
     $('#pleasewait').hide();
-    $('#answerform'+id+' #question'+id).html("<a class='accordion-toggle' data-toggle='collapse' data-parent='#questions' href='#answer"+id+"'>"+question+"</a>");
+    $('#answerform'+id+' #question'+id).html("<a class='accordion-toggle' onclick='collapse_timer("+id+");' data-toggle='collapse' data-parent='#questions' href='#answer"+id+"'>"+question+"</a>");
     $('#answerform'+id+' textarea').val(answer);
     if (answer == '') {
         $('#ranking'+id).hide();
@@ -141,7 +142,7 @@ function check_remaining_time(id, time_delta){
                 time_delta = data.question_time;
                 submit_interval_id[id] = setInterval(function(){
                     check_remaining_time(id, time_delta)
-                    },time_check_interval)
+                },time_check_interval)
                 res = true;
             }
         }
@@ -177,15 +178,15 @@ function submit_answer(id) {
     $.post("/answer", {
         "questionID": id,
         "answerText": $('#answerform'+id+' textarea').val()
-        });            
+    });            
 }
 
 function collapse_timer(id){
-	if ($('#answer'+id).hasClass("in")){
-		$('#counter'+id).addClass('countdowntimesmall');
-		$('#counter'+id).removeClass('countdowntime');
-    } else{
-		$('#counter'+id).addClass('countdowntime');
-		$('#counter'+id).removeClass('countdowntimesmall');
-	}
+    if ($('#answer'+id).hasClass("in") && $('#answer'+id).height() == 189){
+        $('#counter'+id).addClass('countdowntimesmall');
+        $('#counter'+id).removeClass('countdowntime');
+    } else if($('#answer'+id).height() == 0){
+        $('#counter'+id).addClass('countdowntime');
+        $('#counter'+id).removeClass('countdowntimesmall');
+    }
 }

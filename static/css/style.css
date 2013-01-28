@@ -147,9 +147,7 @@ right: -134px;
 float:none;
 }
 .countdowntime{
-    display: inline;
-    margin:0;
-    margin-left: 15px;
+    margin: -34px 0 0 330px;
     font-size: 25px;
 }
 
@@ -157,12 +155,9 @@ float:none;
     float: left;
     font-size: 15px;
 }
-.questionArea{
-    width: 500px;
-}
-.questionArea textarea{
-    margin-top: 8px;
-    width: 96%;
+#questions textarea{
+    width: 400px;
+    height: 120px;
 }
 #answer{
     font-size: 18px;
