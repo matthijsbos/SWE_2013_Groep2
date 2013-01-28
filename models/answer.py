@@ -37,7 +37,7 @@ class AnswerModel(Base, BaseEntity):
     def __str__(self):
         return self.text
 	
-	@staticmethod
+    @staticmethod
     def get_rating(questionID):
         rating = 1
         return rating
@@ -96,7 +96,7 @@ class AnswerModel(Base, BaseEntity):
         # Need to use the old Alias.c.[columname] when using subquery!
         tmp = session.query(Question).\
                 outerjoin(anssub, anssub.c.questionID == Question.id).\
-                filter(Question.answerable == True).\
+                filter(Question._answerable == True).\
                 filter(Question.course_id == courseid)        
 
         #print tmp

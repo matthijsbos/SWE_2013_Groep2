@@ -33,7 +33,7 @@
                 <a href="/filteranswers/{{question.id}}" class="blue">{{question.question}}</a>
             </td>
             <td class="time-field" id="time_{{question.id}}">{{question.time}}</td>
-            <td class="available-field" id="available_{{question.id}}"><input type="checkbox" name="active{{question.id}}" onclick="toggle_question({{question.id}}, 'active')" {% if question.available %}checked{% endif %}></td>
+            <td class="available-field" id="available_{{question.id}}"><input type="checkbox" name="answerable{{question.id}}" onclick="toggle_question({{question.id}}, 'answerable')" {% if question.answerable %}checked{% endif %}></td>
             <td class="comment-field" id="comments_{{question.id}}"><input type="checkbox" name="comments{{question.id}}" onclick="toggle_question({{question.id}}, 'comments')" {% if question.comment %}checked{% endif %}></td>
             <td class="tags-field" id="tags_{{question.id}}"><input type="checkbox" name="tags{{question.id}}" onclick="toggle_question({{question.id}}, 'tags')" {% if question.tags %}checked{% endif %}></td>
             <td class="rating-field" id="rating_{{question.id}}"><input type="checkbox" name="rating{{question.id}}" onclick="toggle_question({{question.id}}, 'rating')" {% if question.rating %}checked{% endif %}></td>

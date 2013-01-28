@@ -9,10 +9,10 @@ from controllers.scheduler import Scheduler
 
 
 class QuestionController():
-	# TODO: remove toggle_question, fix availability
+    # TODO: remove toggle_question, fix availability
     @staticmethod
     def toggle_question(q_id, type):
-        '''toggles a question between available and not available'''
+        '''toggles a question between answerable and not answerable'''
         if g.lti.is_instructor():
             active = QuestionController.availability({'id':q_id,'type':type})
             return json.dumps({"toggle":active, "check": True})
@@ -36,7 +36,7 @@ class QuestionController():
         except KeyError:
             return 
         
-		rv = None
+        rv = None
         if type == 'answerable':
             rv = question.answerable = not question.answerable
             question.activate_time = datetime.now()
@@ -46,18 +46,18 @@ class QuestionController():
 
         elif type == 'archived':
             rv = question.archived = not question.archived
-			
-		elif type == 'comments':
+            
+        elif type == 'comments':
             rv = question.comment = not question.comment
-			
+            
         elif type == 'tags':
             rv = question.tags = not question.tags
-			
+            
         elif type == 'rating':
             rv = question.rating = not question.rating
             
-		session.commit()
-		
+        session.commit()
+        
         if question.reviewable:
             Scheduler(args['id'])
             
@@ -76,20 +76,20 @@ class QuestionController():
             q = Question.by_id(q_id)
             q.question = escaped_question
             q.time = int(time)
-            activate = q.available
+            activate = q.answerable
 
             session.add(q)
             session.commit()
 
             return json.dumps({"id": q_id,
                                "text": escaped_question,
-                               "available": activate,
+                               "answerable": activate,
                                "time":time,
                                "check": g.lti.is_instructor()})
         else:
             return json.dumps({"id": q_id,
                                "text": question,
-                               "available": activate,
+                               "answerable": activate,
                                "time": time,
                                "check": g.lti.is_instructor()})
     
@@ -98,28 +98,33 @@ class QuestionController():
         question = Question.by_id(q_id)
         
         if question is not None and question.activate_time is not None:
-			if question.time == 0:
-				time_remaining = 0
-			else:
-				time_remaining = datetime.now() - (question.activate_time +
-						timedelta(seconds=question.time))
-				time_remaining = time_remaining.seconds + time_remaining.days * 86400
-				time_remaining = -time_remaining
-			
+            time_remaining = QuestionController.calculate_remaining_time(question)            
             question_time =  question.time
         else:
             time_remaining = 0
             question_time =  0
 
-        return json.dumps({"still_available":((question is not None) and question.answerable),
+        return json.dumps({"still_answerable":((question is not None) and question.answerable),
                            "time_remaining":time_remaining,
                            "question_deleted":(question is None) or not question.answerable,
                            "question_time":question_time})
+    
+    @staticmethod
+    def calculate_remaining_time(question):
+        if question.time == 0:
+            time_remaining = 0
+        else:
+            time_remaining = datetime.now() - (question.activate_time +
+                    timedelta(seconds=question.time))
+            time_remaining = time_remaining.seconds + time_remaining.days * 86400
+            time_remaining = -time_remaining
+            
+        return time_remaining
 
     @staticmethod
     def get_questions(n):
-        """Retrieves the first n questions, sorted by date available."""
-        return session.query(Question).order_by(Question.available.desc())[:n]
+        """Retrieves the first n questions, sorted by date answerable."""
+        return session.query(Question).order_by(Question.answerable.desc())[:n]
 
     @staticmethod
     def export_course(course_id):
@@ -145,18 +150,18 @@ class QuestionController():
         for question in questions:
             if question is not None and question.activate_time is not None:
                 if QuestionController.calculate_remaining_time(question) < 0:            
-                    question.available = False
+                    question.answerable = False
         session.commit()
         return render_template('question_list.html', questions=questions)
 
     @staticmethod
     def get_list_table(limit,offset):
         (questions, curpage, maxpages, startpage, pagecount) = Question.get_filtered_offset(limit,offset,orderby='created')
-		
+        
         for question in questions:
             if question is not None and question.activate_time is not None:
                 if QuestionController.calculate_remaining_time(question) < 0:            
-                    question.available = False
+                    question.answerable = False
         session.commit()
 
         return render_template('question_list_tbl.html', questions=questions,

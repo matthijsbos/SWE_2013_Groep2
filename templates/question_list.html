@@ -154,25 +154,28 @@
                         <td><input id="qcomm" type="checkbox" name="comment" checked></td> \
                         <td><input id="qtag" type="checkbox" name="tags" checked></td> \
                         <td><input id="qrat" type="checkbox" name="rating" checked></td> \
-                        <td colspan=2><input type="submit" onclick=save_question() class="btn btn-block btn-primary" value="Add Question"></td>\
+                        <td colspan=2><input id="save_question" type="submit" onclick=save_question() class="btn btn-block btn-primary" value="Add Question"></td>\
                     </tr>');
         $('#qtext').focus();
     }
 
     function save_question(){
+		$('#save_question').attr('disabled', 'disabled')
         activev = ($('#qact').is(':checked') ? true : false);
         commentv = ($('#qcomm').is(':checked') ? true : false);
         tagsv = ($('#qtag').is(':checked') ? true : false);
+		ratingv = ($('#qrat').is(':checked') ? true : false);
         timev = $('#qtime').val();
         questionv = $('#qtext').val();
 
         $.post('/handle_question',{active:activev,comment:commentv,tags:tagsv,
-                question:questionv,time:timev},
+                question:questionv,time:timev,rating:ratingv},
                 function(data){
                     reload()
+					$('#save_question').attr('disabled', '')
+					$('#addQ').show()
                 });
-
-        $('#addQ').show()
+				
         return false;
     }
 

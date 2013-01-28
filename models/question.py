@@ -35,8 +35,8 @@ class Question(Base, BaseEntity):
 
         if(answerable):
             self.activate_time = datetime.now()
-		else:
-			self.activate_time = None
+        else:
+            self.activate_time = None
 
         self.time = time
         self.answerable = answerable
