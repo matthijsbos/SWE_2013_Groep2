@@ -21,9 +21,6 @@ class Index():
         return render_template('index_student.html')
 
     def has_new_question(self):
-        if g.lti.is_instructor():
-            return json.dumps({'has_new': False})
-
         questions = AnswerModel.get_active_questions(g.lti.get_user_id(),
                                                     g.lti.get_course_id())
 

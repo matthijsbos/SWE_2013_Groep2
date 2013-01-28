@@ -28,7 +28,7 @@ function query_new_question() {
                     }
                 }
             }
-            else {
+            
                 /* Poll for reviewable questions */
                 $.getJSON("/has_new_review", {},
                     function(data) {
@@ -39,7 +39,7 @@ function query_new_question() {
                             hide_review_button();
                         }            
                     });
-            }
+            
         });
 }
 
@@ -183,7 +183,7 @@ function submit_answer(id) {
 }
 
 function collapse_timer(id){
-    if ($('#answer'+id).hasClass("in") && $('#answer'+id).height() == 189){
+    if ($('#answer'+id).hasClass("in") && $('#answer'+id).height() >= 189){
         $('#counter'+id).addClass('countdowntimesmall');
         $('#counter'+id).removeClass('countdowntime');
     } else if($('#answer'+id).height() == 0){

@@ -107,7 +107,7 @@ class AnswerModel(Base, BaseEntity):
         for x in tmp:           
             if x.time == 0:
                 questions.append(x)
-            elif x.modified + timedelta(seconds=x.time) > datetime.now():
+            elif x.activate_time + timedelta(seconds=x.time) > datetime.now():
                 questions.append(x)
          
         return questions
