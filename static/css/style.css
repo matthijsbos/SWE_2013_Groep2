@@ -147,10 +147,15 @@ right: -134px;
 float:none;
 }
 .countdowntime{
-    float: right;
-    margin-top: -25px;
-    margin-right: 5px;
+    display: inline;
+    margin:0;
+    margin-left: 15px;
     font-size: 25px;
+}
+
+.countdowntimesmall{
+    float: left;
+    font-size: 15px;
 }
 .questionArea{
     width: 500px;

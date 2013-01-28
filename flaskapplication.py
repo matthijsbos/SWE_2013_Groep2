@@ -183,11 +183,11 @@ def addtags():
     return ctrler.render()
 
 
-@app.route("/removetag", methods=['POST'])
+@app.route("/removetag", methods=['GET'])
 def removetags():
     ctrler = Modifytags()
-    ctrler.deletetag(request)
-    return ctrler.render()
+    return ctrler.delete_tag_question(request.args['tagid'])
+    #return ctrler.render()
 
 
 @app.route("/removetaganswer", methods=['POST', 'GET'])

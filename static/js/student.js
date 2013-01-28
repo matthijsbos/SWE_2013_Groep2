@@ -179,3 +179,13 @@ function submit_answer(id) {
         "answerText": $('#answerform'+id+' textarea').val()
         });            
 }
+
+function collapse_timer(id){
+	if ($('#answer'+id).hasClass("in")){
+		$('#counter'+id).addClass('countdowntimesmall');
+		$('#counter'+id).removeClass('countdowntime');
+    } else{
+		$('#counter'+id).addClass('countdowntime');
+		$('#counter'+id).removeClass('countdowntimesmall');
+	}
+}
