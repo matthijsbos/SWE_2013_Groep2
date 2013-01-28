@@ -36,11 +36,6 @@ class AnswerModel(Base, BaseEntity):
 
     def __str__(self):
         return self.text
-
-    @staticmethod
-    def get_rating(questionID):
-        rating = 1
-        return rating
     
     @staticmethod
     def savereview(questionID, userID, answerText, edit):
@@ -51,6 +46,11 @@ class AnswerModel(Base, BaseEntity):
     @staticmethod
     def get_question_answers(question_id):
         return session.query(AnswerModel).filter(AnswerModel.questionID==question_id)
+        
+    @staticmethod
+    def get_answers_ordered_by_rank(question_id):
+        return session.query(AnswerModel).filter(AnswerModel.questionID==question_id).order_by(AnswerModel.ranking.desc())
+        #return session.query(AnswerModel).filter(AnswerModel.questionID==question_id).order_by(AnswerModel.ranking.desc())
 
     @staticmethod
     def updateAnswer(answerID, answerText):

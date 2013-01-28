@@ -3,6 +3,7 @@ from models.question import Question
 from models.answer import AnswerModel
 from flask import g, request, redirect
 from utilities import render_template
+from dbconnection import session
 import datetime
 import time
 import json
@@ -146,8 +147,7 @@ class Answer():
         return render_template('answerfilter.html', answers=answer.AnswerModel.get_filtered(**args))
 
     def render_results(self):
-        args = {"questionID": request.values["questionid"]}
-        return render_template('rankresults.html', answers=answer.AnswerModel.get_filtered(**args))
+        return render_template('rankresults.html', answers=answer.AnswerModel.get_answers_ordered_by_rank(request.values["questionid"]))
         
     def render_all(self):
         # Render all

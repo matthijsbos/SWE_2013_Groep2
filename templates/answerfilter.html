@@ -12,10 +12,11 @@
         <tr>
             <th>id</th>
             <th>questionID</th>
-            <th>userID</th>
-            <th>text</th>
+            <th>student</th>
+            <th>answer</th>
             <th>created on</th>
             <th>modified on</th>
+            <th>rankscore</th>
         </tr>
     </thead>
     {% for answer in answers %}
@@ -26,6 +27,7 @@
         <td>{{ answer.text }}</td>
         <td>{{ answer.created }}</td>
         <td>{{ answer.modified }}</td>
+        <td>{{ answer.ranking }}</td>
     </tr>
     {% endfor %}
 </table>
