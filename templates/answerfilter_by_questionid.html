@@ -1,5 +1,6 @@
 {% extends "_base.html" %}
 {% block content %}
+{% set i = 0 %}
 <form method="POST" class="form-inline" id="answerfilter-form">
     <b>Filter by:</b><br>
     <label>ID</label> <input type="text" name="id"/>
@@ -10,7 +11,7 @@
 <table class="table table-hover table-bordered table-striped">
     <thead>
         <tr>
-            <th>id</th>
+            <th>rank</th>
             <th>questionID</th>
             <th>userID</th>
             <th>text</th>
@@ -19,8 +20,9 @@
         </tr>
     </thead>
     {% for answer in answers %}
+    {% set i = i + 1 %}
     <tr>
-        <td style="border:1px solid black;">{{ answer.id }}</td>
+        <td style="border:1px solid black;">{{ i }}</td>
         <td style="border:1px solid black;">{{ answer.questionID }}</td>
         <td style="border:1px solid black;">{{ answer.username }}</td>
         <td style="border:1px solid black;">{{ answer.text }}</td>

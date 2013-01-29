@@ -3,7 +3,6 @@ from sqlalchemy import String,Column,Float
 from basemodel import BaseEntity
 from question import Question
 
-
 class UserModel(Base):
     __tablename__ = 'user'
     __table_args__ = {'sqlite_autoincrement': False}
@@ -22,6 +21,10 @@ class UserModel(Base):
             return session.query(cls).filter(cls.userid == uid).one()
         except:
             return None
+
+    @staticmethod
+    def get_by_username(uid):
+        return session.query(UserModel).filter(UserModel.username == uid)
 
     @staticmethod
     def save(uid,uname):

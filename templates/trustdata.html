@@ -1,0 +1,34 @@
+{% extends "_base.html" %}
+{% block content %}
+<p>
+    The trust tracker is a useful tool in measuring the participation of students over time. Trust is gained when students answer questions, and have their questions ranked positively by
+    other students. Trust is lost when not participating in questions or ranking, or when answers are ranked negatively by other students.
+</p>
+
+<p>TODO - ZOEKFUNCTIE NOG NIET FUNCTIONEEL - !!!</p>
+<form method="POST" class="form-inline" id="answerfilter-form">
+    <b>Search student by ID: </b> 
+    <input type="text" name="id"/>
+    <input type="submit" value="Search" class="btn btn-primary"/>
+</form>
+
+<table class="table table-hover table-bordered table-striped">
+    <thead>
+        <tr>
+            <th>student</th>
+            <th>time</th>
+            <th>trust</th>
+            <th>participation</th>
+        </tr>
+    </thead>
+    {% for element in data %}
+    <tr>
+        <td>{{ element.userid }}</td>
+        <td>{{ element.created }}</td>
+        <td>{{ element.trust }}</td>
+        <td>{{ (element.answered / element.asked * 100)|round}} %</td>
+    </tr>
+    {% endfor %}
+</table>
+
+{% endblock %}

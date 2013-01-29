@@ -1,0 +1,39 @@
+{% extends "_base.html" %}
+{% block content %}
+{% set i = 0 %}
+<p>
+    The trust tracker is a useful tool in measuring the participation of students over time. Trust is gained when students answer questions, and have their questions ranked positively by
+    other students. Trust is lost when not participating in questions or ranking, or when answers are ranked negatively by other students.
+</p>
+
+<p>
+    This page contains the current trust value for students. You can search a specific student (by name) to see that student's history.
+</p>
+
+<form method="POST" class="form-inline" id="answerfilter-form">
+    <b>Search student by name: </b> 
+    <input type="text" name="id"/>
+    <input type="submit" value="Search" class="btn btn-primary"/>
+</form>
+
+<table class="table table-hover table-bordered table-striped">
+    <thead>
+        <tr>
+            <th>#</th>
+            <th>student</th>
+            <th>trust</th>
+            <th>edit</th>
+        </tr>
+    </thead>
+    {% for element in data %}
+    {% set i = i + 1 %}
+    <tr>
+        <td>{{ i }}</td>
+        <td><a href="/trustdata?uid={{ element.userid }}" class="blue">{{ element.username }}</a></td>
+        <td>{{ element.trust }}</td>
+        <td>edit trust</td>
+    </tr>
+    {% endfor %}
+</table>
+
+{% endblock %}
