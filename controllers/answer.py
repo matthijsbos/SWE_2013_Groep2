@@ -138,9 +138,13 @@ class Answer():
 
     def render_filtered(self,**kwargs):
         hasqid = ('questionID'in kwargs)
+        course = g.lti.get_course_id()
+
         return render_template('answerfilter.html',
                 hasQuestionID=hasqid,
-                questionID = (0 if not hasqid else kwargs['questionID']))
+                questionID = (0 if not hasqid else kwargs['questionID']),
+                users=user.UserModel.get_all(),
+                questions = [] if hasqid else Question.by_course_id(course))
 
     def render_filtered_tbl(self,limit,offset):
         (answers, curpage, maxpages, startpage, pagecount) = self.get_filtered(limit=limit,
