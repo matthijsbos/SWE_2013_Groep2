@@ -1,14 +1,27 @@
-Draaien van de applicatie
-=========================
+Draaien van de applicatie (Noobproof guide)
+===========================================
 
-We hebben een werkende versie klaargezet met wat demo-code er in.
+Hierbij hebben een werkende versie klaargezet met wat demo-code er in.
 
-Deze werkt als volgt:
+De installatie voor het draaien van een lokale instance van de software die via Sakai aangeroepen kan worden gaat als volgt:
 
-    python flaskapplication.py
-    roep de tool aan via de sakai omgeving (localhost:5000)
+    installeer python 2.7 (http://www.python.org/getit/)
+    installeer python setuptools voor python 2.7 (http://pypi.python.org/pypi/setuptools#files)
+    voeg de subfolder "Scripts" van de python installatiefolder toe aan de omgevingsvariabele PATH (i.e.: "C:\Python27\Scripts")
+    als het goed is kan er nu via de commandline easy_install wordne aangeroepen om de benodigde packages te installeren
+    installeer de packages via de commandline met de volgende commando's:
+        easy_install sqlalchemy
+        easy_install flask
+        easy_install oauth
+        easy_install pyyaml
+    run de file flaskapplication.py met python (commando: python flaskapplication.py)
+    roep de tool aan via de sakai omgeving over poort 5000 (URL: localhost:5000)
 
-Google App engine is weg, nog maar een server nu.
+Wij hebben een compatibele Sakai server staan op www.sakai.chozo.nl waarmee getest kan worden.
+Inloggen kan hier met de acccounts: inst1, inst2, inst3, inst4, stud1, stud2, stud3, stud4.
+Kies bovenin de subsite "Hurdygurdy" en ga vervolgens naar de pagina 'LTI' te vinden in de kantlijn
+Als instructor kan hier een vraag gesteld worden en als student kunnen er vragen beantwoord worden
+en geranked worden. Vervolgens kan de instructor dan zien welke vragen het hoogste gerate zijn
 
 SWE_2013_Groep2
 ===============
