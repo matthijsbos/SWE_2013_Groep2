@@ -1,7 +1,6 @@
 from dbconnection import engine, session, Base, exc
 from sqlalchemy import String,Column,Float
 
-
 class UserModel(Base):
     __tablename__ = 'user'
     __table_args__ = {'sqlite_autoincrement': False}
@@ -40,5 +39,9 @@ class UserModel(Base):
     def setTrust(uID, trust):
         user = session.query(UserModel).filter_by(userid=uID).one()
         user.trust = trust
+        
+    @staticmethod
+    def render_page():
+        return
 
 Base.metadata.create_all(engine)

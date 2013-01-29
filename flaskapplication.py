@@ -8,6 +8,7 @@ import models.answer
 import models.answerchoice
 import models.tag
 import models.rating
+import models.user_history
 from dbconnection import Base, engine
 from flask import Flask, request, render_template, g
 from lti import LTI, LTIException
@@ -22,6 +23,7 @@ from controllers.answer import Answer
 from controllers.question import QuestionController as Question
 from controllers.tags import Modifytags, AssignTags
 from controllers.review import ReviewAnswer
+from controllers.user_history import UserHistory
 
 app = Flask(__name__)
 app.debug = True
@@ -293,6 +295,12 @@ def get_pagination():
 
     return render_template('pagination.html',currentpage=curpage,
             startpage=startpage,pagecount=pagecount,maxpages=maxpages)
+            
+@app.route("/trustdata", methods=['GET', 'POST'])
+def trust_data():
+    ctrler = UserHistory(request)
+    return ctrler.render_by_userid(1)
+    #return ctrler.render_by_userid(request.values["uid"])
 
 @app.route("/logout")
 def logout():
