@@ -68,7 +68,7 @@ class Answer():
         except:
             return abort(404)
 
-        if AnswerModel.question_valid(questionid):
+        if AnswerModel.question_valid(questionid) and text != "":
             AnswerModel.save(questionid, userid, text)
 
         return redirect('/index_student')
