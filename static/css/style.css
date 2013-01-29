@@ -141,6 +141,11 @@ textarea:focus{
     margin:0;
     margin-left: 10px;
 }
+.ranking{
+    display: inline;
+    margin:0;
+    margin-left: 10px;
+}
 #questions .submitted button.close-submitted{
     top: -1px;
 right: -134px;
