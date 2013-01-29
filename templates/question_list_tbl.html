@@ -16,15 +16,15 @@
         <thead>
             <tr>
                 <!--<th>id</th>-->
-                <th>Question</th>
-                <th>Time</th>
-                <th>State</th>
-                <th>Comments</th>
-                <th>Tags</th>
-                <th>Rating</th>
-                <th>Ranking</th>
-                <th>Edit</th>
-                <th>Delete</th>
+                <th class="question-field">Question</th>
+                <th class="time-field">Time</th>
+                <th class="state-field">State</th>
+                <th class="comment-field">Comments</th>
+                <th class="tags-field">Tags</th>
+                <th class="rating-field">Rating</th>
+                <th class="rankscore-field">Ranking</th>
+                <th class="edit-field">Edit</th>
+                <th class="delete-field">Delete</th>
             </tr>
         </thead>
         {% for question in questions %}
@@ -71,5 +71,6 @@
         {% endfor %}
     </table>
 <input type="submit"id="addQ" value="Add Question" class="btn-primary btn" onclick=add_question() ></button>
+<input type="submit"id="advanced" value="Advanced" class="btn-primary btn" onclick=advanced() ></button>
 <input style="display:none" type="submit"id="cancelQ" value="Cancel" class="btn" onclick=cancel_question() ></button>
 <div id="paginationbottom"/>
