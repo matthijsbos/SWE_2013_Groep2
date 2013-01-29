@@ -15,11 +15,19 @@ def test():
   print clusterer.run_clustering()
   print clusterer.remove_cluster(0)
 
+# error class for cluster module
+class ClusterError(Exception):
+  def __init__(self,value):
+    self.msg = msg
+  
+  def __str__(self):
+    return repr(self.msg)
+
 # initialize an instance of this class to do clustering
 class Clusterer():
   def __init__(self):
     self.answers = []
-    self.data = DataClusterer()
+    self.data = _DataClusterer()
     self.best_error = sys.maxsize
     self.nr_tries = 10
     self.best_clustering = self.nr_tries + 1
@@ -33,14 +41,20 @@ class Clusterer():
   
   # sets a number of clusters to add answers to
   def set_number_of_clusters(self,nr):
+    if nr < 1:
+      raise ClusterError('set_number_of_clusters argument must be at least 1')
     self.n_clusters = nr
     
   # change number of tries to search for best cluster
   def change_nr_tries(self,new_value):
+    if new_value < 1:
+      raise ClusterError('change_nr_tries argument nmust be at least 1')
     self.nr_tries = new_value
   
   # runs clustering over the data, run this function only once for a clusterer instance
   def run_clustering(self):
+    if len(self.answers) < 1:
+      raise ClusterError('you need to add at least 1 answer to Clusterer before calling run_clustering')
     lp = lang_parser.LanguageParser('en',self.answers)
     lemma_answers = lp.get_keywords()
     
@@ -52,7 +66,7 @@ class Clusterer():
     
     # determine best cluster found in n tries
     for n in range(self.nr_tries):
-      self.clustering_list.append(N_random())
+      self.clustering_list.append(_N_random())
       if self.n_clusters != 0:
         self.clustering_list[n].set_n(self.n_clusters)
       for data in self.data.answers:
@@ -75,6 +89,8 @@ class Clusterer():
   
   # remove cluster with index 'index' and rerun clustering
   def remove_cluster(self,index):
+    if len(self.best_n.selected_indices) < 2:
+      raise ClusterError('removing this cluster would cause the clusterer to work with 0 clusters')
     # remove and reset some data
     self.best_n.selected_indices.pop(index)
     self.best_n.selected_data.pop(index)
@@ -99,14 +115,14 @@ class Clusterer():
     return text_clusters
 
 # contains an answer and its vector representation
-class Data():  
+class _Data():  
   def __init__(self):
     self.answer = ""
     self.string = ""
     self.vector = []
 
 # takes all answers and builds a matrix which shows which words are in which answer
-class DataClusterer():
+class _DataClusterer():
   def __init__(self):
     self.answers = []
     self.tokens = []
@@ -114,14 +130,10 @@ class DataClusterer():
   
   # add answer to list
   def add_answer(self,answer,string):
-    data = Data()
+    data = _Data()
     data.answer = answer
     data.string = string
     self.answers.append(data)
-  
-  # tokenizer placeholder
-  def tokenize_string(self,str):
-    return str.split()
   
   # tokenize all answers, generate list of tokens and create term frequency matrix
   def tokenize_all(self):
@@ -147,7 +159,7 @@ class DataClusterer():
           self.answers[i].vector.append(0)
 
 # select some clusters n times and cluster all answers to those clusters
-class N_random():  
+class _N_random():  
   def __init__(self):
     self.n = 0
     self.data = []
