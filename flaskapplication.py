@@ -18,7 +18,9 @@ from controllers.index import Index
 from controllers.answer import Answer
 from controllers.question import QuestionController as Question
 from controllers.tags import Modifytags, AssignTags
+from controllers.ratings import AssignRatings
 from controllers.review import ReviewAnswer
+from controllers.stats import Stats
 
 import models.question
 import models.answer
@@ -64,6 +66,12 @@ def home():
 def launch():
     ctrler = Index(debug=True)
     return ctrler.render()
+
+@app.route("/stats", methods=['GET', 'POST'])
+def show_stats():
+  ctrler = Stats()
+  return ctrler.render()
+
 
 
 @app.route("/edit_question", methods=['GET', 'POST'])
