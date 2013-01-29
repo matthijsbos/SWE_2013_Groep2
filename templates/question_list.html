@@ -152,14 +152,14 @@
         $('#cancelQ').show()
         $('#qList tr:last').after(
         '<tr>\
-                        <td class="question-field"><input id="qtext" type="text" class="input-block-level" name="question" placeholder="your question"></td> \
-                        <td class="time-field"><input id="qtime" type="number" name="time" size="3" maxlength="3" placeholder="sec"></td> \
-                        <td><input id="qact" type="checkbox" name="active"></td> \
-                        <td><input id="qcomm" type="checkbox" name="comment" checked></td> \
-                        <td><input id="qtag" type="checkbox" name="tags" checked></td> \
-                        <td><input id="qrat" type="checkbox" name="rating" checked></td> \
-                        <td colspan=2><input id="save_question" type="submit" onclick=save_question() class="btn btn-block btn-primary" value="Add Question"></td>\
-                    </tr>');
+            <td class="question-field"><input id="qtext" type="text" class="input-block-level" name="question" placeholder="your question"></td> \
+            <td class="time-field"><input id="qtime" type="number" name="time" size="3" maxlength="3" placeholder="sec"></td> \
+            td><label class="checkbox"><input id="qact" type="checkbox" name="active">Answerable</label></td> \
+            <td><input id="qcomm" type="checkbox" name="comment" checked></td> \
+            <td><input id="qtag" type="checkbox" name="tags" checked></td> \
+            <td><input id="qrat" type="checkbox" name="rating" checked></td> \
+            <td colspan=2><input id="save_question" type="submit" onclick=save_question() class="btn btn-block btn-primary" value="Add Question"></td>\
+        </tr>');
         $('#qtext').focus();
     }
     
