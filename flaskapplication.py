@@ -18,7 +18,6 @@ from controllers.index import Index
 from controllers.answer import Answer
 from controllers.question import QuestionController as Question
 from controllers.tags import Modifytags, AssignTags
-from controllers.ratings import AssignRatings
 from controllers.review import ReviewAnswer
 from controllers.stats import Stats
 
@@ -235,13 +234,13 @@ def assign_tags():
 
 @app.route("/assigntags_done", methods=['POST'])
 def handle_assign_tags():
-    ctrler = AssignTags.assign(request)
+    AssignTags.assign(request)
     return "<a href='/'>back to main</a>"
 
 
 @app.route("/removetags_done", methods=['POST'])
 def handle_remove_tags():
-    ctrler = AssignTags.remove(request)
+    AssignTags.remove(request)
     return Index(request).render()
 
 
@@ -255,7 +254,7 @@ def handle_review_answer():
     """ To review a answer, return reviewanswer.review(x) should be called from
     the controller deciding wich answer to review, this url handles storing the
     reviews in the database (given a user has permission to do so) """
-    ctrler = ReviewAnswer(request)
+    ReviewAnswer(request)
     return ReviewAnswer.review()
 
 
