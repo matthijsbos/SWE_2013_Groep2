@@ -9,7 +9,6 @@ br { clear: both; }
 #qList input, #addQuestion-table input{
     margin-bottom: 0px;
 }
-
 .question-field{
     width: 400px;
 }
@@ -55,10 +54,10 @@ br { clear: both; }
 	width: 250px;
 }
 #qList .time-field {
-	width: 30px;
+	width: 40px;
 }
-#qList .available-field {
-	width: 30px;
+#qList .state-field label{
+	width: 80px;
 }
 #qList .comment-field {
 	width: 30px;
