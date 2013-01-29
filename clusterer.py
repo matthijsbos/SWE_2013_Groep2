@@ -13,6 +13,7 @@ def test():
     clusterer.add_answer(a)
   #clusterer.change_nr_tries(3)
   print clusterer.run_clustering()
+  print clusterer.remove_cluster(0)
 
 # initialize an instance of this class to do clustering
 class Clusterer():
@@ -38,7 +39,7 @@ class Clusterer():
   def change_nr_tries(self,new_value):
     self.nr_tries = new_value
   
-  # runs clustering over the data
+  # runs clustering over the data, run this function only once for a clusterer instance
   def run_clustering(self):
     lp = lang_parser.LanguageParser('en',self.answers)
     lemma_answers = lp.get_keywords()
@@ -116,7 +117,6 @@ class DataClusterer():
     data = Data()
     data.answer = answer
     data.string = string
-    # lemmatization goes here
     self.answers.append(data)
   
   # tokenizer placeholder
@@ -126,8 +126,6 @@ class DataClusterer():
   # tokenize all answers, generate list of tokens and create term frequency matrix
   def tokenize_all(self):
     for str in self.answers:
-      #toks = self.tokenize_string(str.answer)
-      print str.answer
       for token in str.answer:
         if token not in self.tokens:
           self.tokens.append(token)
@@ -137,7 +135,6 @@ class DataClusterer():
   # counts the frequency of each term in each answer and adds them to the term frequency matrix
   def count_frequency(self):
     for i in range(len(self.answers)):
-      #toks = self.tokenize_string(self.answers[i].answer)
       toks = self.answers[i].answer
       for j in range(len(self.tokens)):
         match=False
@@ -171,7 +168,6 @@ class N_random():
     
   # calculate distance between two vectors
   def distance(self,vector1,vector2):
-    print vector1,vector2
     diff = np.abs(np.array(vector1) - np.array(vector2))
     length = np.sum(diff)
     return length
