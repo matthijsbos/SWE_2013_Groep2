@@ -20,24 +20,21 @@
         edit_field.appendTo(elem).focus();
     }
 
-  function edit_question(id,text){
+    function edit_question(id,text){
     $.getJSON("/edit_question",{id:id,text:text},
     function(data){
-      if(data.check){
-        if(!data.available){
-          temp="False"
+        if(data.check){
+            if(!data.available)
+                temp="False"
+            else
+                temp="True"
+            $('#available_'+id).html(temp);
+            $('#question_'+id).html('<a href=\"/filteranswer/'+data.text+'\">'+data.text+'</a>');
         }
-        else{
-          temp="True"
-        }
-        $('#available_'+id).html(temp);
-        $('#question_'+id).html('<a href=\"/filteranswer/'+data.text+'\">'+data.text+'</a>');
-      }
-      else{
-        $('#error').html("Error while editing question question.");
-      }
-    });
-  }
+        else
+            $('#error').html("Error while editing question question.");
+        });
+    }
 
     function delete_question(id){
         $.getJSON("/delete_question/"+id,{},
@@ -49,23 +46,20 @@
             });
     }
 
-  function toggle_question(id){
-    $.getJSON("/toggle_question",{id:id},
-    function(data){
-      if(data.check){
-        if(!data.toggle){
-          temp="False"
-        }
-        else{
-          temp="True"
-        }
-        $('#available_'+id).html(temp);
-      }
-      else{
-        $('#error').html("Error while togging question question.");
-      }
-    });
-  }
+    function toggle_question(id){
+        $.getJSON("/toggle_question",{id:id},
+        function(data){
+            if(data.check){
+                if(!data.toggle)
+                    temp="False"
+                else
+                    temp="True"
+                $('#available_'+id).html(temp);
+            }
+            else
+                $('#error').html("Error while togging question question.");
+        });
+    }
 
     function add_question(){
         $('#addQ').hide()
