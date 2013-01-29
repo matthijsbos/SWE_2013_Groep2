@@ -69,20 +69,12 @@ def edit_question():
                                   request.args['text'],
                                   request.args['time'])
 
-# this route is called to toggle a question's availability
 
-
-@app.route("/toggle_question", methods=['GET', 'POST'])
-def toggle_question():
-    return Question.toggle_question(request.args['id'], request.args['field'])
-
-@app.route("/questionavailability", methods=['GET', 'POST'])
-def questionavailability():
-    return Question.availability(request.args)
-
+@app.route("/togglequestion", methods=['GET', 'POST'])
+def toggle_options():
+    return Question.toggle_options(request.args)
+    
 # this route is used to ask a question to students
-
-
 @app.route("/question", methods=['GET', 'POST'])
 def ask_question():
     if g.lti.is_instructor() == False:
@@ -92,8 +84,6 @@ def ask_question():
 
 # this route is used for the feedback from inserting the question into the
 # database, it also inserts the question into the database
-
-
 @app.route("/handle_question", methods=['POST'])
 def handle_question():
     try:
