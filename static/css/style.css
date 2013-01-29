@@ -44,6 +44,10 @@ br { clear: both; }
 .welcome-message{
     width: 640px;
 }
+.state-buttons{
+    text-align: center;
+    width: 70px;
+}
 #qList {
 	width: auto;
 }	
