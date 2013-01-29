@@ -1,5 +1,7 @@
 from dbconnection import engine, session, Base, exc
 from sqlalchemy import String,Column,Float
+from basemodel import BaseEntity
+from question import Question
 
 class UserModel(Base):
     __tablename__ = 'user'
@@ -43,5 +45,18 @@ class UserModel(Base):
     @staticmethod
     def render_page():
         return
+
+    @staticmethod
+    def winningProbability(rating1, rating2) :
+        return 1.0 / (1.0 + (10.0**((rating2 - rating1) / 400.0)))
+
+    @staticmethod
+    def newTrust(winnerId, loserId) :
+        K = 100.0
+        winnerTrust = UserModel.getTrust(winnerId)
+        loserTrust = UserModel.getTrust(loserId)
+        newWinnerTrust = winnerTrust + (K * (1.0 - UserModel.winningProbability(winnerTrust, loserTrust)))
+        newLoserTrust = loserTrust + (K * (0.0 - UserModel.winningProbability(loserTrust, winnerTrust)))
+        return newWinnerTrust, newLoserTrust
 
 Base.metadata.create_all(engine)

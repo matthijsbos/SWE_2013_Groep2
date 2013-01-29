@@ -36,7 +36,7 @@ class AnswerModel(Base, BaseEntity):
 
     def __str__(self):
         return self.text
-    
+
     @staticmethod
     def savereview(questionID, userID, answerText, edit):
         session.add(AnswerModel(questionID=questionID,
@@ -46,7 +46,7 @@ class AnswerModel(Base, BaseEntity):
     @staticmethod
     def get_question_answers(question_id):
         return session.query(AnswerModel).filter(AnswerModel.questionID==question_id)
-        
+
     @staticmethod
     def get_answers_ordered_by_rank(question_id):
         return session.query(AnswerModel).filter(AnswerModel.questionID==question_id).order_by(AnswerModel.ranking.desc())
@@ -91,21 +91,21 @@ class AnswerModel(Base, BaseEntity):
         tmp = session.query(Question).\
                 outerjoin(anssub, anssub.c.questionID == Question.id).\
                 filter(Question.available == True).\
-                filter(Question.course_id == courseid)        
+                filter(Question.course_id == courseid)
 
         #print tmp
         #print [(x.modified + timedelta(seconds=x.time), datetime.now()) for x in tmp]
-        
+
         questions = []
-        
-        for x in tmp:           
+
+        for x in tmp:
             if x.time == 0:
                 questions.append(x)
             elif x.modified + timedelta(seconds=x.time) > datetime.now():
                 questions.append(x)
-         
+
         return questions
-    
+
     @staticmethod
     def get_answered_active_questions(userid, courseid):
         """
@@ -122,13 +122,13 @@ class AnswerModel(Base, BaseEntity):
                 filter(Question.available == True).\
                 filter(Question.course_id == courseid).\
                 filter(anssub.c.id != None).all()
-				
+
         print tmp
         print [(x.modified + timedelta(seconds=x.time), datetime.now()) for x in tmp]
 
         return [x for x in tmp if x.modified + timedelta(seconds=x.time) >
                 datetime.now()]
-				
+
     @staticmethod
     def question_valid(questionid):
         questionTmp = Question.by_id(questionid)
@@ -157,8 +157,12 @@ class AnswerModel(Base, BaseEntity):
         return 1.0 / (1.0 + (10.0**((rating2 - rating1) / 400.0)))
 
     @staticmethod
-    def newRating(winner, loser) :
-        K = 100.0
+    def getUserIdByAnswerId(answerId) :
+        temp = session.query(AnswerModel).filter_by(id=answerId).one()
+        return temp.userID
+
+    @staticmethod
+    def newRating(winner, loser, K) :
         winnerRanking = AnswerModel.getRanking(winner)
         loserRanking = AnswerModel.getRanking(loser)
         newWinnerRanking = winnerRanking + (K * (1.0 - AnswerModel.winningProbability(winnerRanking, loserRanking)))
