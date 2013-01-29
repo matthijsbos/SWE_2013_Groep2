@@ -74,6 +74,7 @@ br { clear: both; }
 .tags div{
     width:80px;
     display:inline-block;
+    word-wrap:break-word;
 }
 .tags a:hover{ 
 	text-decoration: none; 
