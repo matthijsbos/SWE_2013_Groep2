@@ -59,7 +59,7 @@ class AnswerModel(Base, BaseEntity):
         #return session.query(AnswerModel).filter(AnswerModel.questionID==question_id).order_by(AnswerModel.ranking.desc())
 
     @staticmethod
-    def updateAnswer(answerID, answerText):
+    def update_answer(answerID, answerText):
         session.query(AnswerModel).filter_by(id=answerID).update(
             {"text": answerText}, synchronize_session=False)
 
@@ -70,12 +70,12 @@ class AnswerModel(Base, BaseEntity):
         session.commit()
 
     @staticmethod
-    def getAnswerID(uID, qID):
+    def get_answer_id(uID, qID):
         answer = session.query(AnswerModel).filter_by(questionID=qID, userID=uID, edit=0).one()
         return answer.id
 
     @staticmethod
-    def checkAnswerExist(uID, qID):
+    def check_answer_exists(uID, qID):
         if engine.dialect.has_table(engine.connect(), "answer"):
             try:
                 answer = session.query(AnswerModel).filter_by(questionID=qID, userID=uID, edit=0).one()
@@ -119,33 +119,27 @@ class AnswerModel(Base, BaseEntity):
         return [questionTmp.modified + timedelta(seconds=questionTmp.time) >
                 datetime.now()]
 
-
     @staticmethod
-    def getTimeStamp(answerID):
-        answer = session.query(AnswerModel).filter_by(id=answerID).one()
-        return answer.created
-
-    @staticmethod
-    def getRanking(answerID):
+    def get_ranking(answerID):
         answer = session.query(AnswerModel).filter_by(id=answerID).one()
         return answer.ranking
 
     @staticmethod
-    def setRanking(answerID, ranking):
+    def set_ranking(answerID, ranking):
         answer = session.query(AnswerModel).filter_by(id=answerID).one()
         answer.ranking = ranking
 
     @staticmethod
-    def winningProbability(rating1, rating2):
+    def winning_probability(rating1, rating2):
         return 1.0 / (1.0 + (10.0**((rating2 - rating1) / 400.0)))
 
     @staticmethod
-    def newRating(winner, loser):
+    def new_rating(winner, loser):
         K = 100.0
-        winnerRanking = AnswerModel.getRanking(winner)
-        loserRanking = AnswerModel.getRanking(loser)
-        newWinnerRanking = winnerRanking + (K * (1.0 - AnswerModel.winningProbability(winnerRanking, loserRanking)))
-        newLoserRanking = loserRanking + (K * (0.0 - AnswerModel.winningProbability(loserRanking, winnerRanking)))
+        winnerRanking = AnswerModel.get_ranking(winner)
+        loserRanking = AnswerModel.get_ranking(loser)
+        newWinnerRanking = winnerRanking + (K * (1.0 - AnswerModel.winning_probability(winnerRanking, loserRanking)))
+        newLoserRanking = loserRanking + (K * (0.0 - AnswerModel.winning_probability(loserRanking, winnerRanking)))
         return newWinnerRanking, newLoserRanking
 
     @staticmethod

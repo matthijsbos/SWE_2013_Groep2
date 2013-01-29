@@ -31,14 +31,11 @@ class Index():
         array = []        
         
         for question in questions:        
-            time_remaining = datetime.now() - (question.activate_time +
-                    timedelta(seconds=question.time))
-            time_remaining = time_remaining.seconds + time_remaining.days * 86400
-            time_remaining = -time_remaining      
+            time_remaining = question.get_time_left()
             
             answer_text = ''
-            if AnswerModel.checkAnswerExist(g.lti.get_user_id(), question.id) == 1:
-                answer_text = AnswerModel.by_id(AnswerModel.getAnswerID(g.lti.get_user_id(), question.id)).text
+            if AnswerModel.check_answer_exists(g.lti.get_user_id(), question.id) == 1:
+                answer_text = AnswerModel.by_id(AnswerModel.get_answer_id(g.lti.get_user_id(), question.id)).text
             
             object = {'question_id': question.id,
                       'question_text': question.question,
