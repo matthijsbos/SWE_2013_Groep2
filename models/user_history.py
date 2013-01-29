@@ -20,7 +20,7 @@ class UserHistoryModel(Base, BaseEntity):
         
     @staticmethod
     def get_by_user_id(uid):
-        return session.query(UserHistoryModel).filter(UserHistoryModel.userid == uid).order_by(UserHistoryModel.created.desc())
+        return session.query(UserHistoryModel).filter(UserHistoryModel.userid == uid).order_by(UserHistoryModel.created.asc())
         
     @staticmethod
     def get_user_latest_data(uid):
