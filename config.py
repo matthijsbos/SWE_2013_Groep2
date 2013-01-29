@@ -18,4 +18,3 @@ consumers = {
     'sakai': 'secret',
     'blackboard': 'secret'
 }
-
