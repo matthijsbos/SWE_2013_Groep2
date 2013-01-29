@@ -4,6 +4,7 @@
 <script language="javascript" type="text/javascript">
     var stdlimit = 10;
     var currPage = 1;
+    var editing = 0;
 
     $(document).ready(function() {
         refresh_table(0,stdlimit);
@@ -28,7 +29,7 @@
         load_page(currPage);
     }
 
-    function edit_field(id){
+    function edit_field(id){        
         var elem = $('#question_' + id + ' a');
         var time_elem = $('#time_'+id);
         if (elem.hasClass('activated')){
@@ -44,8 +45,10 @@
         var time_field = $('<input type="number" size="3" maxlength="3" placeholder="sec">').val(time);
 
         var editelem = $('#sedit_'+id);
-
+        editing++;
+        
         editelem.click(function(){
+            editing--;
             $('#edit_'+id).show();
             $('#sedit_'+id).hide();
             
@@ -81,7 +84,7 @@
     function edit_question(id,text,time){
         $.getJSON("/edit_question",{id:id,text:text,time:time},
         function(data){
-            if(data.check){
+            if(data.check){                
                 $('#question_'+id).html('<a href=\"/filteranswers/'+data.id+'\">'+data.text+'</a>');
                 $('#time_'+id).html(data.time)
             }
@@ -146,6 +149,7 @@
 
     function add_question(){
         $('#addQ').hide()
+        $('#cancelQ').show()
         $('#qList tr:last').after(
         '<tr>\
                         <td class="question-field"><input id="qtext" type="text" class="input-block-level" name="question" placeholder="your question"></td> \
@@ -157,6 +161,12 @@
                         <td colspan=2><input id="save_question" type="submit" onclick=save_question() class="btn btn-block btn-primary" value="Add Question"></td>\
                     </tr>');
         $('#qtext').focus();
+    }
+    
+    function cancel_question(){
+        $('#cancelQ').hide()
+        $('#addQ').show()        
+        $('#qList tr:last').remove()        
     }
 
     function save_question(){
@@ -173,7 +183,8 @@
                 function(data){
                     reload()
 					$('#save_question').attr('disabled', '')
-					$('#addQ').show()
+                    $('#cancelQ').hide()
+					$('#addQ').show()                    
                 });
 				
         return false;
