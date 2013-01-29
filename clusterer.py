@@ -24,6 +24,7 @@ class Clusterer():
     self.best_clustering = self.nr_tries + 1
     self.clustering_list = []
     self.n_clusters = 0
+    self.best_n = None
   
   # add answer to cluster module
   def add_answer(self,answer):
@@ -61,7 +62,33 @@ class Clusterer():
         self.best_error=self.clustering_list[n].error
     
     # change best cluster into list of string lists for easier reading
-    best_clusters = self.clustering_list[self.best_clustering].clusters
+    self.best_n = self.clustering_list[self.best_clustering]
+    best_clusters = self.best_n.clusters
+    text_clusters = []
+    for c in range(len(best_clusters)):
+      text_clusters.append([])
+      for v in range(len(best_clusters[c])):
+        data = best_clusters[c][v]
+        text_clusters[c].append(data.string)
+    return text_clusters
+  
+  # remove cluster with index 'index' and rerun clustering
+  def remove_cluster(self,index):
+    # remove and reset some data
+    self.best_n.selected_indices.pop(index)
+    self.best_n.selected_data.pop(index)
+    self.best_n.clusters = []
+    self.best_n.error = 0
+    for a in range(len(self.best_n.selected_indices)):
+      self.best_n.clusters.append([])
+    
+    # rerun clustering
+    self.best_n.assign_cluster()
+    for c in self.best_n.clusters:
+      self.best_n.calc_average_error(c)
+    
+    # form human readable output
+    best_clusters = self.best_n.clusters
     text_clusters = []
     for c in range(len(best_clusters)):
       text_clusters.append([])
@@ -144,6 +171,7 @@ class N_random():
     
   # calculate distance between two vectors
   def distance(self,vector1,vector2):
+    print vector1,vector2
     diff = np.abs(np.array(vector1) - np.array(vector2))
     length = np.sum(diff)
     return length
