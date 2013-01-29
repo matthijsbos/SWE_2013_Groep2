@@ -1,31 +1,34 @@
-# Descrp : Contains routing and calling of the constrollers
+# Descrp : Contains routing and calling of the controllers.
 # Changes:
 # Comment: MultiDict with isinstructor,consumerkey,coursekey and coursename in
 #          the request.form field.
 
-import models.question
-import models.answer
-import models.answerchoice
-import models.tag
-import models.rating
-from dbconnection import Base, engine
-from flask import Flask, request, render_template, g
-from lti import LTI, LTIException
-from controllers import index, answer, answerchoice
-import yaml
 import json
+
+import yaml
 from flask import Flask, Response, request, g
-from utilities import render_template
+
+import config
+from dbconnection import Base, engine
 from lti import LTI, LTIException
+from utilities import render_template
+
+from controllers import index, answer, answerchoice
 from controllers.index import Index
 from controllers.answer import Answer
 from controllers.question import QuestionController as Question
 from controllers.tags import Modifytags, AssignTags
 from controllers.review import ReviewAnswer
 
+import models.question
+import models.answer
+import models.answerchoice
+import models.tag
+import models.rating
+
 app = Flask(__name__)
-app.debug = True
-app.secret_key = "Hurdygurdy"  # Used for Flask sessions, TODO: config?
+app.debug = config.debug
+app.secret_key = config.secret_key  # Used for Flask sessions.
 
 
 @app.before_request
@@ -41,7 +44,8 @@ def init_lti():
         params = request.args.to_dict()
 
     try:
-        g.lti = LTI(request.url, params, dict(request.headers))
+        g.lti = LTI(request.url, params, dict(request.headers),
+                    config.consumers)
     except LTIException as error:
         ret = "Error getting LTI data. Did you run this tool via a " + \
             "consumer such as Sakai?"
@@ -81,8 +85,6 @@ def questionavailability():
     return Question.availability(request.args)
 
 # this route is used to ask a question to students
-
-
 @app.route("/question", methods=['GET', 'POST'])
 def ask_question():
     if g.lti.is_instructor() == False:
@@ -92,29 +94,12 @@ def ask_question():
 
 # this route is used for the feedback from inserting the question into the
 # database, it also inserts the question into the database
-
-
 @app.route("/handle_question", methods=['POST'])
 def handle_question():
-    try:
-        isActive = request.form['active'] in ['true','True']
-    except:
-        isActive = False
-
-    try:
-        comment = request.form['comment'] in ['true','True'] 
-    except:
-        comment = False
-
-    try:
-        tags = request.form['tags'] in ['true','True']
-    except:
-        tags = False
-
-    try:
-        rating = request.form['rating'] in ['true','True']
-    except:
-        rating = False
+    isActive = request.form.get('active', "false") in ['true','True']
+    comment = request.form.get('comment', "false") in ['true','True']
+    tags = request.form.get('tags', "false") in ['true','True']
+    rating = request.form.get('rating', "false") in ['true','True']
 
     Question.create_question(request.form['question'],
                                     g.lti.get_user_id(),
@@ -127,7 +112,7 @@ def handle_question():
     return json.dumps({'done':True})
 
 
-@app.route("/question_list", methods=['GET', 'POST'])                                            
+@app.route("/question_list", methods=['GET', 'POST'])
 def list_questions():
     return render_template('question_list.html')
 
@@ -305,8 +290,11 @@ def get_pagination():
     pagecount =  int(request.args['pagecount'])
     maxpages = int(request.args['maxpages'])
 
-    return render_template('pagination.html',currentpage=curpage,
-            startpage=startpage,pagecount=pagecount,maxpages=maxpages)
+    return render_template('pagination.html',
+                           currentpage=curpage,
+                           startpage=startpage,
+                           pagecount=pagecount,
+                           maxpages=maxpages)
 
 @app.route("/logout")
 def logout():
@@ -315,4 +303,4 @@ def logout():
 
 if __name__ == '__main__':
     Base.metadata.create_all(engine)
-    app.run(host='0.0.0.0')
+    app.run(host=config.host)
