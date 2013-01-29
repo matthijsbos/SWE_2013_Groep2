@@ -18,7 +18,7 @@
                 <!--<th>id</th>-->
                 <th>Question</th>
                 <th>Time</th>
-                <th>Active</th>
+                <th>State</th>
                 <th>Comments</th>
                 <th>Tags</th>
                 <th>Rating</th>
@@ -33,10 +33,19 @@
                 <a href="/filteranswers/{{question.id}}" class="blue">{{question.question}}</a>
             </td>
             <td class="time-field" id="time_{{question.id}}">{{question.time}}</td>
-            <td class="available-field" id="available_{{question.id}}"><input type="checkbox" name="answerable{{question.id}}" onclick="toggle_question({{question.id}}, 'answerable')" {% if question.answerable %}checked{% endif %}></td>
-            <td class="comment-field" id="comments_{{question.id}}"><input type="checkbox" name="comments{{question.id}}" onclick="toggle_question({{question.id}}, 'comments')" {% if question.comment %}checked{% endif %}></td>
-            <td class="tags-field" id="tags_{{question.id}}"><input type="checkbox" name="tags{{question.id}}" onclick="toggle_question({{question.id}}, 'tags')" {% if question.tags %}checked{% endif %}></td>
-            <td class="rating-field" id="rating_{{question.id}}"><input type="checkbox" name="rating{{question.id}}" onclick="toggle_question({{question.id}}, 'rating')" {% if question.rating %}checked{% endif %}></td>
+            <td class="state-field" id="available_{{question.id}}">
+                <div class="btn-group">
+                    <a id ="state{{question.id}}" class="btn btn-primary" href="#"><i class="icon-white"></i>{{question.state}}</a>
+                    <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown" href="#"><span class="caret"></span></a>
+                    <ul class="dropdown-menu">
+                        <li {% if question.answerable %}style="display:none"{% endif %} id="q{{question.id}}_drop1"><a href="#" onclick="toggle_state({{question.id}}, 'Answerable')">Answerable</a></li>
+                        <li {% if question.reviewable %}style="display:none"{% endif %} id="q{{question.id}}_drop2"><a href="#" onclick="toggle_state({{question.id}}, 'Reviewable')">Reviewable</a></li>
+                        <li {% if question.archived %}style="display:none"{% endif %} id="q{{question.id}}_drop3"><a href="#" onclick="toggle_state({{question.id}}, 'Archived')">Archived</a></li>
+                    </ul>              
+            </td>
+            <td class="comment-field" id="comments_{{question.id}}"><input type="checkbox" name="comments{{question.id}}" onclick="toggle_review_options({{question.id}}, 'comments')" {% if question.comment %}checked{% endif %}></td>
+            <td class="tags-field" id="tags_{{question.id}}"><input type="checkbox" name="tags{{question.id}}" onclick="toggle_review_options({{question.id}}, 'tags')" {% if question.tags %}checked{% endif %}></td>
+            <td class="rating-field" id="rating_{{question.id}}"><input type="checkbox" name="rating{{question.id}}" onclick="toggle_review_options({{question.id}}, 'rating')" {% if question.rating %}checked{% endif %}></td>
 			<td class="rankscore-field" id="rr_{{question.id}}">
                 <a href="/rankresults?questionid={{question.id}}" class="blue">view</a>
 			</td>
@@ -62,5 +71,5 @@
         {% endfor %}
     </table>
 <input type="submit"id="addQ" value="Add Question" class="btn-primary btn" onclick=add_question() ></button>
-<input style="display:none" type="submit"id="cancelQ" value="Cancel" class="btn-primary btn" onclick=cancel_question() ></button>
+<input style="display:none" type="submit"id="cancelQ" value="Cancel" class="btn" onclick=cancel_question() ></button>
 <div id="paginationbottom"/>
