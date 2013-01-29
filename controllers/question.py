@@ -1,45 +1,119 @@
 import json
-from flask import escape, render_template, g
-
+from flask import escape, g
+from utilities import render_template
 from dbconnection import session
 from models.question import Question
+from datetime import datetime, timedelta
+
+from controllers.scheduler import Scheduler
 
 
 class QuestionController():
+    # TODO: remove toggle_question, fix availability
     @staticmethod
-    def toggle_question(q_id):
-        '''toggles a question between available and not available'''
+    def toggle_question(q_id, type):
+        '''toggles a question between answerable and not answerable'''
         if g.lti.is_instructor():
-            available = Question.toggle_available(q_id)
-            return json.dumps({"toggle":available,"check": True})
-
+            active = QuestionController.availability({'id':q_id,'type':type})
+            return json.dumps({"toggle":active, "check": True})
         else:
-          return json.dumps({"toggle": True,"check": False})
+          return json.dumps({"toggle": True, "check": False})
 
     @staticmethod
-    def edit_question(q_id, question, activate):
+    def availability(args):
+        """
+        Handles availability via the question_list form
+        """
+        try:
+            type = args['type']
+        except KeyError:
+            return 
+            
+        question = Question.by_id(args['id'])
+        if question is None:
+            return 
+
+        if not g.lti.is_instructor() and type != 'reviewable':
+            return
+        
+        rv = None
+        if type == 'answerable':
+            rv = question.answerable = not question.answerable
+            question.activate_time = datetime.now()
+
+        elif type == 'reviewable':
+            if not question.reviewable:
+                Scheduler(args['id'])
+                question.reviewable = True
+            rv = question.reviewable
+
+
+        elif type == 'archived':
+            rv = question.archived = not question.archived
+            
+        elif type == 'comments':
+            rv = question.comment = not question.comment
+            
+        elif type == 'tags':
+            rv = question.tags = not question.tags
+            
+        elif type == 'rating':
+            rv = question.rating = not question.rating
+            
+        session.commit()
+            
+        return rv
+
+    @staticmethod
+    def edit_question(q_id, question, time):
         """Updates a question with given contents and activation status."""
         if g.lti.is_instructor():
-            if question != None:
-                escaped_question = escape(question)
-                Question.by_id(q_id).question = question
-            else:
+            if question is None:
                 escaped_question = None
-            Question.by_id(q_id).available = activate
+            else:
+                escaped_question = escape(question)
+
+            escaped_time = escape(time)
+            q = Question.by_id(q_id)
+            q.question = escaped_question
+            q.time = int(time)
+            activate = q.answerable
+
+            session.add(q)
+            session.commit()
+
             return json.dumps({"id": q_id,
                                "text": escaped_question,
-                               "available": activate,
+                               "answerable": activate,
+                               "time":time,
                                "check": g.lti.is_instructor()})
         else:
             return json.dumps({"id": q_id,
                                "text": question,
-                               "available": activate,
+                               "answerable": activate,
+                               "time": time,
                                "check": g.lti.is_instructor()})
+    
+    @staticmethod
+    def get_remaining_time(q_id):
+        question = Question.by_id(q_id)
+        
+        if question is not None and question.activate_time is not None:
+            time_remaining = question.get_time_left()
+            question_time =  question.time
+        else:
+            time_remaining = 0
+            question_time =  0
+
+        return json.dumps({"still_answerable":((question is not None) and question.answerable),
+                           "time_remaining":time_remaining,
+                           "question_deleted":(question is None) or not question.answerable,
+                           "question_time":question_time})
 
     @staticmethod
     def get_questions(n):
-        """Retrieves the first n questions, sorted by date available."""
-        return session.query(Question).order_by(Question.available.desc())[:n]
+        """Retrieves the first n questions, sorted by date answerable."""
+        return session.query(Question).order_by(Question.answerable.desc())[:n]
 
     @staticmethod
     def export_course(course_id):
@@ -47,11 +121,54 @@ class QuestionController():
         return [{'question': question.question} for question in questions]
 
     @staticmethod
+    def get_list_asked():
+       """Retrieves questions asked by the user currently logged in."""
+       if g.lti.is_instructor():
+           # TODO: pagination, etc..... same goes for get_questions
+           session.commit()
+           return render_template('question_list.html',
+                                  questions=session.query(Question).filter_by(user_id=g.lti.get_user_id()  ) )
+       else:
+           session.commit()
+           return render_template('question_list.html',
+                                  questions=session.query(Question).filter_by(user_id=g.lti.get_user_id()  ) )
+
+    @staticmethod
     def get_list():
-        # TODO: pagination, etc..... same goes for get_questions
+        questions = Question.get_filtered()
+        for question in questions:
+            if question is not None and question.activate_time is not None:
+                if question.get_time_left() < 0:          
+                    question.answerable = False
         session.commit()
-        return render_template('question_list.html',
-                               questions=session.query(Question).order_by(Question.available.desc()))
+        return render_template('question_list.html', questions=questions)
+
+    @staticmethod
+    def get_list_table(limit,offset):
+        (questions, curpage, maxpages, startpage, pagecount) = Question.get_filtered_offset(limit,offset,orderby='created')
+        
+        for question in questions:
+            if question is not None and question.activate_time is not None:
+                if question.get_time_left() < 0:         
+                    question.answerable = False
+        session.commit()
+
+        return render_template('question_list_tbl.html', questions=questions,
+                currentpage=curpage,startpage=startpage,pagecount=pagecount,maxpages=maxpages)
+
+    def get_list_to_answer():
+     """Retrieves questions to be answered by the instructor (all questions )"""
+     if g.lti.is_instructor():
+         # TODO: pagination, etc..... same goes for get_questions
+         session.commit()
+         return render_template('answer_student_questions.html',
+                                questions=session.query(Question).\
+                                    filter(Question.course_id == g.lti.get_course_id() ).\
+                                    filter(Question.course_id != g.lti.get_user_id() ))         #Filter questions by instructor                                    
+
+     #Only instructors can answer these questions
+     else:
+         return render_template('access_restricted.html')
 
     @staticmethod
     def delete_question(qid):
@@ -69,13 +186,11 @@ class QuestionController():
         return render_template('askQuestion.html', instr=instructor)
 
     @staticmethod
-    def create_question(question, instructor, course, active, time):
+    def create_question(question, instructor, course, active, time, comment, tags, rating):
         '''formats a question for database insertion and inserts it, calls a result screen afterwards'''
         try:
             time = int(time)
         except ValueError:
             time = 0
-        session.add(Question(instructor, course, question, active, time))
+        session.add(Question(instructor, course, question, active, time, comment, tags, rating))
         session.commit()
-
-        return QuestionController.get_list()

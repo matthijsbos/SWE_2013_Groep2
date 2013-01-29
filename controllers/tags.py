@@ -3,10 +3,12 @@
 # Changes:
 # Comment:
 
-from flask import render_template, session as fsession
+from flask import session as fsession, g
+from utilities import render_template
 from models.tag import Tag, AnswerTag
 from models.answer import AnswerModel
-from dbconnection import session
+import json
+
 
 class Modifytags():
     def __init__(self):
@@ -15,13 +17,26 @@ class Modifytags():
     def addtag(self, request):
         Tag.add_tag(request.form['newTag'])
 
-    def deletetag(self, request):
-        for tid in request.form.getlist('tags'):
-            Tag.remove_tag(tid)
+    def delete_tag_question(self, id):
+        if g.lti.is_instructor():
+            Tag.remove_tag(id)
+        return json.dumps({'deleted': g.lti.is_instructor()})
 
     def render(self):
         self.taglist = Tag.get_all()
         return render_template('modifytags.html',tags=self.taglist)
+        
+    @staticmethod
+    def json_get_tags():    
+       #create json file of all tags
+       tags = Tag.get_all()
+       #list of dicytionaries
+       data = []
+       for tag in tags:
+           data.append( {"id":tag.id, "name":tag.name} )
+
+       #Qreturn "Test return"
+       return json.dumps(data)
 
 
 class AssignTags():

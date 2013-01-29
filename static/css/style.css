@@ -1,14 +1,61 @@
 body{
       color:#009DCE;
-      width: 500px;
+      width: 950px;
       font-family: sans-serif;
 }
+
 br { clear: both; }
 
-table.black{
-    color:#000000;
+#qList input, #addQuestion-table input{
+    margin-bottom: 0px;
 }
 
+.question-field{
+    width: 400px;
+}
+.time-field{
+    width: 71px;
+}
+.available-field{
+    width: 50px;
+}
+.comment-field{
+    width: 70px;
+}
+.tags-field{
+    width: 40px;
+}
+.rating-field{
+    width: 50px;
+}
+.edit-field{
+    width: 70px;
+}
+.delete-field{
+    width: 70px; 
+}
+.delete-question-link{
+    color: #c40f0f;
+}
+.delete-question-link:hover{
+    color:#c40f0f;
+}
+
+.welcome-message{
+    width: 640px;
+}
+
+#qList td, #addQuestion-table td{
+    max-width: 500px;
+    word-wrap: break-word;
+}
+#qList input[type="number"], #addQuestion-table input[type="number"]{
+    margin-bottom: 0px;
+    width: 40px;
+}
+#addQuestion-table{
+    margin-top: -21px;
+}
 .cntSeparator {
     font-size: 54px;
     margin: 10px 7px;
@@ -24,57 +71,97 @@ table.black{
     font-weight: bold;
     color: #000;
 }
-#counter{
-float: right;
-margin-right: 250px;
-margin-top: -48px;
-font-size: 25px;
+.tags div{
+    width:80px;
+    display:inline-block;
+}
+.tags a:hover{ 
+	text-decoration: none; 
+	font-weight: bold;
+	cursor: pointer;
+}
+#assigned_tags div{
+    display: inline-block;
+}
+#answerfilter-form input[type="text"]{
+    margin-right: 20px;
 }
 textarea{
     border: 2px dotted #009DCE;
-background: rgb(247, 251, 252);
-color:#126a65;
-font-weight: bold;
-font-size: 14px;
-font-family: sans-serif;
+    background: rgb(247, 251, 252);
+    color:#126a65;
+    font-weight: bold;
+    font-size: 14px;
+    font-family: sans-serif;
+    resize: none;
 }
 textarea:focus{
     background:  #ffffff;
 }
+#assigntags legend{
+    border:none;
+}
+/* 'star-rating' component */
+.starRate {position:relative; margin-bottom:10px; overflow:hidden; zoom:1;}
+.starRate ul {width:160px; margin:0; padding:0;}
+.starRate li {display:inline; list-style:none;}
+.starRate a, .starRate b {background:url(../img/star_rate.gif) left top repeat-x;}
+.starRate a {float:right; margin:0 80px 0 -144px; width:80px; height:16px; background-position:left 16px; color:#000; text-decoration:none;}
+.starRate a:hover {background-position:left -32px;}
+.starRate b {position:absolute; z-index:-1; width:80px; height:16px; background-position:left -16px;}
+.starRate div b {left:0px; bottom:0px; background-position:left top;}
+.starRate a span {position:absolute; left:-300px;}
+.starRate a:hover span {left:90px; width:100%;}
 
-#question{
+.reviewanswer_left{
+    float:left;
+    width: 400px;
+}
+.reviewanswer_left textarea{
+    width: 400px;
+    height: 100px;
+}
+.reviewanswer_right{
+    float:right;
+}
+.no-border{
+    border:none !important
+}
+.question{
     font-size: 18px;
     font-weight: bold;
     color:#009DCE;
-
+    cursor: pointer;
 }
-.submit-answer {
-	-moz-box-shadow:inset 0px 1px 0px 0px #cae3fc;
-	-webkit-box-shadow:inset 0px 1px 0px 0px #cae3fc;
-	box-shadow:inset 0px 1px 0px 0px #cae3fc;
-	background:-webkit-gradient( linear, left top, left bottom, color-stop(0.05, #79bbff), color-stop(1, #4197ee) );
-	background:-moz-linear-gradient( center top, #79bbff 5%, #4197ee 100% );
-	filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#79bbff', endColorstr='#4197ee');
-	background-color:#79bbff;
-	-moz-border-radius:6px;
-	-webkit-border-radius:6px;
-	border-radius:6px;
-	border:1px solid #469df5;
-	display:inline-block;
-	color:#ffffff;
-	font-family:arial;
-	font-size:15px;
-	font-weight:bold;
-        cursor: pointer;
-	padding:6px 24px;
-	text-decoration:none;
-	text-shadow:1px 1px 0px #287ace;
-}.submit-answer:hover {
-	background:-webkit-gradient( linear, left top, left bottom, color-stop(0.05, #4197ee), color-stop(1, #79bbff) );
-	background:-moz-linear-gradient( center top, #4197ee 5%, #79bbff 100% );
-	filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#4197ee', endColorstr='#79bbff');
-	background-color:#4197ee;
-}.submit-answer:active {
-	position:relative;
-	top:1px;
+.question:hover{
+    text-decoration: underline;
+}
+.submitted{
+    display: inline;
+    margin:0;
+    margin-left: 10px;
+}
+#questions .submitted button.close-submitted{
+    top: -1px;
+right: -134px;
+float:none;
+}
+.countdowntime{
+    margin: -34px 0 0 330px;
+    font-size: 25px;
+}
+
+.countdowntimesmall{
+    float: left;
+    font-size: 15px;
+}
+#questions textarea{
+    width: 400px;
+    height: 120px;
+}
+#answer{
+    font-size: 18px;
+    font-weight: bold;
+	margin-bottom: 5px;
+    color:#009DCE;
 }

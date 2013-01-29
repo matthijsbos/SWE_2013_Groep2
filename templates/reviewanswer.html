@@ -1,48 +1,102 @@
-﻿<html>
-<head>
-</head>
-	<body>
-		<h1>Review this answer:</h1>
-		<div class="answer">{{ answer }}</div>
-		<legend>Current Tags:<legend>
-			{% for tag in tags %}
-				{% if tag.id in enabledtags %}
-					{{ tag.name }}
-				{% endif %}
-			{% endfor %}
-		<legend>Assign tags:</legend>
+﻿{% extends "_base.html" %}
+{% block content %}
 
-		<form action="/reviewanswer" method="POST">
-			{% for tag in tags %}
-			<input type="checkbox" name="assign_tags" value="{{tag.id}}">
-				{{tag.name}}
-			</input>
-			{% endfor %}
-		
-			<legend>Remove tags:</legend>
-			
-			{% for tag in tags %}
-			<input type="checkbox" name="remove_tags" value="{{tag.id}}">
-				{{tag.name}}
-			</input>
-			{% endfor %}
-			<input type="submit" value="remove"> 
-			<hr>
-			<table>
-				<tr>
-					<td>
-						1
-						<input type="radio" name="rating" value="1">
-						<input type="radio" name="rating" value="2">
-						<input type="radio" name="rating" value="3">
-						<input type="radio" name="rating" value="4">
-						<input type="radio" name="rating" value="5">
-						5
-					</td>
-				</tr>
-			</table>
-			<textarea name="text" rows="4" cols="50" placeholder="Insert your comment here..."></textarea> <!-- close tag must be on the same line to work-->
-			<input type="submit" name="rating" value="Submit review">
-		</form>
-	</body>
-</html>
+<script>
+    function rating2(value){
+        $("#1").html("<span>Rate it 1 stars</span>");
+        $("#2").html("<span>Rate it 2 stars</span>");
+        $("#3").html("<span>Rate it 3 stars</span>");
+        $("#4").html("<span>Rate it 4 stars</span>");
+        $("#5").html("<span>Rate it 5 stars</span>");
+
+        $("#" + value).html("<span>Rate it " + value + " stars</span><b></b>");
+        document.getElementById("input_rating").value = value;
+    }
+    
+    function remove_tag(aid, tid, tname){
+        $.getJSON("/removetaganswer",{answerid:aid, tagid:tid},
+            function(data){
+                if (data.deleted) {
+                    $('#remove_'+tid).remove();
+                    $('#assigned_tag_'+tid).remove();
+                    $('#available_tags').append('\
+                        <div id="assign_tag_'+tid+'">\
+                            <div><a onclick="javascript:add_tag('+aid+','+tid+',\''+tname+'\');">\
+                                <i class="icon-ok"></i> '+tname+' \
+                            </a></div>\
+                        </div>')
+                }
+                else
+                    $('#error').html("Error while deleting question.");
+            });
+    }
+    
+    function add_tag(aid, tid, tname){
+        $.getJSON("/addtaganswer",{answerid:aid, tagid:tid},
+            function(data){
+                if (data.deleted) {
+                    $('#assign_tag_'+tid).remove();
+                    $('#assigned_tags').append('\
+                            <div id="assigned_tag_'+tid+'">\
+                                '+tname+',\
+                            </div>')
+                    $('#remove_tags').append('\
+                            <div class="tags" id="remove_'+tid+'">\
+                                <div>'+tname+'</div>\
+                                <div><a onclick="javascript:remove_tag('+aid+','+tid+',\''+tname+'\');">\
+                                    <i class="icon-remove-sign"></i> delete \
+                                </a></div>\
+                            </div>')
+                }
+                else
+                    $('#error').html("Error while deleting question.");
+            });
+    }
+</script>
+
+<div id="error"></div>
+<form action="/reviewanswer" method="POST">
+    <div class="reviewanswer_left">
+		<div id="answer" class="question accordion-header">
+			{{ answer }} <br>
+		</div>
+        <textarea name="comments" rows="4" cols="50" placeholder="Insert your comment here..."></textarea>
+
+        <input type="hidden" name="rating" id="input_rating" value="3">
+        <div class="starRate">
+            <div><b></b></div>
+            <ul>
+                <li><a href="#" onclick="javascript:rating2(5);" id="5" value="5"><span>Rate it 5 stars</span></a></li>
+                <li><a href="#" onclick="javascript:rating2(4);" id="4" value="4"><span>Rate it 4 stars</span></a></li>
+                <li><a href="#" onclick="javascript:rating2(3);" id="3" value="3"><span>Rate it 3 stars</span><b></b></a></li>
+                <li><a href="#" onclick="javascript:rating2(2);" id="2" value="2"><span>Rate it 2 stars</span></a></li>
+                <li><a href="#" onclick="javascript:rating2(1);" id="1" value="1"><span>Rate it 1 star</span></a></li>
+            </ul>
+        </div>        
+        <div id="remove_tags">
+		<b>Current tags:</b>
+        {% for tag in tags %}
+            {% if tag.id in enabledtags %}
+                <div class="tags" id="remove_{{tag.id}}">
+                    <div>{{tag.name}}</div>
+                    <a onclick="javascript:remove_tag({{answer.id}},{{tag.id}},'{{tag.name}}');"/><i class="icon-remove-sign"></i> delete </a>
+                </div>
+            {% endif %}
+        {% endfor %}
+        </div>
+        <div id="available_tags">
+		<b>Assign tags:</b>
+            {% for tag in tags %}
+                {% if not tag.id in enabledtags %}
+                    <div class="tags" id="assign_tag_{{tag.id}}">
+                        <a onclick="javascript:add_tag({{answer.id}},{{tag.id}},'{{tag.name}}');"/><i class="icon-ok"></i> {{tag.name}} </a>
+                    </div>
+                {% endif %}
+            {% endfor %}
+        </div>
+
+        <br>
+        <input type="submit" class="btn-primary btn" name="rating" value="Submit review">
+    </div>
+</form>
+{% endblock %}

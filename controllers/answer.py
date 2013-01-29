@@ -1,7 +1,12 @@
-from models import answer, question
-from flask import render_template, g
+from models import answer, question, user
+from models.question import Question
+from models.answer import AnswerModel
+from flask import g, request, redirect
+from utilities import render_template
+from dbconnection import session
 import datetime
 import time
+import json
 import sqlalchemy.orm.exc as sqlalchemyExp
 
 
@@ -23,40 +28,66 @@ class Answer():
             q = question.Question.by_id(qID)
             if q is not None:
                 qText = q.question
-                questionStartTime = q.modified;
+                questionStartTime = q.activate_time;
                 timerD = q.time
-
-        if 'answerText' in self.request.form:
-            return self.saveAnswer(uID, qID, timerD, questionStartTime)
-        elif 'showall' in self.request.form:
+        
+        print 'Retrieved question information'
+        if 'answerText' in self.request.values:
+            print self.saveAnswer(uID, qID, timerD, questionStartTime)
+            return json.dumps({"result":True})
+        elif 'showall' in self.request.values:
             # Render all
             return self.render_all()
-        elif 'viewanswer' in self.request.form:
+        elif 'viewanswer' in self.request.values:
             # show answer
             return self.viewAnswer()
-        elif 'reviewAnswer' in self.request.form:
+        elif 'reviewAnswer' in self.request.values:
             # save review answer
             return self.saveReviewAnswer()
-        elif 'removeAnswer' in self.request.form:
+        elif 'removeAnswer' in self.request.values:
             return self.removeAnswer()
         else:
             return self.answerQuestion(uID, qID, qText, timerD, questionStartTime)
 
+    @staticmethod
+    def renderanswerform():
+        try:
+            questionid = int(request.values['question_id'])
+            question = Question.by_id(questionid)
+        except:
+            return abort(404)
+        return render_template('student_answer.html', question = question)
+
+    @staticmethod
+    def save():
+        try:
+            questionid = int(request.values['questionid'])
+            question = Question.by_id(questionid)
+            text = request.values['text']
+            userid = g.lti.get_user_id()
+        except:
+            return abort(404)
+
+        if AnswerModel.question_valid(questionid):
+            AnswerModel.save(questionid, userid, text)
+
+        return redirect('/index_student')
+        
     def saveAnswer(self, uID, qID, timerD, questionStartTime):
         # save answer
         print "ANSW", uID, qID, timerD
         answerText = self.request.form['answerText']
 
         flag = "false"
-        if self.timeLeft(timerD, 0, questionStartTime):
-            if answer.AnswerModel.checkAnswerExist(uID, qID):
-                aID = answer.AnswerModel.getAnswerID(uID, qID)
-                answer.AnswerModel.updateAnswer(aID, answerText)
+        if self.timeLeft(timerD, questionStartTime):
+            if answer.AnswerModel.check_answer_exists(uID, qID):
+                aID = answer.AnswerModel.get_answer_id(uID, qID)
+                answer.AnswerModel.update_answer(aID, answerText)
             else:
                 answer.AnswerModel.save(qID, uID, answerText)
             flag = "true"
-
-        return render_template('answersaved.html', flag=flag)
+        user.UserModel.save(uID,g.lti.get_user_name())
+        return True#render_template('answersaved.html', flag=flag)
 
     def viewAnswer(self):
         aid = int(self.request.form['id'])
@@ -77,9 +108,9 @@ class Answer():
         return render_template('answersaved.html', flag='removed')
 
     def answerQuestion(self, uID, qID, qText, timerD, questionStartTime):
-        if answer.AnswerModel.checkAnswerExist(uID, qID):
-            aID = answer.AnswerModel.getAnswerID(uID, qID)
-            if self.timeLeft(timerD, 0, questionStartTime):
+        if answer.AnswerModel.check_answer_exists(uID, qID):
+            aID = answer.AnswerModel.get_answer_id(uID, qID)
+            if self.timeLeft(timerD, questionStartTime):
                 return render_template('answer.html', questionID=qID, userID=uID, questionText=qText, timerDuration=timerD, date=time.mktime(questionStartTime.timetuple()), go="true")
             else:
                 return render_template('answer.html', questionID=qID, userID=uID, questionText=qText, timerDuration=timerD, date=time.mktime(questionStartTime.timetuple()), go="false")
@@ -87,19 +118,19 @@ class Answer():
             #answer.AnswerModel.save(qID, uID, "")
             return render_template('answer.html', questionID=qID, userID=uID, questionText=qText, timerDuration=timerD, date=time.mktime(questionStartTime.timetuple()), go="true")
 
-    def timeLeft(self, timerD, giveTime, questionStartTime):
+    def timeLeft(self, timerD, questionStartTime):
         currentTime = datetime.datetime.now()
         timeAnswered = questionStartTime
         difference = currentTime - timeAnswered
         seconds = difference.days * 86400 + difference.seconds
-
-        if giveTime == 1:
-            return timerD - seconds
-
-        if seconds < timerD + 2:
+        
+        if timerD == 0:
             return True
         else:
-            return False
+            if seconds < timerD + 20:
+                return True
+            else:
+                return False
 
     def render_filtered(self):
         postdata = self.request.form
@@ -115,6 +146,9 @@ class Answer():
 
         return render_template('answerfilter.html', answers=answer.AnswerModel.get_filtered(**args))
 
+    def render_results(self):
+        return render_template('rankresults.html', answers=answer.AnswerModel.get_answers_ordered_by_rank(request.values["questionid"]))
+        
     def render_all(self):
         # Render all
         return render_template('showanswers.html', answers=answer.AnswerModel.get_all())
@@ -131,4 +165,8 @@ class Answer():
 
         return render_template('answerfilter_by_questionid.html', answers=answer.AnswerModel.get_filtered(**args))
 
-
+    def studenthistory(self):
+        return render_template('studenthistory.html')
+        
+    def studenthistory_result(self):
+        return render_template('studenthistory_result.html', studid=answer.AnswerModel.get_answers_by_userid(request.values['sid']))

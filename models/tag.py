@@ -12,6 +12,16 @@ from models.answer import AnswerModel
 from basemodel import BaseEntity
 
 
+#A way to serialize SQLalchemy results
+#Source: http://piotr.banaszkiewicz.org/blog/2012/06/30/serialize-sqlalchemy-results-into-json/
+from collections import OrderedDict
+class DictSerializable(object):
+    def _asdict(self):
+        result = OrderedDict()
+        for key in self.__mapper__.c.keys():
+            result[key] = getattr(self, key)
+        return result
+
 class Tag(Base, BaseEntity):
     __tablename__ = 'Tags'
 
@@ -38,9 +48,9 @@ class Tag(Base, BaseEntity):
             
     @staticmethod
     def remove_tag(tag_id):
-        for tag in session.query(Tag).filter(Tag.id == tag_id):
-            session.delete(tag)
-            session.commit()
+        tag = session.query(Tag).filter(Tag.id == tag_id).first()
+        session.delete(tag)
+        session.commit()
 
 
 class AnswerTag(Base):
@@ -86,5 +96,3 @@ class AnswerTag(Base):
         for x in tlist:
             endlist.append(x[0])
         return endlist 
-
-Base.metadata.create_all(engine)

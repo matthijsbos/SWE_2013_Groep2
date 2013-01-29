@@ -50,4 +50,3 @@ class AnswerRating(Base):
 					AnswerRating.rating_id==rid).first() is None:
 				session.add(AnswerRating(aid, rid))	
 		
-Base.metadata.create_all(engine)

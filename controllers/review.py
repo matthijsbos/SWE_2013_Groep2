@@ -1,13 +1,20 @@
-# Authors : Victor Azizi & David Schoorisse & Mustafa Karaalioglu
+﻿# Authors : Victor Azizi & David Schoorisse & Mustafa Karaalioglu
 # Descrp : Controls the reviewing of answers
 # Changes:
 # Comment: call ReviewAnswer.review(x) to start reviewing a answer
 
-from flask import render_template, session as fsession
+from flask import g, session as fsession
+from utilities import render_template
 from models.tag import Tag, AnswerTag
 from models.answer import AnswerModel
-from models.rating import AnswerRating, Rating
+from models.review import Review
+from models.question import Question
 from dbconnection import session
+from models.schedule import Schedule
+from controllers.question import QuestionController
+from controllers.answer import Answer as AnswerController
+import json
+
 
 class ReviewAnswer():
     def __init__(self, request):
@@ -17,34 +24,76 @@ class ReviewAnswer():
         try:
             fsession['reviewanswer']
         except:
-            return self
-
-        for tag_id in request.form.getlist('assign_tags'):
-            AnswerTag.add_answertag(fsession['reviewanswer'], tag_id)
-
-        for rating_id in request.form.getlist('rating'):
-            AnswerRating.add_answerrating(fsession['reviewanswer'], rating_id)
-
-        for tag_id in request.form.getlist('remove_tags'):
-            AnswerTag.remove(fsession['reviewanswer'], tag_id)
-
-        # revoke permission to review answer
-        del fsession['reviewanswer']
+            pass
+        else:
+            # for rating in request.form.getlist('rating'):
+            # Review.add(fsession['reviewanswer'], fsession['user_id'], rating, )
+    
+            for tag_id in request.form.getlist('remove_tags'):
+                AnswerTag.remove(fsession['reviewanswer'], tag_id)
+            
+            try:
+                request.form['rating']
+            except KeyError:
+                pass
+            else:
+                Review.add(fsession['reviewanswer'], g.lti.get_user_id(),
+                           request.form['rating'], request.form['comments'])
+                           
+                # users can review only once per answer so delete from schdule list
+                Schedule.delete(fsession['reviewanswer'], g.lti.get_user_id())
+                                   
+            # revoke permission to review answer
+            del fsession['reviewanswer']
     
     @staticmethod
-    def review(answer_id):
+    def remove_tag_answer(aid, tagid):
+        AnswerTag.remove(aid, tagid)
+        return json.dumps({'deleted': True})
 
-        try:
-            answer = AnswerModel.by_id(answer_id)
-        except:
-            return "Error answer not found"
+    @staticmethod
+    def add_tag_answer(aid, tagid):
+        AnswerTag.add_answertag(aid, tagid)
+        return json.dumps({'deleted': True})
+    
+    
+    @staticmethod
+    def review():
+        answer = Schedule.get_answer(g.lti.get_user_id())
         if answer == None:
-            return "Error answer not found"
+            return "No answers to review."
 
-        fsession['reviewanswer'] = answer_id
+        fsession['reviewanswer'] = answer.id
 
-        enabledtags = AnswerTag.get_tag_ids(answer_id)
+        enabledtags = AnswerTag.get_tag_ids(answer.id)
+        reviews = Review.get_list(answer.id)
 
         return render_template('reviewanswer.html', answer=answer,
-                               tags=Tag.get_all(), enabledtags=enabledtags)
+                               tags=Tag.get_all(), enabledtags=enabledtags,
+                               reviews=reviews)
+
+    @staticmethod
+    def start_review(request):
+        try:
+            question_id = request.form['question_id']
+        except:
+            return json.dumps({'reviewable':False})
         
+        question = Question.by_id(question_id)
+        reviewable = False
+        if question is not None:
+            if g.lti.is_instructor() or \
+                    (question.get_time_left() <= 0 and question.time > 0):
+                reviewable = QuestionController.availability(
+                {'id':question_id, 'type':'reviewable'})
+            
+        return json.dumps({'reviewable':reviewable})
+        
+    @staticmethod 
+    def has_new_review():
+        answer = Schedule.get_answer(g.lti.get_user_id())
+        
+        if g.lti.is_instructor() or answer is None:
+            return json.dumps({'has_new': False})
+
+        return json.dumps({'has_new': True})
