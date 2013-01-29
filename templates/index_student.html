@@ -17,7 +17,7 @@
     saved</div>
 
 <!-- For answering a question. -->
-<div id="questions" class="accordion"></div>
+<div id="questions" class="accordion"><br></div>
 
 <!-- For the review button. -->
 <form action="/reviewanswer_stub" id="reviewform" method="post" style="display:none;">
@@ -64,8 +64,7 @@
 		{% endfor %}
 		</table>
 	{% endif %}
+
 <!-- For asking questions to instructor -->
-<ul>
-    <li><a href="/question_list/asked" class="blue">Ask a question</a></li>
-</ul>
+<a href="/question_list/asked" class="blue">Ask a question</a>
 {% endblock %}

@@ -69,20 +69,20 @@ function show_question(id, question, time_remaining, question_time, answer) {
     austDay.setSeconds(austDay.getSeconds() + time_remaining);
     console.log(austDay);
     $('#questions').append('<form id="answerform'+id+'" method="post" style="display:none;">\
-        <br>\
         <div class="accordion-group no-border" id="questionArea'+id+'" class="questionArea">\
             <div id="question'+id+'" class="question accordion-header"></div>\
             <div id="answer'+id+'"  class="accordion-body collapse">\
-            <div class="accordion-inner"><textarea name="answerText" cols=50 rows=5></textarea>\
-            <br>\
-            <button class="btn btn-info" onclick="submit_answer('+id+'); return false;" value="submit answer">submit answer</button>\
-            <div id="submitted'+id+'" style="display:none" class="submitted alert alert-success"><button type="button" class="close close-submitted" onclick="document.getElementById(\'submitted'+id+'\').style.display = \'none\';">&times;</button><b>Answer saved!</b><br/></div>\
-            <div id="ranking'+id+'"><a href="/choicelobby?question_id='+id+'" >rank it!</a></div>\
-            </div></div>\
+                <div class="accordion-inner"><textarea name="answerText" cols=50 rows=5></textarea>\
+                    <br>\
+                    <button class="btn btn-info" onclick="submit_answer('+id+'); return false;" value="submit answer">submit answer</button>\
+                    <div id="submitted'+id+'" style="display:none" class="submitted alert alert-success"><button type="button" class="close close-submitted" onclick="document.getElementById(\'submitted'+id+'\').style.display = \'none\';">&times;</button><b>Answer saved!</b><br/></div>\
+                </div>\
+            </div>\
             <div id="counter'+id+'" class="countdowntimesmall"></div>\
             <div id="prolongedText'+id+'" style="display: none;">Question has been prolonged</div>\
         </div>\
     </form>');
+    // <div id="ranking'+id+'"><br><a href="/choicelobby?question_id='+id+'" >rank it!</a><br></div>\
     
     if (question_time != 0) {
         $('#answerform'+id+' #counter'+id).countdown({
@@ -183,11 +183,17 @@ function submit_answer(id) {
 }
 
 function collapse_timer(id){
-    if ($('#answer'+id).hasClass("in") && $('#answer'+id).height() >= 189){
-        $('#counter'+id).addClass('countdowntimesmall');
-        $('#counter'+id).removeClass('countdowntime');
-    } else if($('#answer'+id).height() == 0){
-        $('#counter'+id).addClass('countdowntime');
+    if($('#answer'+id).height() == 0){
         $('#counter'+id).removeClass('countdowntimesmall');
+        $('#counter'+id).delay("fast").queue(function(next){
+            $(this).addClass('countdowntime');
+            next();
+        });
+    } else {
+        $('#counter'+id).removeClass('countdowntime');
+        $('#counter'+id).delay("fast").queue(function(next){
+            $(this).addClass('countdowntimesmall');
+            next();
+        });
     }
 }
