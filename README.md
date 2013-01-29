@@ -7,7 +7,7 @@ De installatie voor het draaien van een lokale instance van de software die via 
 
     Installeer python 2.7 (http://www.python.org/getit/)
     Installeer python setuptools voor python 2.7 (http://pypi.python.org/pypi/setuptools#files)
-    Voeg de subfolder "Scripts" van de python installatiefolder toe aan de omgevingsvariabele PATH (i.e.: "C:\Python27\Scripts")
+    Voeg de subfolder "Scripts" van de python installatiefolder toe aan de omgevingsvariabele PATH (voor windoze, that is, i.e.: "C:\Python27\Scripts")
     Als het goed is kan er nu via de commandline easy_install wordne aangeroepen om de benodigde packages te installeren
     Installeer de packages via de commandline met de volgende commando's:
         easy_install sqlalchemy
