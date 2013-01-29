@@ -143,19 +143,16 @@
     function(data){
       if(data.check){
         if(type == "Answerable"){
-          alert("HEY");
           answerable="True";
           $('#q'+id+'_drop1').hide();
           $('#q'+id+'_drop2').show();
           $('#q'+id+'_drop3').show();
-          alert("HEY");
         }
         if(type == "Reviewable"){
           reviewable="True";
           $('#q'+id+'_drop2').hide();
           $('#q'+id+'_drop1').show();
           $('#q'+id+'_drop3').show();
-          alert("HEY");
         }
         if(type == "Archived"){
           archived="True";

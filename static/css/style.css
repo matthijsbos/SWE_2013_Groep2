@@ -76,10 +76,10 @@ br { clear: both; }
 	width: 30px;
 }
 #qList .edit-field {
-	width: 50px;
+	width: 70px;
 }
 #qList .delete-field {
-	width: 60px;
+	width: 70px;
 }
 #qList td, #addQuestion-table td{
     max-width: 500px;
