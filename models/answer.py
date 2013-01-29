@@ -59,8 +59,12 @@ class AnswerModel(Base, BaseEntity):
 
     @staticmethod
     def save(questionID, userID, answerText):
+        try:
+            ranking = ((session.query(UserModel).filter_by(userid=userID).one().trust - 1000.0) / 4) + 1000.0
+        except exc.InvalidRequestError:
+            ranking = 1000.0
         session.add(AnswerModel(
-            questionID=questionID, userID=userID, text=answerText, edit=0, ranking=1000.0))
+            questionID=questionID, userID=userID, text=answerText, edit=0, ranking=ranking))
         session.commit()
 
     @staticmethod
