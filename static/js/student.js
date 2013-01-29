@@ -1,5 +1,5 @@
-/*
- * Handles all actions for studentis: showing them the current question and
+﻿/*
+ * Handles all actions for students: showing them the current question and
  * letting them answer it.
  *
  * Note: This can later easily be refactored to also ask for ratings and stuff.
