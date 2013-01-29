@@ -33,24 +33,11 @@ function query_new_question() {
                 $.getJSON("/has_new_review", {},
                     function(data) {
                         if (data.has_new) {
-                            show_review_button();
-                        }
-                        else {
-                            hide_review_button();
-                        }            
+                            window.location.href = "reviewanswer_stub";
+                        }          
                     });
             
         });
-}
-
-function show_review_button() {
-    console.log("GOT REVIEW");
-    $('#reviewform #review-answer').val('You have a reviewable answer waiting for you!');
-    $('#reviewform').show();
-}
-
-function hide_review_button() {
-    $('#reviewform').hide();
 }
 
 function toggleQ(id){

@@ -255,8 +255,8 @@ def handle_review_answer():
     the controller deciding wich answer to review, this url handles storing the
     reviews in the database (given a user has permission to do so) """
     ReviewAnswer(request)
-    return ReviewAnswer.review()
-
+    ctrler = Index()
+    return ctrler.render()
 
 @app.route("/reviewanswer_stub", methods=["POST", "GET"])
 def do_review_answer_stub():
