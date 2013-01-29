@@ -204,7 +204,7 @@ def addtag_answer():
 
 @app.route("/answer", methods=['GET', 'POST'])
 def answerForm():
-    ctrler = Answer(request)
+    ctrler = Answer()
     return ctrler.render()
 
 @app.route("/answerchoice",methods=['GET'])
@@ -258,19 +258,30 @@ def do_review_answer_stub():
 
 @app.route("/filteranswers", methods=['POST', 'GET'])
 def answerFilter():
-    ctrler = Answer(request)
+    ctrler = Answer()
     return ctrler.render_filtered()
-
-@app.route("/rankresults", methods=['POST', 'GET'])
-def render_results():
-    ctrler = answer.Answer(request)
-    return ctrler.render_results()
 
 
 @app.route("/filteranswers/<questionid>", methods=['POST', 'GET'])
 def answerFilterByQuestionID(questionid):
-    ctrler = Answer(request)
-    return ctrler.render_filtered_by_questionid(questionid)
+    ctrler = Answer()
+    return ctrler.render_filtered(questionID=questionid)
+
+
+@app.route("/filteranswerstbl", methods=['POST', 'GET'])
+def answerFilterTable():
+    if 'limit' in request.args:
+        limit = int(request.args['limit'])
+    if 'offset' in request.args:
+        offset = int(request.args['offset'])
+
+    ctrler = Answer()
+    return ctrler.render_filtered_tbl(limit,offset)
+
+@app.route("/rankresults", methods=['POST', 'GET'])
+def render_results():
+    ctrler = answer.Answer()
+    return ctrler.render_results()
 
 
 @app.route("/has_new_question", methods=['GET', 'POST'])

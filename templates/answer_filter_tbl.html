@@ -1,0 +1,41 @@
+<script language="javascript" type="text/javascript">
+
+    $(document).ready(function() {
+            $.get('/pagination',{currentpage:{{ currentpage }},
+                startpage:{{ startpage }},
+                pagecount:{{ pagecount}},
+                maxpages:{{ maxpages }},
+                },
+            function(data){
+                $('#paginationtop').html(data);
+                $('#paginationbottom').html(data);
+            });
+    });
+</script>
+
+<div id="paginationtop"/>
+<table class="table table-hover table-bordered table-striped">
+    <thead>
+        <tr>
+            <th>id</th>
+            <th>questionID</th>
+            <th>student</th>
+            <th>answer</th>
+            <th>created on</th>
+            <th>modified on</th>
+            <th>rankscore</th>
+        </tr>
+    </thead>
+    {% for answer in answers %}
+    <tr>
+        <td>{{ answer.id }}</td>
+        <td>{{ answer.questionID }}</td>
+        <td>{{ answer.username }}</td>
+        <td>{{ answer.text }}</td>
+        <td>{{ answer.created }}</td>
+        <td>{{ answer.modified }}</td>
+        <td>{{ answer.ranking }}</td>
+    </tr>
+    {% endfor %}
+</table>
+<div id="paginationbottom"/>
