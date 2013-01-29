@@ -295,7 +295,12 @@ def get_pagination():
 
     return render_template('pagination.html',currentpage=curpage,
             startpage=startpage,pagecount=pagecount,maxpages=maxpages)
-            
+
+@app.route("/trustdata_start", methods=['GET', 'POST'])
+def trust_data_start():
+    ctrler = User(request)
+    return ctrler.render_trust_data(1)
+
 @app.route("/trustdata", methods=['GET', 'POST'])
 def trust_data():
     ctrler = UserHistory(request)
