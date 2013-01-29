@@ -8,6 +8,7 @@ import models.answer
 import models.answerchoice
 import models.tag
 import models.rating
+import models.user
 import models.user_history
 from dbconnection import Base, engine
 from flask import Flask, request, render_template, g
@@ -23,6 +24,7 @@ from controllers.answer import Answer
 from controllers.question import QuestionController as Question
 from controllers.tags import Modifytags, AssignTags
 from controllers.review import ReviewAnswer
+from controllers.user import User
 from controllers.user_history import UserHistory
 
 app = Flask(__name__)
@@ -299,8 +301,8 @@ def get_pagination():
 @app.route("/trustdata_start", methods=['GET', 'POST'])
 def trust_data_start():
     ctrler = User(request)
-    return ctrler.render_trust_data(1)
-
+    return ctrler.render_with_all()
+    
 @app.route("/trustdata", methods=['GET', 'POST'])
 def trust_data():
     ctrler = UserHistory(request)

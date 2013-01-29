@@ -23,6 +23,10 @@ class UserModel(Base):
             return None
 
     @staticmethod
+    def get_by_username(uid):
+        return session.query(UserModel).filter(UserModel.username == uid)
+
+    @staticmethod
     def save(uid,uname):
         user = UserModel.by_user_id(uid)
         if user is None:
