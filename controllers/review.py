@@ -67,10 +67,13 @@ class ReviewAnswer():
 
         enabledtags = AnswerTag.get_tag_ids(answer.id)
         reviews = Review.get_list(answer.id)
+        question = Question.by_id(answer.questionID)
+        if question is None:
+            return "Question was not found."
 
         return render_template('reviewanswer.html', answer=answer,
                                tags=Tag.get_all(), enabledtags=enabledtags,
-                               reviews=reviews)
+                               reviews=reviews, question=question.question)
 
     @staticmethod
     def start_review(request):
