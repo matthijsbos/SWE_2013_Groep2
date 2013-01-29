@@ -72,7 +72,7 @@ br { clear: both; }
     color: #000;
 }
 .tags div{
-    width:80px;
+    width:150px;
     display:inline-block;
     word-wrap:break-word;
 }
