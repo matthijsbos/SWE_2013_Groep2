@@ -1,4 +1,4 @@
-// datasets = { "Q1": { label: "Q1", data: [[0,1], [2,1], [3,4]]}, "Q2": { label: "Q2", data: [[0,1], [2,1], [3,4]]} };
+datasets = { "Q1": { label: "Q1", data: [[0,1], [2,1], [3,4]]}, "Q2": { label: "Q2", data: [[0,1], [2,1], [3,4]]} };
 // Data is of the form of [[Day-#, value], [Day-#, value], ... ]
 // Value ranges from 0 to X (there's no support for negative values)
 function plot_graph (datasets) {

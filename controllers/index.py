@@ -55,3 +55,6 @@ class Index():
         output['questions'] = array
         
         return json.dumps(output)
+    
+    def unit_test_graph(self):
+        return render_template('unit_test_graph.html')
