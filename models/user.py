@@ -41,10 +41,6 @@ class UserModel(Base):
     def setTrust(uID, trust):
         user = session.query(UserModel).filter_by(userid=uID).one()
         user.trust = trust
-        
-    @staticmethod
-    def render_page():
-        return
 
     @staticmethod
     def winningProbability(rating1, rating2) :
