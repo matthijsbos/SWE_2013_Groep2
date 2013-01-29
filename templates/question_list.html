@@ -93,7 +93,21 @@
             }
         });
     }
-
+	
+	var advanced_visible = false;
+	function advanced(){
+		if (advanced_visible) {
+			$('.comment-field').hide();
+			$('.tags-field').hide();
+			$('.rating-field').hide();
+		} else {
+			$('.comment-field').show();
+			$('.tags-field').show();
+			$('.rating-field').show();
+		}
+		advanced_visible = !advanced_visible;
+    }
+	
     function delete_question(id){
         $.getJSON("/delete_question/"+id,{},
         function(data){
@@ -163,14 +177,19 @@
         
         $('#qList tr:last').after(
         '<tr>\
-            <td class="question-field"><input id="qtext" type="text" class="input-block-level" name="question" placeholder="your question"></td> \
-            <td class="time-field"><input id="qtime" type="number" name="time" size="3" maxlength="3" placeholder="sec"></td> \
-            <td><label class="checkbox"><input id="qact" type="checkbox" name="active">Answerable</label></td> \
-            <td><input id="qcomm" type="checkbox" name="comment" checked></td> \
-            <td><input id="qtag" type="checkbox" name="tags" checked></td> \
-            <td><input id="qrat" type="checkbox" name="rating" checked></td> \
-            <td colspan=2><input id="save_question" type="submit" onclick=save_question() class="btn btn-block btn-primary" value="Add Question"></td>\
-        </tr>');
+			<td class="question-field"><input id="qtext" type="text" class="input-block-level" name="question" placeholder="your question"></td> \
+			<td class="time-field"><input id="qtime" type="number" name="time" size="3" maxlength="3" placeholder="sec"></td> \
+			<td><input id="qact" type="checkbox" name="active"></td> \
+			<td class="comment-field"><input id="qcomm" type="checkbox" name="comment" checked></td> \
+			<td class="tags-field"><input id="qtag" type="checkbox" name="tags" checked></td> \
+			<td class="rating-field"><input id="qrat" type="checkbox" name="rating" checked></td> \
+			<td colspan=3><input id="save_question" type="submit" onclick=save_question() class="btn btn-block btn-primary" value="Add Question"></td>\
+		</tr>');
+		if (!advanced_visible) {
+			$('.comment-field').hide();
+			$('.tags-field').hide();
+			$('.rating-field').hide();
+		}
         $('#qtext').focus();
         
         if (edit_count > 0) {

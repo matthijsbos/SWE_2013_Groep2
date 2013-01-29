@@ -44,7 +44,39 @@ br { clear: both; }
 .welcome-message{
     width: 640px;
 }
-
+#qList {
+	width: auto;
+}	
+#qList .question-field {
+	width: 250px;
+}
+#qList .time-field {
+	width: 30px;
+}
+#qList .available-field {
+	width: 30px;
+}
+#qList .comment-field {
+	width: 30px;
+	display: none;
+}
+#qList .tags-field {
+	width: 30px;
+	display: none;
+}
+#qList .rating-field {
+	width: 30px;
+	display: none;
+}
+#qList .rankscore-field {
+	width: 30px;
+}
+#qList .edit-field {
+	width: 50px;
+}
+#qList .delete-field {
+	width: 60px;
+}
 #qList td, #addQuestion-table td{
     max-width: 500px;
     word-wrap: break-word;
@@ -72,9 +104,8 @@ br { clear: both; }
     color: #000;
 }
 .tags div{
-    width:150px;
+    width:80px;
     display:inline-block;
-    word-wrap:break-word;
 }
 .tags a:hover{ 
 	text-decoration: none; 
