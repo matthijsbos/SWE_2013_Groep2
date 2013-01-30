@@ -3,10 +3,9 @@
 {% set i = 0 %}
 
 <script language=javascript type='text/javascript'> 
-    function do_stuff() { 
-        if (document.getElementById) {
-            document.getElementById('trust_edit').style.visibility = 'block';
-        }
+    function do_stuff(string) {
+        document.getElementById("trust_edit_"+string).style.display = 'block';
+        document.getElementById("trust_view_"+string).style.display = 'none';
     }
 </script>
 
@@ -29,8 +28,13 @@
         <td>{{ i }}</td>
         <td><a href="/trustdata?uid={{ element.userid }}" class="blue">{{ element.username }}</a></td>
         <td>{{ element.trust }}</td>
-        <td id="trust_edit" style="display: none;">derp</td>
-        <td id="trust_view" style="display: block;"><input type="edit-trust" id="edit-trust" value="edit trust" class="btn-primary btn" onclick=do_stuff) ></button></td>
+        <td id="trust_edit_{{element.userid}}" style="display: none;">
+            <form action="/adjust_trust?uid={{element.userid}}" name="" method="post">
+                New value: <input type="number" name="quantity" min="0" max="2500"> </input>
+            </form>
+        </td>
+        
+        <td id="trust_view_{{element.userid}}" style="display: block;"><input type="edit-trust" id="edit-trust" value="edit trust" class="btn-primary btn" onclick=do_stuff("{{element.userid}}") ></button></td>
     </tr>
     {% endfor %}
 </table>
