@@ -188,3 +188,26 @@ function collapse_timer(id){
         });
     }
 }
+
+function submit_student_question() {
+	text = $('#student_question').val();
+	if(text != '') {
+		$.post("/student_question", {'text': text}, function(data) {
+			succes = $('#question_succes');
+			error = $('#question_error');
+			if(!data.error) {
+				error.hide()
+				succes.show()
+				succes.text('Your question has been submitted.');
+				succes.delay(4000).fadeOut(500);
+			} else if(data.type == 'time') {
+				if(!succes.is(':visible')) {
+					error.show()
+					error.text("You've recently added a question,\
+						please wait a few seconds.");
+					error.delay(4000).fadeOut(500);
+				}
+			}
+		}, 'JSON');
+	}
+}

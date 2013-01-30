@@ -162,6 +162,11 @@ def question_export():
 def question_import():
     list = yaml.load(request.args['file'])
     print list
+    
+@app.route("/student_question", methods=['POST'])
+def student_question():
+    ctrlr = Index()
+    return ctrlr.student_question(request)
 
 
 @app.route("/managetags", methods=['GET', 'POST'])

@@ -58,6 +58,15 @@
 		{% endfor %}
 		</table>
 	{% endif %}
+	
+	<hr>
+	<p>Ask your instructor a question.</p>
+	<textarea id="student_question" rows="4" cols="100" placeholder="Insert your question here..."></textarea>
+	<br>
+	<button class="btn btn-info" onclick="submit_student_question()">Ask question</button>
+	<div id="question_succes" class="alert alert-success" style="display:none"></div>
+	<div id="question_error" class="alert alert-error" style="display:none"></div>
+	<br>
 
 <!-- For asking questions to instructor -->
 <a href="/question_list/asked" class="blue">Ask a question</a>

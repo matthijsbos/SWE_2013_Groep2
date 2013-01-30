@@ -101,4 +101,31 @@ class Question(Base, BaseEntity):
         return session.query(cls).filter(cls.course_id == course_id).all()
 
 
+class UserQuestion(Base, BaseEntity):
+    __tablename__ = "UserQuestions"
+    
+    user_id = Column(String)
+    text = Column(String)
+    
+    def __init__(self, user_id, text):
+        self.user_id = user_id
+        self.text = text
+        
+    @classmethod
+    def add(cls, user_id, text):
+        session.add(cls(user_id, text))
+        session.commit()
+        
+    @classmethod
+    def time_since_last(cls, user_id):
+        created = session.query(cls.created).filter(
+            cls.user_id == user_id).order_by(cls.id.desc()).first()
+        
+        if created is None:
+            return None
+            
+        dt = datetime.now() - created[0]
+        return dt.seconds + dt.days*86400
+        
+        
 Base.metadata.create_all(engine)
