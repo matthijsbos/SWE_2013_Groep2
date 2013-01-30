@@ -37,6 +37,10 @@
         }
         var text = elem.text();
         var time = time_elem.text();
+        
+        if (isNaN(time))
+            time = 0;
+        
         elem.addClass('activated');
         elem.text('');
         elem.hide();
@@ -53,12 +57,13 @@
             $('#edit_'+id).show();
             $('#sedit_'+id).hide();
             
-            var newTime = time_field.val();
-            if (newTime == 0)
-                newTime = '&#8734';
+            var newTime = time_field.val();            
                 
             edit_question(id,edit_field.val(),newTime);
-
+            
+            if (newTime == 0)
+                newTime = '&#8734';
+            
             var newText = elem.val();
             elem.text(newText);
             elem.removeClass('activated');
@@ -141,30 +146,37 @@
         });
     }
 
-    function toggle_state(id, type){
-    answerable = "False"
-    reviewable = "False"
-    archived = "False"
+    function toggle_state(id, type){   
     $.getJSON("/togglequestion",{id:id, type:type},
     function(data){
       if(data.check){
-        if(type == "Answerable"){
+        if(type == "Inactive"){
           answerable="True";
           $('#q'+id+'_drop1').hide();
           $('#q'+id+'_drop2').show();
           $('#q'+id+'_drop3').show();
+          $('#q'+id+'_drop4').show();
         }
-        if(type == "Reviewable"){
-          reviewable="True";
+        if(type == "Answerable"){
+          answerable="True";
           $('#q'+id+'_drop2').hide();
           $('#q'+id+'_drop1').show();
           $('#q'+id+'_drop3').show();
+          $('#q'+id+'_drop4').show();
         }
-        if(type == "Archived"){
-          archived="True";
+        if(type == "Reviewable"){
+          reviewable="True";
           $('#q'+id+'_drop3').hide();
           $('#q'+id+'_drop1').show();
           $('#q'+id+'_drop2').show();
+          $('#q'+id+'_drop4').show();
+        }
+        if(type == "Archived"){
+          archived="True";
+          $('#q'+id+'_drop4').hide();
+          $('#q'+id+'_drop1').show();
+          $('#q'+id+'_drop2').show();
+          $('#q'+id+'_drop3').show();
         }
         $('#state'+id).html(type);
       }

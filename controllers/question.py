@@ -25,10 +25,15 @@ class QuestionController():
                 return
             
             rv = None
+            if type == 'Inactive':
+                rv = question.inactive = True
+                question.answerable = question.reviewable = question.archived = False
+                question.state = 'Inactive'
+            
             if type == 'Answerable':
-                rv = question.answerable = not question.answerable
+                rv = question.answerable = True
                 question.activate_time = datetime.now()
-                question.reviewable = question.archived = False
+                question.inactive = question.reviewable = question.archived = False
                 question.state = 'Answerable'
 
             elif type == 'Reviewable':
@@ -36,12 +41,12 @@ class QuestionController():
                     Scheduler(args['id'])
                     question.reviewable = True
                 rv = question.reviewable
-                question.answerable = question.archived = False
+                question.inactive = question.answerable = question.archived = False
                 question.state = 'Reviewable'
 
             elif type == 'Archived':
-                rv = question.archived = not question.archived
-                question.answerable = question.reviewable = False
+                rv = question.archived = True
+                question.inactive = question.answerable = question.reviewable = False
                 question.state = 'Archived'
                 
             elif type == 'comments':
