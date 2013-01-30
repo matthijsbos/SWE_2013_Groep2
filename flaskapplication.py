@@ -1,4 +1,4 @@
-# Descrp : Contains routing and calling of the controllers.
+﻿# Descrp : Contains routing and calling of the controllers.
 # Changes:
 # Comment: MultiDict with isinstructor,consumerkey,coursekey and coursename in
 #          the request.form field.
@@ -79,18 +79,11 @@ def edit_question():
                                   request.args['text'],
                                   request.args['time'])
 
-
-@app.route("/toggle_question", methods=['GET', 'POST'])
-def toggle_question():
-    """Used to toggle a question's availability."""
-    return Question.toggle_question(request.args['id'], request.args['field'])
-
-
-@app.route("/questionavailability", methods=['GET', 'POST'])
-def questionavailability():
-    return Question.availability(request.args)
-
-
+@app.route("/togglequestion", methods=['GET', 'POST'])
+def toggle_options():
+    return Question.toggle_options(request.args)
+    
+# this route is used to ask a question to students
 @app.route("/question", methods=['GET', 'POST'])
 def ask_question():
     """Used to asked questions to students."""
@@ -99,7 +92,8 @@ def ask_question():
 
     return Question.ask_question(g.lti.get_user_id())
 
-
+# this route is used for the feedback from inserting the question into the
+# database, it also inserts the question into the database
 @app.route("/handle_question", methods=['POST'])
 def handle_question():
     """Used for the feedback from inserting a question into the database, and

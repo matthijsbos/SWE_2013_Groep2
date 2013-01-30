@@ -17,6 +17,7 @@ class Question(Base, BaseEntity):
     _answerable = Column(Boolean)
     _reviewable = Column(Boolean)
     _archived = Column(Boolean)
+    state = Column(String)
     time = Column(Integer)
     activate_time = Column(DateTime,nullable=True)
     
@@ -29,12 +30,14 @@ class Question(Base, BaseEntity):
         self.course_id = course_id
         self.question = question
         
+        self.state = 'States'
         self.comment = comment
         self.tags = tags
         self.rating = rating
 
         if(answerable):
             self.activate_time = datetime.now()
+            self.state = 'Answerable'
         else:
             self.activate_time = None
 
