@@ -78,17 +78,23 @@ function show_question(id, question, time_remaining, question_time, answer) {
     var austDay = new Date();
     austDay.setSeconds(austDay.getSeconds() + time_remaining);
     console.log(austDay);
+      if ( $('#questions').is(':empty') ){
+          expanded = 'in';
+          timersize= '';
+      }else{
+          expanded = '';
+          timersize = 'small';}
     $('#questions').append('<form id="answerform'+id+'" method="post" style="display:none;">\
         <div class="accordion-group no-border" id="questionArea'+id+'" class="questionArea">\
             <div id="question'+id+'" class="question accordion-header"></div>\
-            <div id="answer'+id+'"  class="accordion-body collapse">\
+            <div id="answer'+id+'"  class="accordion-body collapse '+expanded+'">\
                 <div class="accordion-inner"><textarea name="answerText" cols=50 rows=5></textarea>\
                     <br>\
                     <button class="btn btn-info" onclick="submit_answer('+id+'); return false;" value="submit answer">submit answer</button>\
                     <div id="submitted'+id+'" style="display:none" class="submitted alert alert-success"><button type="button" class="close close-submitted" onclick="document.getElementById(\'submitted'+id+'\').style.display = \'none\';">&times;</button><b>Answer saved!</b><br/></div>\
                 </div>\
             </div>\
-            <div id="counter'+id+'" class="countdowntimesmall"></div><br>\
+            <div id="counter'+id+'" class="countdowntime'+timersize+'"></div><br>\
             <div id="prolongedText'+id+'"  class="alert alert-info" style="display: none;">Question time has changed</div>\
         </div>\
     </form>\
@@ -214,7 +220,7 @@ function collapse_timer(id){
             $(this).addClass('countdowntime');
             next();
         });
-    } else {
+    } else if ($('#answer'+id).hasClass("in") && $('#answer'+id).height() >= 189){
         $('#counter'+id).removeClass('countdowntime');
         $('#counter'+id).delay("fast").queue(function(next){
             $(this).addClass('countdowntimesmall');

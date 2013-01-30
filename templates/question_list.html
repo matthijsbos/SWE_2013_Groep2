@@ -188,9 +188,17 @@
     });    
     }
 
+    function checkSubmit(e)
+    {
+        if(e && e.keyCode == 13)
+        {
+            if( document.getElementById('addQ').style.display == 'none')
+                save_question();
+        }
+    }
     function add_question(){
         $('#addQ').hide()
-        $('#cancelQ').show()       
+            
         $('#qList tr:first').after(
         '<tr>\
 			<td class="question-field"><input id="qtext" type="text" class="input-block-level" name="question" placeholder="your question"></td> \
@@ -199,13 +207,15 @@
 			<td class="comment-field"><input id="qcomm" type="checkbox" name="comment" checked></td> \
 			<td class="tags-field"><input id="qtag" type="checkbox" name="tags" checked></td> \
 			<td class="rating-field"><input id="qrat" type="checkbox" name="rating" checked></td> \
-			<td colspan=3><input id="save_question" type="submit" onclick=save_question() class="btn btn-block btn-primary" value="Add Question"></td>\
+			<td colspan=2><input id="save_question" type="submit" onclick=save_question() class="btn btn-block btn-primary" value="Add Question"></td>\\n\
+                        <td><input style="display:none" type="submit"id="cancelQ" value="Cancel" class="btn" onclick=cancel_question() ></button></td>\
 		</tr>');
 		if (!advanced_visible) {
 			$('.comment-field').hide();
 			$('.tags-field').hide();
 			$('.rating-field').hide();
 		}
+        $('#cancelQ').show()   
         $('#qtext').focus();
         
         if (edit_count > 0) {
@@ -249,7 +259,7 @@
 </script>
 
 <div id="error" style="background-color: #a33; color: white;"></div>
-<div id="questListForm" style="display:block">
+<div id="questListForm" onKeyPress="return checkSubmit(event)" style="display:block">
 
 </div>
 {% endblock %}
