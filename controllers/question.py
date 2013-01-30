@@ -11,8 +11,7 @@ from controllers.scheduler import Scheduler
 class QuestionController():
     # TODO: remove toggle_question, fix availability    
     @staticmethod
-    def toggle_options(args):
-        if g.lti.is_instructor():        
+    def toggle_options(args):        
             try:
                 type = args['type']
             except KeyError:
@@ -22,7 +21,7 @@ class QuestionController():
             if question is None:
                 return 
 
-            if not g.lti.is_instructor() and type != 'reviewable':
+            if not g.lti.is_instructor() and type != 'Reviewable':
                 return
             
             rv = None
@@ -55,9 +54,7 @@ class QuestionController():
                 rv = question.rating = not question.rating
                 
             session.commit()                                             
-            return json.dumps({"toggle": rv, "check": True})
-        else:
-            return json.dumps({"toggle": True, "check": False})        
+            return json.dumps({"toggle": rv, "check": True})                    
 
     @staticmethod
     def edit_question(q_id, question, time):
