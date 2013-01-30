@@ -6,10 +6,7 @@
 <script language="javascript" type="text/javascript" src="../static/js/jquery.flot.js"></script>
 <script language="javascript" type="text/javascript" src="../static/js/graphing.js"></script>
 
-<p>
-    The trust tracker is a useful tool in measuring the participation of students over time. Trust is gained when students answer questions, and have their questions ranked positively by
-    other students. Trust is lost when not participating in questions or ranking, or when answers are ranked negatively by other students.
-</p>
+<p>The trust tracker is a useful tool in measuring the participation of students over time. Trust is gained when students answer questions, and have their questions ranked positively by other students. Trust is lost when not participating in questions or ranking, or when answers are ranked negatively by other students.</p>
 
 <p><a href="/trustdata_start.html" class="blue">Go back</a></p>
 
@@ -18,7 +15,6 @@
 <p id="choices">Show:</p>
 
 <script type="text/javascript">
-// TODO: Datasets is supposed to be retrieved from the database instead of being hardcoded
 var datasets = {
         "Trust": {
             label: "Trust",
@@ -52,7 +48,6 @@ var datasets = {
 
 plot_graph(datasets);
 set_explanation(text);
-
 </script>
 
 <table class="table table-hover table-bordered table-striped">
