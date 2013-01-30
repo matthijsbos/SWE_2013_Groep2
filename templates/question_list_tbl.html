@@ -32,7 +32,7 @@
             <td class="question-field" id="question_{{question.id}}">
                 <a href="/filteranswers/{{question.id}}" class="blue">{{question.question}}</a>
             </td>
-            <td class="time-field" id="time_{{question.id}}">{{question.time}}</td>
+            <td class="time-field" id="time_{{question.id}}">{% if question.time == 0 %}&#8734; {% else %} {{question.time}} {% endif %}</td>
             <td class="state-field" id="available_{{question.id}}">
                 <div class="btn-group">
                     <a id ="state{{question.id}}" class="btn btn-primary state-buttons" href="#">{{question.state}}</a>
@@ -71,6 +71,6 @@
         {% endfor %}
     </table>
 <input type="submit"id="addQ" value="Add Question" class="btn-primary btn" onclick=add_question() ></button>
-<input type="submit"id="advanced" value="Advanced" class="btn-primary btn" onclick=advanced() ></button>
+<input type="submit"id="advanced" value="Advanced" class="btn" onclick=advanced() ></button>
 <input style="display:none" type="submit"id="cancelQ" value="Cancel" class="btn" onclick=cancel_question() ></button>
 <div id="paginationbottom"/>

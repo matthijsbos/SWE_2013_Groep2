@@ -53,6 +53,9 @@
             $('#sedit_'+id).hide();
             
             var newTime = time_field.val();
+            if (newTime == 0)
+                newTime = '&#8734';
+                
             edit_question(id,edit_field.val(),newTime);
 
             var newText = elem.val();
@@ -100,10 +103,12 @@
 			$('.comment-field').hide();
 			$('.tags-field').hide();
 			$('.rating-field').hide();
+            $('#advanced').prop('value', 'Advanced');
 		} else {
 			$('.comment-field').show();
 			$('.tags-field').show();
 			$('.rating-field').show();
+            $('#advanced').prop('value', 'Simple');
 		}
 		advanced_visible = !advanced_visible;
     }

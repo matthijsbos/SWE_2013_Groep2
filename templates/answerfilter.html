@@ -1,34 +1,64 @@
 {% extends "_base.html" %}
 {% block content %}
+<script language="javascript" type="text/javascript">
+    var stdlimit = 10;
+    var currPage = 1;
+
+    $(document).ready(function() {
+        $('#submit').click(function(){
+            refresh_table_default();
+            return false;
+        });
+
+        refresh_table_default();
+    });
+
+    function load_page(page){
+        currPage = page;
+        refresh_table((page-1)*stdlimit,stdlimit);
+    }
+
+    function refresh_table_default(){
+        refresh_table(0,stdlimit);
+    }
+
+    function refresh_table(offset,limit){
+        var dict = {offset:offset,limit:limit}
+
+        if ($.trim($('#userID').val()).length > 0){
+            dict['userID'] = $.trim($('#userID').val());
+        }
+
+        if ($.trim($('#id').val()).length > 0){
+            dict['id'] = $.trim($('#id').val());
+        }
+
+        if ($.trim($('#questionID').val()).length > 0){
+            dict['questionID'] = $.trim($('#questionID').val());
+        }
+
+        $.get('/filteranswerstbl',
+            dict,
+            function(data){
+            $('#tblContainer').html(data);});
+    }
+
+    function reload(){
+        load_page(currPage);
+    }
+</script>
+
 <form method="POST" class="form-inline" id="answerfilter-form">
     <b>Filter by:</b><br>
-    <label>ID</label> <input type="text" name="id"/>
-    <label>UserID</label> <input type="text" name="userID"/>
-    <label>QuestionID</label> <input type="text" name="questionID"/>
-    <input type="submit" value="Search" class="btn btn-primary"/>
+    <label>ID</label> <input type="text" id="id"/>
+    <label>UserID</label> <input type="text" id="userID"/>
+    {% if hasQuestionID%}
+        <input type='hidden' id='questionID' value='{{ questionID }}' />
+    {% else %}
+        <label>QuestionID</label> <input type="text" id="questionID"/>
+    {% endif %}
+
+    <input id='submit' type="submit" value="Search" class="btn btn-primary" />
 </form>
-<table class="table table-hover table-bordered table-striped">
-    <thead>
-        <tr>
-            <th>id</th>
-            <th>questionID</th>
-            <th>student</th>
-            <th>answer</th>
-            <th>created on</th>
-            <th>modified on</th>
-            <th>rankscore</th>
-        </tr>
-    </thead>
-    {% for answer in answers %}
-    <tr>
-        <td>{{ answer.id }}</td>
-        <td>{{ answer.questionID }}</td>
-        <td>{{ answer.username }}</td>
-        <td>{{ answer.text }}</td>
-        <td>{{ answer.created }}</td>
-        <td>{{ answer.modified }}</td>
-        <td>{{ answer.ranking }}</td>
-    </tr>
-    {% endfor %}
-</table>
+<div id='tblContainer'></div>
 {% endblock %}
