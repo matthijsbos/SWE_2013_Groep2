@@ -52,19 +52,25 @@ class Index():
         return json.dumps(output)
 
     def student_question(self, request):
-        rv = dict({'error': True, 'type': ''})
-        try:
-            text = request.form['text']
-        except KeyError:
-            rv['type'] = 'key'
-            return json.dumps(rv)
-        
-        min_delay = 10
-        dt = UserQuestion.time_since_last(g.lti.get_user_id())
-        if dt is not None and dt < min_delay:
-            rv['type'] = 'time'
+        if g.lti.is_instructor():
+            rv = []
+            user_questions = UserQuestion.get_list(5)
+            for q in user_questions:
+                rv.append({'user':q.user_id, 'text':q.text})
         else:
-            rv['error'] = False
-            UserQuestion.add(g.lti.get_user_id(), text)
+            rv = dict({'error': True, 'type': ''})
+            try:
+                text = request.form['text']
+            except KeyError:
+                rv['type'] = 'key'
+                return json.dumps(rv)
+            
+            min_delay = 10
+            dt = UserQuestion.time_since_last(g.lti.get_user_id())
+            if dt is not None and dt < min_delay:
+                rv['type'] = 'time'
+            else:
+                rv['error'] = False
+                UserQuestion.add(g.lti.get_user_id(), text)
         
         return json.dumps(rv)

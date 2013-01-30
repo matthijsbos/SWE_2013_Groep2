@@ -186,6 +186,11 @@ def question_import():
 def student_question():
     ctrlr = Index()
     return ctrlr.student_question(request)
+    
+@app.route("/get_student_questions", methods=['GET'])
+def get_student_questions():
+    ctrlr = Index()
+    return ctrlr.student_question(request)
 
 
 @app.route("/managetags", methods=['GET', 'POST'])
