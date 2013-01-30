@@ -94,26 +94,45 @@ def ask_question():
 
 # this route is used for the feedback from inserting the question into the
 # database, it also inserts the question into the database
-@app.route("/handle_question", methods=['POST'])
-def handle_question():
-    """Used for the feedback from inserting a question into the database, and
-    for actually inserting questions into the database."""
+@app.route("/handle_question", methods=['GET','POST'])
+def handle_question():    
+    try:
+        question_text = request.args['question']
+    except KeyError: 
+        return json.dumps({'done':False})       
+    
+    if question_text == '':
+        return json.dumps({'done':False})       
+    
+    try:
+        isActive = request.args['active'] in ['true','True']
+    except:
+        isActive = False
 
-    isActive = request.form.get('active', "false") in ['true', 'True']
-    comment = request.form.get('comment', "false") in ['true', 'True']
-    tags = request.form.get('tags', "false") in ['true', 'True']
-    rating = request.form.get('rating', "false") in ['true', 'True']
+    try:
+        comment = request.args['comment'] in ['true','True'] 
+    except:
+        comment = False
 
-    Question.create_question(request.form['question'],
-                             g.lti.get_user_id(),
-                             g.lti.get_course_id(),
-                             isActive,
-                             request.form['time'],
-                             comment,
-                             tags,
-                             rating)
-    return json.dumps({'done': True})
+    try:
+        tags = request.args['tags'] in ['true','True']
+    except:
+        tags = False
 
+    try:
+        rating = request.args['rating'] in ['true','True']
+    except:
+        rating = False
+
+    Question.create_question(question_text,
+                                    g.lti.get_user_id(),
+                                    g.lti.get_course_id(),
+                                    isActive,
+                                    request.args['time'],
+                                    comment,
+                                    tags,
+                                    rating)
+    return json.dumps({'done':True})
 
 @app.route("/question_list", methods=['GET', 'POST'])
 def list_questions():
@@ -174,14 +193,11 @@ def managetags():
     ctrler = Modifytags()
     return ctrler.render()
 
-
-@app.route("/addtag", methods=['POST'])
-def addtags():
+@app.route("/addtags", methods=['GET', 'POST'])
+def addtags():    
     ctrler = Modifytags()
-    ctrler.addtag(request)
-    return ctrler.render()
-
-
+    return ctrler.addtag(request.args)    
+    
 @app.route("/removetag", methods=['GET'])
 def removetags():
     ctrler = Modifytags()

@@ -1,4 +1,4 @@
-﻿<script language="javascript" type="text/javascript">
+<script language="javascript" type="text/javascript">
     $(document).ready(function() {
             $.get('/pagination',{currentpage:{{ currentpage }},
                 startpage:{{ startpage }},
@@ -35,12 +35,13 @@
             <td class="time-field" id="time_{{question.id}}">{% if question.time == 0 %}&#8734; {% else %} {{question.time}} {% endif %}</td>
             <td class="state-field" id="available_{{question.id}}">
                 <div class="btn-group">
-                    <a id ="state{{question.id}}" class="btn btn-primary state-buttons" href="#">{{question.state}}</a>
+                    <a id ="state{{question.id}}" class="btn btn-primary state-buttons" href="#" onclick=next_state({{question.id}})>{{question.state}}</a>
                     <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown" href="#"><span class="caret"></span></a>
                     <ul class="dropdown-menu">
-                        <li {% if question.answerable %}style="display:none"{% endif %} id="q{{question.id}}_drop1"><a href="#" onclick="toggle_state({{question.id}}, 'Answerable')">Answerable</a></li>
-                        <li {% if question.reviewable %}style="display:none"{% endif %} id="q{{question.id}}_drop2"><a href="#" onclick="toggle_state({{question.id}}, 'Reviewable')">Reviewable</a></li>
-                        <li {% if question.archived %}style="display:none"{% endif %} id="q{{question.id}}_drop3"><a href="#" onclick="toggle_state({{question.id}}, 'Archived')">Archived</a></li>
+                        <li {% if question.inactive %}style="display:none"{% endif %} id="q{{question.id}}_drop1"><a href="#" onclick="toggle_state({{question.id}}, 'Inactive')">Inactive</a></li>
+                        <li {% if question.answerable %}style="display:none"{% endif %} id="q{{question.id}}_drop2"><a href="#" onclick="toggle_state({{question.id}}, 'Answerable')">Answerable</a></li>
+                        <li {% if question.reviewable %}style="display:none"{% endif %} id="q{{question.id}}_drop3"><a href="#" onclick="toggle_state({{question.id}}, 'Reviewable')">Reviewable</a></li>
+                        <li {% if question.archived %}style="display:none"{% endif %} id="q{{question.id}}_drop4"><a href="#" onclick="toggle_state({{question.id}}, 'Archived')">Archived</a></li>
                     </ul>              
             </td>
             <td class="comment-field" id="comments_{{question.id}}"><input type="checkbox" name="comments{{question.id}}" onclick="toggle_review_options({{question.id}}, 'comments')" {% if question.comment %}checked{% endif %}></td>
@@ -72,5 +73,4 @@
     </table>
 <input type="submit"id="addQ" value="Add Question" class="btn-primary btn" onclick=add_question() ></button>
 <input type="submit"id="advanced" value="Advanced" class="btn" onclick=advanced() ></button>
-<input style="display:none" type="submit"id="cancelQ" value="Cancel" class="btn" onclick=cancel_question() ></button>
 <div id="paginationbottom"/>

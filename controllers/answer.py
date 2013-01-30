@@ -136,19 +136,24 @@ class Answer():
         # Render all
         return render_template('showanswers.html', answers=answer.AnswerModel.get_all())
 
-    def render_filtered(self,**kwargs):
-        hasqid = ('questionID'in kwargs)
+    def render_filtered(self,questionID=None):
         return render_template('answerfilter.html',
-                hasQuestionID=hasqid,
-                questionID = (0 if not hasqid else kwargs['questionID']))
+                hasqid=(questionID is not None),
+                questionID=questionID)
 
-    def render_filtered_tbl(self,limit,offset):
+    def render_filtered_tbl(self,limit,offset,**kwargs):
         (answers, curpage, maxpages, startpage, pagecount) = self.get_filtered(limit=limit,
                                                                         offset=offset)
 
+        hasqid = ('questionID'in kwargs)
+        course = g.lti.get_course_id()
+
         return render_template('answer_filter_tbl.html',
                 answers=answers,currentpage=curpage,
-                maxpages=maxpages,startpage=startpage,pagecount=pagecount)
+                maxpages=maxpages,startpage=startpage,pagecount=pagecount,
+                hasQuestionID=hasqid,
+                users=user.UserModel.get_all(),
+                questions = [] if hasqid else Question.by_course_id(course))
 
     def get_filtered(self,limit=None,offset=None):
         args = self.get_args_for_filter()

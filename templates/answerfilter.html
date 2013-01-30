@@ -3,16 +3,40 @@
 <script language="javascript" type="text/javascript">
     var stdlimit = 10;
     var currPage = 1;
+{% if hasqid %}
+    var currentQuestionFilter = {{questionID}};
+{% else %}
+    var currentQuestionFilter = -1;
+{% endif %}
+    var currentUserFilter = -1;
 
     $(document).ready(function() {
-        $('#submit').click(function(){
-            refresh_table_default();
-            return false;
-        });
-
         refresh_table_default();
     });
 
+    function setfilteruser(userid,username){
+        currentUserFilter = userid;
+        $('a#userfiltertext').text(username)
+        reload();
+    }   
+
+    function clearfilteruser(){
+        currentUserFilter = -1;
+        $('a#userfiltertext').text('Select User')
+        reload();
+    }
+
+    function setfilterquestion(questid,questtext){
+        currentQuestionFilter = questid;
+        $('a#questionfiltertext').text(questtext.substring(10)+'...')
+        reload();
+    }   
+
+    function clearfilterquestion(){
+        currentQuestionFilter = -1;
+        $('a#questionfiltertext').text('Select Question')
+        reload();
+    }
     function load_page(page){
         currPage = page;
         refresh_table((page-1)*stdlimit,stdlimit);
@@ -25,16 +49,12 @@
     function refresh_table(offset,limit){
         var dict = {offset:offset,limit:limit}
 
-        if ($.trim($('#userID').val()).length > 0){
-            dict['userID'] = $.trim($('#userID').val());
+        if (currentUserFilter != -1){
+            dict['userID'] = currentUserFilter;
         }
 
-        if ($.trim($('#id').val()).length > 0){
-            dict['id'] = $.trim($('#id').val());
-        }
-
-        if ($.trim($('#questionID').val()).length > 0){
-            dict['questionID'] = $.trim($('#questionID').val());
+        if (currentQuestionFilter != -1){
+            dict['questionID'] = currentQuestionFilter;
         }
 
         $.get('/filteranswerstbl',
@@ -48,17 +68,5 @@
     }
 </script>
 
-<form method="POST" class="form-inline" id="answerfilter-form">
-    <b>Filter by:</b><br>
-    <label>ID</label> <input type="text" id="id"/>
-    <label>UserID</label> <input type="text" id="userID"/>
-    {% if hasQuestionID%}
-        <input type='hidden' id='questionID' value='{{ questionID }}' />
-    {% else %}
-        <label>QuestionID</label> <input type="text" id="questionID"/>
-    {% endif %}
-
-    <input id='submit' type="submit" value="Search" class="btn btn-primary" />
-</form>
 <div id='tblContainer'></div>
 {% endblock %}
