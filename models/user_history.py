@@ -1,7 +1,6 @@
 from dbconnection import engine, Base, session
 from sqlalchemy import String,Column,Float,Integer
 from basemodel import BaseEntity
-from user import UserModel
 
 class UserHistoryModel(Base, BaseEntity):
     __tablename__ = 'user_history'
@@ -26,6 +25,8 @@ class UserHistoryModel(Base, BaseEntity):
     def get_user_latest_data(uid):
         return session.query(UserHistoryModel).filter(UserHistoryModel.userid == uid)[:1]
         
+    # method creates a new history entry by copying the last known history
+    # entry of the student, and updating the 'trust' column
     @staticmethod
     def set_trust(uid, trust):
         thing = UserHistoryModel.get_user_latest_data(uid)
@@ -33,13 +34,21 @@ class UserHistoryModel(Base, BaseEntity):
         session.add(UserHistoryModel(thing.userid, thing.trust, thing.answered, thing.asked))
         session.commit
         
+    # method creates a new history entry by copying the last known history
+    # entry of the student, and updating the 'answered' column
     @staticmethod
     def inc_answered(uid):
         thing = UserHistoryModel.get_user_latest_data(uid)
-        thing.answered = thing.answered + 1      
+        thing.answered = thing.answered + 1
+        # make sure answered cannot exceed asked, which would result in
+        # participation data higher than 100%
+        if (thing.answered > thing.asked):
+            thing.asked = thing.answered
         session.add(UserHistoryModel(thing.userid, thing.trust, thing.answered, thing.asked))
         session.commit
         
+    # method creates a new history entry by copying the last known history
+    # entry of the student, and updating the 'asked' column
     @staticmethod
     def inc_asked(uid):
         thing = UserHistoryModel.get_user_latest_data(uid)

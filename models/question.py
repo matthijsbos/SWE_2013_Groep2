@@ -2,7 +2,6 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import Column, String, Boolean, Integer,DateTime
 from dbconnection import engine, session, Base
 from basemodel import BaseEntity
-from models import UserHistoryModel
 from datetime import datetime
 
 
