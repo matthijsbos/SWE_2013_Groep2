@@ -170,3 +170,12 @@ float:none;
 	margin-bottom: 5px;
     color:#009DCE;
 }
+#buttonleft {
+    word-wrap: break-word;
+}
+#buttonright {
+    word-wrap: break-word;
+}
+#rankquestion {
+    word-wrap: break-word;
+}
