@@ -10,7 +10,7 @@ class AnswerModel(Base, BaseEntity):
     __tablename__ = 'answer'
 
     text = Column(String)
-    questionID = Column(Integer)
+    questionID = Column(Integer, ForeignKey('questions.id',ondelete='CASCADE'))
     userID = Column(String)
     edit = Column(Integer)
     ranking = Column(Float)
