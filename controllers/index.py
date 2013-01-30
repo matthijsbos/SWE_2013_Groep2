@@ -61,7 +61,7 @@ class Index():
         
         min_delay = 10
         dt = UserQuestion.time_since_last(g.lti.get_user_id())
-        if dt < min_delay:
+        if dt is not None and dt < min_delay:
             rv['type'] = 'time'
         else:
             rv['error'] = False
