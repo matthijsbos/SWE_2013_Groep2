@@ -41,8 +41,9 @@
         elem.text('');
         elem.hide();
         time_elem.text('');
-        var edit_field = $('<input type="text" class="input-block-level" placeholder="your question">').val(text);
-        var time_field = $('<input type="number" size="3" maxlength="3" placeholder="sec">').val(time);
+        
+        var edit_field = $('<input type="text" class="input-block-level" placeholder="your question">').prop('value', 'Simple');
+        var time_field = $('<input type="number" size="3" maxlength="3" value="" placeholder="sec">').prop('value', parseInt(time));
 
         var editelem = $('#sedit_'+id);
         edit_count++;
