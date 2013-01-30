@@ -3,15 +3,14 @@
 <script language="javascript" type="text/javascript">
     var stdlimit = 10;
     var currPage = 1;
+{% if hasqid %}
+    var currentQuestionFilter = {{questionid}};
+{% else %}
     var currentQuestionFilter = -1;
+{% endif %}
     var currentUserFilter = -1;
 
     $(document).ready(function() {
-        $('#submit').click(function(){
-            refresh_table_default();
-            return false;
-        });
-
         refresh_table_default();
     });
 
@@ -69,44 +68,5 @@
     }
 </script>
 
-<form method="POST" class="form-inline" id="answerfilter-form">
-    <b>Filter by:</b><br>
-    <label>UserID</label>
-    <div class="btn-group">
-        <a href='#' class="btn" id='userfiltertext'>Select user</a>
-        <a class="btn dropdown-toggle" data-toggle="dropdown">
-            <span class="caret"></span>
-        </a>
-        <ul class="dropdown-menu">
-            <li><a href='#' onclick="clearfilteruser();">Clear</a></li>
-            <li class='divider'></li>
-            {% for user in users %}
-            <li><a href='#' onclick="setfilteruser('{{user.userid}}','{{user.username}}');">{{user.username}}</a></li>
-            {% endfor %}
-        </ul>
-    </div>
-
-    {% if hasQuestionID%}
-        <input type='hidden' id='questionID' value='{{ questionID }}' />
-    {% else %}
-        <label>QuestionID</label> 
-        <div class="btn-group">
-            <a href='#' class="btn" id='questionfiltertext'>Filter</a>
-            <a href='#' class="btn dropdown-toggle" data-toggle="dropdown">
-                <span class="caret"></span>
-            </a>
-            <ul class="dropdown-menu">
-                <li><a href='#' onclick="clearfilterquestion();">Clear</a></li>
-                <li class='divider'></li>
-                {% for question in questions %}
-                <li><a href='#'
-                    onclick="setfilterquestion('{{question.id}}','{{question.question}}');">{{question.question[:10]+'...'}}</a></li>
-                {% endfor %}
-            </ul>
-        </div>
-    {% endif %}
-
-    <input id='submit' type="submit" value="Search" class="btn btn-primary" />
-</form>
 <div id='tblContainer'></div>
 {% endblock %}

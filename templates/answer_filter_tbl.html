@@ -1,14 +1,31 @@
 <script language="javascript" type="text/javascript">
     $(document).ready(function() {
-            $.get('/pagination',{currentpage:{{ currentpage }},
-                startpage:{{ startpage }},
-                pagecount:{{ pagecount}},
-                maxpages:{{ maxpages }},
-                },
+        $.get('/pagination',{currentpage:{{ currentpage }},
+            startpage:{{ startpage }},
+            pagecount:{{ pagecount}},
+            maxpages:{{ maxpages }},
+            },
             function(data){
-                $('#paginationtop').html(data);
-                $('#paginationbottom').html(data);
+            $('#paginationtop').html(data);
+            $('#paginationbottom').html(data);
+        });
+
+        if(currentQuestionFilter > 0)
+        {
+            $('#questiondropdown').find('a').each(function (){
+                if(currentQuestionFilter == $(this).attr('value')){
+                    $('a#questionfiltertext').text($(this).text());
+                }
             });
+        }
+        if(currentUserFilter != -1)
+        {
+            $('#userdropdown').find('a').each(function (){
+                if(currentUserFilter == $(this).attr('value')){
+                    $('a#userfiltertext').text($(this).text());
+                }
+            });
+        }
     });
 </script>
 
@@ -16,19 +33,54 @@
 <table class="table table-hover table-bordered table-striped">
     <thead>
         <tr>
-            <th>id</th>
-            <th>questionID</th>
-            <th>student</th>
-            <th>answer</th>
-            <th>created on</th>
-            <th>modified on</th>
-            <th>rankscore</th>
+            <th>ID</th>
+            <th class='questionColumnAnswerTable' >Question:
+                {% if not hasQuestionID %}
+                <div class="btn-group">
+                    <a href='#' class="btn" id='questionfiltertext'>Filter</a>
+                    <a href='#' class="btn dropdown-toggle" data-toggle="dropdown">
+                        <span class="caret"></span>
+                    </a>
+                    <ul class="dropdown-menu" id='questiondropdown'>
+                        <li><a href='#' onclick="clearfilterquestion();">Clear</a></li>
+                        <li class='divider'></li>
+                        {% for question in questions %}
+                        <li><a href='#' value="{{question.id}}"
+                            onclick="setfilterquestion('{{question.id}}','{{question.question}}');">{{question.question[:10]+'...'}}</a></li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                {% endif %}
+            </th>
+            <th class='userColumnAnswerTable'>Student:
+                <div class="btn-group">
+                    <a href='#' class="btn" id='userfiltertext'>Select user</a>
+                    <a class="btn dropdown-toggle" data-toggle="dropdown">
+                        <span class="caret"></span>
+                    </a>
+                    <ul class="dropdown-menu" id='userdropdown'>
+                        <li><a href='#' onclick="clearfilteruser();">Clear</a></li>
+                        <li class='divider'></li>
+                        {% for user in users %}
+                        <li><a href='#' value="{{user.userid}}"
+                            onclick="setfilteruser('{{user.userid}}','{{user.username}}');">{{user.username}}</a></li>
+                        {% endfor %}
+                    </ul>
+            </div></th>
+            <th>Answer</th>
+            <th>Created on</th>
+            <th>Modified on</th>
+            <th>Rankscore</th>
         </tr>
     </thead>
     {% for answer in answers %}
     <tr>
         <td>{{ answer.id }}</td>
-        <td>{{ answer.questionID }}</td>
+        <td>{% for q in questions %}
+            {% if q.id == answer.questionID%}
+            {{ q.question[:10]+'...' }}
+            {% endif %}
+            {% endfor %}</td>
         <td>{{ answer.username }}</td>
         <td>{{ answer.text }}</td>
         <td>{{ answer.created }}</td>
