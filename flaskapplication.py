@@ -165,14 +165,11 @@ def managetags():
     ctrler = Modifytags()
     return ctrler.render()
 
-
-@app.route("/addtag", methods=['POST'])
-def addtags():
+@app.route("/addtags", methods=['GET', 'POST'])
+def addtags():    
     ctrler = Modifytags()
-    ctrler.addtag(request)
-    return ctrler.render()
-
-
+    return ctrler.addtag(request.args)    
+    
 @app.route("/removetag", methods=['GET'])
 def removetags():
     ctrler = Modifytags()
