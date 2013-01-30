@@ -3,7 +3,8 @@
 {% set i = 0 %}
 
 <script language=javascript type='text/javascript'> 
-    function do_stuff(string) {
+    function do_stuff(string)
+    {
         document.getElementById("trust_edit_"+string).style.display = 'block';
         document.getElementById("trust_view_"+string).style.display = 'none';
     }
@@ -29,7 +30,7 @@
         <td><a href="/trustdata?uid={{ element.userid }}" class="blue">{{ element.username }}</a></td>
         <td>{{ element.trust }}</td>
         <td id="trust_edit_{{element.userid}}" style="display: none;">
-            <form action="/adjust_trust?uid={{element.userid}}" name="" method="post">
+            <form action="/adjust_trust?uid={{element.userid}}&new=714" name="" method="post">
                 New value: <input type="number" name="new" min="0" max="2500"> </input>
             </form>
         </td>

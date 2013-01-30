@@ -9,6 +9,7 @@ import models.answerchoice
 import models.tag
 import models.rating
 import models.user
+import models.user_history
 from dbconnection import Base, engine
 from flask import Flask, request, render_template, g
 from lti import LTI, LTIException
@@ -306,14 +307,11 @@ def trust_data_start():
 def trust_data():
     ctrler = UserHistory(request)
     return ctrler.render_by_userid(request.args['uid'])
-    #return ctrler.render_by_userid(request.values["uid"])
     
 @app.route("/adjust_trust", methods=['GET', 'POST'])
-def adjust_it():
+def adjust_trust():
     ctrler = UserHistory(request)
-    ctrler.set_trust(request.args['uid'], request.args['new'])
-    ctrler = User(request)
-    return ctrler.render_with_all()
+    return ctrler.render_adjust_trust(request.args['uid'], request.args['new'])
 
 @app.route("/logout")
 def logout():

@@ -12,3 +12,7 @@ class UserHistory():
     def render_by_userid(self, uid):
         return render_template('trustdata.html', data=UserHistoryModel.get_by_user_id(uid), data2=UserModel.by_user_id(uid))
         
+    def render_adjust_trust(self, uid, trust):
+        UserHistoryModel.set_trust(uid, trust)
+        return render_template('trustdata_start.html', data=UserModel.get_all())
+        
