@@ -1,14 +1,18 @@
 {% extends "_base.html" %}
 {% block content %}
 {% set i = 0 %}
-<p>
-    The trust tracker is a useful tool in measuring the participation of students over time. Trust is gained when students answer questions, and have their questions ranked positively by
-    other students. Trust is lost when not participating in questions or ranking, or when answers are ranked negatively by other students.
-</p>
 
-<p>
-    This page contains the current trust value for students. Click on a student's name for details on that student's history.
-</p>
+<script language=javascript type='text/javascript'> 
+    function do_stuff() { 
+        if (document.getElementById) {
+            document.getElementById('trust_edit').style.visibility = 'block';
+        }
+    }
+</script>
+
+<p>The trust tracker is a useful tool in measuring the participation of students over time. Trust is gained when students answer questions, and have their questions ranked positively by other students. Trust is lost when not participating in questions or ranking, or when answers are ranked negatively by other students.</p>
+
+<p>This page contains the current trust value for students. Click on a student's name for details on that student's history.</p>
 
 <table class="table table-hover table-bordered table-striped">
     <thead>
@@ -25,7 +29,8 @@
         <td>{{ i }}</td>
         <td><a href="/trustdata?uid={{ element.userid }}" class="blue">{{ element.username }}</a></td>
         <td>{{ element.trust }}</td>
-        <td>edit trust</td>
+        <td id="trust_edit" style="display: none;">derp</td>
+        <td id="trust_view" style="display: block;"><input type="edit-trust" id="edit-trust" value="edit trust" class="btn-primary btn" onclick=do_stuff) ></button></td>
     </tr>
     {% endfor %}
 </table>
