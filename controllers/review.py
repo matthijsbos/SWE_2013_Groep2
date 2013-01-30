@@ -73,7 +73,7 @@ class ReviewAnswer():
 
         return render_template('reviewanswer.html', answer=answer,
                                tags=Tag.get_all(), enabledtags=enabledtags,
-                               reviews=reviews, question=question.question)
+                               reviews=reviews, question=question)
 
     @staticmethod
     def start_review(request):
