@@ -35,7 +35,7 @@
             <td class="time-field" id="time_{{question.id}}">{% if question.time == 0 %}&#8734; {% else %} {{question.time}} {% endif %}</td>
             <td class="state-field" id="available_{{question.id}}">
                 <div class="btn-group">
-                    <a id ="state{{question.id}}" class="btn btn-primary state-buttons" href="#">{{question.state}}</a>
+                    <a id ="state{{question.id}}" class="btn btn-primary state-buttons" href="#" onclick=next_state({{question.id}})>{{question.state}}</a>
                     <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown" href="#"><span class="caret"></span></a>
                     <ul class="dropdown-menu">
                         <li {% if question.inactive %}style="display:none"{% endif %} id="q{{question.id}}_drop1"><a href="#" onclick="toggle_state({{question.id}}, 'Inactive')">Inactive</a></li>
