@@ -143,5 +143,9 @@ class UserQuestion(Base, BaseEntity):
         dt = datetime.now() - created[0]
         return dt.seconds + dt.days*86400
         
+    @classmethod
+    def get_list(cls, count):
+        return session.query(cls).limit(count).all()
+        
         
 Base.metadata.create_all(engine)
