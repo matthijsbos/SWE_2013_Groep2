@@ -17,6 +17,8 @@ class Question(Base, BaseEntity):
     _answerable = Column(Boolean)
     _reviewable = Column(Boolean)
     _archived = Column(Boolean)
+    _inactive = Column(Boolean)
+    
     state = Column(String)
     time = Column(Integer)
     activate_time = Column(DateTime,nullable=True)
@@ -30,22 +32,25 @@ class Question(Base, BaseEntity):
         self.course_id = course_id
         self.question = question
         
-        self.state = 'States'
+        self.state = 'Inactive'        
         self.comment = comment
         self.tags = tags
         self.rating = rating
-
+        
+        inactive = True
         if(answerable):
             self.activate_time = datetime.now()
             self.state = 'Answerable'
+            inactive = False
         else:
             self.activate_time = None
 
         self.time = time
+        self.inactive = inactive
         self.answerable = answerable
         self.reviewable = False
         self.archived = False
-
+        
     def __repr__(self):
         return "<Question ('%s','%s','%s','%s', '%s')>" % (self.user_id,
                                                 self.course_id,
@@ -94,6 +99,16 @@ class Question(Base, BaseEntity):
     @archived.setter
     def archived(self, value):
          self._archived = value
+         session.add(self)
+         session.commit()
+         
+    @property
+    def inactive(self):
+         return self._inactive
+
+    @inactive.setter
+    def inactive(self, value):
+         self._inactive = value
          session.add(self)
          session.commit()
 

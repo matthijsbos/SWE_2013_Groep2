@@ -14,8 +14,16 @@ class Modifytags():
     def __init__(self):
         pass
     
-    def addtag(self, request):
-        Tag.add_tag(request.form['newTag'])
+    def addtag(self, args):
+        tag = args['tag']
+        if tag != '':
+            response = Tag.add_tag(tag);
+            if not response:                
+                return json.dumps({"succes": False})
+            else:
+                return json.dumps({"succes": True, "id":response})
+        else:
+            return json.dumps({"succes": False})
 
     def delete_tag_question(self, id):
         if g.lti.is_instructor():
@@ -24,7 +32,7 @@ class Modifytags():
 
     def render(self):
         self.taglist = Tag.get_all()
-        return render_template('modifytags.html',tags=self.taglist)
+        return render_template('modifytags.html',tags=self.taglist)        
         
     @staticmethod
     def json_get_tags():    
