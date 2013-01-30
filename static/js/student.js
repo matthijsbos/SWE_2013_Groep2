@@ -30,23 +30,11 @@ function query_new_question() {
             }
             
                 /* Poll for reviewable questions */
-                $.getJSON("/has_new_review", {},
-                    function(data) {
-                        if (data.has_new) {
-                            window.location.href = "reviewanswer_stub";
-                        }          
-                    });
-            /* Poll for reviewable questions */
-            $.getJSON("/has_new_review", {},
-                function(data) {
-                    if (data.has_new) {
-                        show_review_button();
-                    }
-                    else {
-                        hide_review_button();
-                    }            
-                });
-            
+                $.getJSON("/has_new_review", {}, function(data) {
+					if (data.has_new) {
+						window.location.href = "reviewanswer_stub";
+					}          
+				});
         });
 }
 
