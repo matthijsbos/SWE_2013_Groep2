@@ -85,33 +85,32 @@ def ask_question():
 # this route is used for the feedback from inserting the question into the
 # database, it also inserts the question into the database
 @app.route("/handle_question", methods=['GET','POST'])
-def handle_question():
-    question_text = '' 
+def handle_question():    
     try:
-        question_text = request.form['question']
-    except: 
-        pass
+        question_text = request.args['question']
+    except KeyError: 
+        return json.dumps({'done':False})       
     
     if question_text == '':
-        return json.dumps({'done':False})
-        
+        return json.dumps({'done':False})       
+    
     try:
-        isActive = request.form['active'] in ['true','True']
+        isActive = request.args['active'] in ['true','True']
     except:
         isActive = False
 
     try:
-        comment = request.form['comment'] in ['true','True'] 
+        comment = request.args['comment'] in ['true','True'] 
     except:
         comment = False
 
     try:
-        tags = request.form['tags'] in ['true','True']
+        tags = request.args['tags'] in ['true','True']
     except:
         tags = False
 
     try:
-        rating = request.form['rating'] in ['true','True']
+        rating = request.args['rating'] in ['true','True']
     except:
         rating = False
 
@@ -119,7 +118,7 @@ def handle_question():
                                     g.lti.get_user_id(),
                                     g.lti.get_course_id(),
                                     isActive,
-                                    request.form['time'],
+                                    request.args['time'],
                                     comment,
                                     tags,
                                     rating)
