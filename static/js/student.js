@@ -1,4 +1,4 @@
-﻿/*
+/*
  * Handles all actions for students: showing them the current question and
  * letting them answer it.
  *

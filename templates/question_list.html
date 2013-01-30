@@ -5,11 +5,25 @@
     var stdlimit = 10;
     var currPage = 1;
     var edit_count = 0;
-
+    var query_interval = 1000 * 5; // Every 5 sec
+    var query_interval_id;
+    $(function() {    
+        query_interval_id = setInterval(get_student_questions, query_interval);    
+    });
     $(document).ready(function() {
         refresh_table(0,stdlimit);
+        
     });
-
+    
+    function get_student_questions(){
+        $.getJSON("/get_student_questions", {},
+        function(data) {          
+            if (data.has_new) {
+alert("test");
+            }
+        }
+    )
+    }
     function refresh_table(offset,limit){
         $.get('/question_list_table',{offset:offset,limit:limit},
             function(data){
@@ -257,7 +271,7 @@
     }
 
 </script>
-
+<table id="student_questions"><tr><td><b>student name</b></td><td><b>suggested question</b></td></tr></table>
 <div id="error" style="background-color: #a33; color: white;"></div>
 <div id="questListForm" onKeyPress="return checkSubmit(event)" style="display:block">
 
