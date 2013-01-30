@@ -61,7 +61,7 @@ function toggleQ(id){
 }
 function show_question(id, question, time_remaining, question_time, answer) {
     console.log("GOT QUESTION", id, question, time_remaining);
-    submit_interval_id[id] = setInterval(function(){
+    submit_interval_id[id] = window.setInterval(function(){
         check_remaining_time(id, question_time)
     },time_check_interval)
     
@@ -111,7 +111,8 @@ function check_submit_answer(id, question_time){
         submit_answer(id);
     }
     $('#answerform'+id).remove();
-    clearInterval(submit_interval_id[id]);
+    window.clearInterval(submit_interval_id[id]);
+    submit_interval_id[id] = "";
     if ( $('#questions').is(':empty') )
     {
         $('#pleasewait').show();
@@ -125,7 +126,7 @@ function check_remaining_time(id, time_delta){
     },
     function(data) {
         res = false;
-        if (data.still_available)
+        if (data.still_answerable)
         {
             if (data.question_time != time_delta)
             {
@@ -141,7 +142,9 @@ function check_remaining_time(id, time_delta){
                     popup_div('#answerform'+id+' #prolongedText'+id)
 
                 time_delta = data.question_time;
-                submit_interval_id[id] = setInterval(function(){
+                window.clearInterval(submit_interval_id[id]);
+                submit_interval_id[id] = "";
+                submit_interval_id[id] = window.setInterval(function(){
                     check_remaining_time(id, time_delta)
                 },time_check_interval)
                 res = true;
@@ -156,7 +159,8 @@ function check_remaining_time(id, time_delta){
                     $('#pleasewait').show();
                 }
                 $('#answerform'+id).remove();      
-                clearInterval(submit_interval_id[id]);
+                window.clearInterval(submit_interval_id[id]);
+                submit_interval_id[id] = "";
                 popup_div('#questionWasDeleted',5000)
             }
         }
