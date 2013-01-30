@@ -103,10 +103,12 @@
 			$('.comment-field').hide();
 			$('.tags-field').hide();
 			$('.rating-field').hide();
+            $('#advanced').prop('value', 'Advanced');
 		} else {
 			$('.comment-field').show();
 			$('.tags-field').show();
 			$('.rating-field').show();
+            $('#advanced').prop('value', 'Simple');
 		}
 		advanced_visible = !advanced_visible;
     }
