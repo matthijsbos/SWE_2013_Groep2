@@ -29,6 +29,16 @@ function query_new_question() {
                 }
             }
             
+                /* Poll for reviewable questions */
+                $.getJSON("/has_new_review", {},
+                    function(data) {
+                        if (data.has_new) {
+                            show_review_button();
+                        }
+                        else {
+                            hide_review_button();
+                        }            
+                    });
             /* Poll for reviewable questions */
             $.getJSON("/has_new_review", {},
                 function(data) {
@@ -91,11 +101,9 @@ function show_question(id, question, time_remaining, question_time, answer) {
             until: austDay,
             compact: true,
             onExpiry: function(){
-                check_submit_answer(id, question_time)
-                $.post('/start_review', {
-                    'question_id': id
-                });
-            }        
+				check_submit_answer(id, question_time)
+				$.post('/start_review', {'question_id': id});
+			}        
         });
     }
     
@@ -158,6 +166,14 @@ function check_remaining_time(id, time_delta){
         {            
             if(data.question_deleted)
             {
+                if ( $('#questions').is(':empty') )
+                {
+                    $('#pleasewait').show();
+                }
+                $('#answerform'+id).remove();      
+                window.clearInterval(submit_interval_id[id]);
+                submit_interval_id[id] = "";
+                popup_div('#questionWasDeleted',5000)
                 $('#answerform'+id).remove();      
                 window.clearInterval(submit_interval_id[id]);
                 submit_interval_id[id] = "";
@@ -179,7 +195,6 @@ function popup_div(div,time) {
 }, 5000)
     else
         $(div).delay(time).hide(1);
-    
 }
 
 function submit_answer(id) {
