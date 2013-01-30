@@ -32,21 +32,17 @@
     function edit_field(id){        
         var elem = $('#question_' + id + ' a');
         var time_elem = $('#time_'+id);
-        if (elem.hasClass('activated')){
-            return;
-        }
+
         var text = elem.text();
         var time = time_elem.text();
         
         if (isNaN(time))
             time = 0;
         
-        elem.addClass('activated');
-        elem.text('');
         elem.hide();
         time_elem.text('');
         
-        var edit_field = $('<input type="text" class="input-block-level" placeholder="your question">').prop('value', 'Simple');
+        var edit_field = $('<input type="text" class="input-block-level" placeholder="your question">').prop('value', text);
         var time_field = $('<input type="number" size="3" maxlength="3" value="" placeholder="sec">').prop('value', parseInt(time));
 
         var editelem = $('#sedit_'+id);
@@ -55,19 +51,19 @@
         editelem.click(function(){            
             edit_count--;
             $('#edit_'+id).show();
+            elem.show();
             $('#sedit_'+id).hide();
             
             var newTime = time_field.val();            
+            var newText = edit_field.val();
+
                 
-            edit_question(id,edit_field.val(),newTime);
+            edit_question(id,newText,newTime);
             
             if (newTime == 0)
-                newTime = '&#8734';
-            
-            var newText = elem.val();
-            elem.text(newText);
-            elem.removeClass('activated');
+                newTime = $("<div/>").html('&#8734').text();
 
+            elem.text(newText);
             time_elem.text(newTime);
             
             $(time_field).remove();
@@ -84,7 +80,6 @@
             editelem.css('color', 'darkorange');
             editelem.css('font-weight', 'bold');
         });
-        
         edit_field.appendTo(elem.parent());
         time_field.appendTo(time_elem);
         edit_field.focus();
@@ -95,7 +90,8 @@
         function(data){
             if(data.check){                
                 $('#question_'+id).html('<a href=\"/filteranswers/'+data.id+'\">'+data.text+'</a>');
-                $('#time_'+id).html(data.time)
+                if (data.time == 0)timeDisplay = '&#8734;'; else timeDisplay = data.time;
+                $('#time_'+id).html(timeDisplay)
             }
             else{
                 $('#error').html("Error while editing question question.");
