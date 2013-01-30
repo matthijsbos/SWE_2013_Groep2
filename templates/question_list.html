@@ -8,6 +8,7 @@
     var query_interval = 1000 * 5; // Every 5 sec
     var query_interval_id;
     $(function() {    
+        get_student_questions()
         query_interval_id = setInterval(get_student_questions, query_interval);    
     });
     $(document).ready(function() {
@@ -18,8 +19,9 @@
     function get_student_questions(){
         $.getJSON("/get_student_questions", {},
         function(data) {          
-            if (data.has_new) {
-alert("test");
+            $('#student_questions').html('<thead><tr><td><b>student name</b></td><td><b>suggested question</b></td></tr></thead><tr></tr>');
+           for (key in data) {
+               $('#student_questions tr:last').after('<tr><td>'+data[key].user+'</td><td>'+data[key].text+'</td></tr>')
             }
         }
     )
@@ -271,7 +273,7 @@ alert("test");
     }
 
 </script>
-<table id="student_questions"><tr><td><b>student name</b></td><td><b>suggested question</b></td></tr></table>
+<table id="student_questions" class="table table-hover table-bordered table-striped"></table>
 <div id="error" style="background-color: #a33; color: white;"></div>
 <div id="questListForm" onKeyPress="return checkSubmit(event)" style="display:block">
 
