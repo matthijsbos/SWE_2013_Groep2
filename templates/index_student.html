@@ -13,11 +13,9 @@
         <i class="icon-time"></i>&nbsp;Please wait for your instructor to ask a question.
     </div>
 </div>
-<div id="questionWasDeleted" style="display: none;">The question was deleted. Your answer was not
-    saved</div>
 
 <!-- For answering a question. -->
-<div id="questions" class="accordion"><br></div>
+<div id="questions" class="accordion"></div>
 	<!---
         Check to see if there are questions to answer
         or questions to rank. If so link to the appropriate
@@ -58,6 +56,15 @@
 		{% endfor %}
 		</table>
 	{% endif %}
+	
+	<hr>
+	<p>Ask your instructor a question.</p>
+	<textarea id="student_question" rows="4" cols="100" placeholder="Insert your question here..."></textarea>
+	<br>
+	<button class="btn btn-info" onclick="submit_student_question()">Ask question</button>
+	<div id="question_succes" class="alert alert-success" style="display:none"></div>
+	<div id="question_error" class="alert alert-error" style="display:none"></div>
+	<br>
 
 <!-- For asking questions to instructor -->
 <a href="/question_list/asked" class="blue">Ask a question</a>

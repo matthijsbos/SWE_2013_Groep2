@@ -43,8 +43,12 @@ class Tag(Base, BaseEntity):
     @staticmethod
     def add_tag(name):
         if session.query(Tag.name).filter(Tag.name == name).first() is None:
-            session.add(Tag(name))
+            tag = Tag(name)
+            session.add(tag)
             session.commit()
+            return tag.id
+        else:
+            return False
             
     @staticmethod
     def remove_tag(tag_id):

@@ -1,4 +1,4 @@
-# Descrp : Contains routing and calling of the controllers.
+﻿# Descrp : Contains routing and calling of the controllers.
 # Changes:
 # Comment: MultiDict with isinstructor,consumerkey,coursekey and coursename in
 #          the request.form field.
@@ -79,18 +79,11 @@ def edit_question():
                                   request.args['text'],
                                   request.args['time'])
 
-
-@app.route("/toggle_question", methods=['GET', 'POST'])
-def toggle_question():
-    """Used to toggle a question's availability."""
-    return Question.toggle_question(request.args['id'], request.args['field'])
-
-
-@app.route("/questionavailability", methods=['GET', 'POST'])
-def questionavailability():
-    return Question.availability(request.args)
-
-
+@app.route("/togglequestion", methods=['GET', 'POST'])
+def toggle_options():
+    return Question.toggle_options(request.args)
+    
+# this route is used to ask a question to students
 @app.route("/question", methods=['GET', 'POST'])
 def ask_question():
     """Used to asked questions to students."""
@@ -99,27 +92,47 @@ def ask_question():
 
     return Question.ask_question(g.lti.get_user_id())
 
+# this route is used for the feedback from inserting the question into the
+# database, it also inserts the question into the database
+@app.route("/handle_question", methods=['GET','POST'])
+def handle_question():    
+    try:
+        question_text = request.args['question']
+    except KeyError: 
+        return json.dumps({'done':False})       
+    
+    if question_text == '':
+        return json.dumps({'done':False})       
+    
+    try:
+        isActive = request.args['active'] in ['true','True']
+    except:
+        isActive = False
 
-@app.route("/handle_question", methods=['POST'])
-def handle_question():
-    """Used for the feedback from inserting a question into the database, and
-    for actually inserting questions into the database."""
+    try:
+        comment = request.args['comment'] in ['true','True'] 
+    except:
+        comment = False
 
-    isActive = request.form.get('active', "false") in ['true', 'True']
-    comment = request.form.get('comment', "false") in ['true', 'True']
-    tags = request.form.get('tags', "false") in ['true', 'True']
-    rating = request.form.get('rating', "false") in ['true', 'True']
+    try:
+        tags = request.args['tags'] in ['true','True']
+    except:
+        tags = False
 
-    Question.create_question(request.form['question'],
-                             g.lti.get_user_id(),
-                             g.lti.get_course_id(),
-                             isActive,
-                             request.form['time'],
-                             comment,
-                             tags,
-                             rating)
-    return json.dumps({'done': True})
+    try:
+        rating = request.args['rating'] in ['true','True']
+    except:
+        rating = False
 
+    Question.create_question(question_text,
+                                    g.lti.get_user_id(),
+                                    g.lti.get_course_id(),
+                                    isActive,
+                                    request.args['time'],
+                                    comment,
+                                    tags,
+                                    rating)
+    return json.dumps({'done':True})
 
 @app.route("/question_list", methods=['GET', 'POST'])
 def list_questions():
@@ -168,6 +181,11 @@ def question_export():
 def question_import():
     list = yaml.load(request.args['file'])
     print list
+    
+@app.route("/student_question", methods=['POST'])
+def student_question():
+    ctrlr = Index()
+    return ctrlr.student_question(request)
 
 
 @app.route("/managetags", methods=['GET', 'POST'])
@@ -175,14 +193,11 @@ def managetags():
     ctrler = Modifytags()
     return ctrler.render()
 
-
-@app.route("/addtag", methods=['POST'])
-def addtags():
+@app.route("/addtags", methods=['GET', 'POST'])
+def addtags():    
     ctrler = Modifytags()
-    ctrler.addtag(request)
-    return ctrler.render()
-
-
+    return ctrler.addtag(request.args)    
+    
 @app.route("/removetag", methods=['GET'])
 def removetags():
     ctrler = Modifytags()
@@ -204,7 +219,7 @@ def addtag_answer():
 
 @app.route("/answer", methods=['GET', 'POST'])
 def answerForm():
-    ctrler = Answer(request)
+    ctrler = Answer()
     return ctrler.render()
 
 
@@ -265,7 +280,7 @@ def do_review_answer_stub():
 
 @app.route("/filteranswers", methods=['POST', 'GET'])
 def answerFilter():
-    ctrler = Answer(request)
+    ctrler = Answer()
     return ctrler.render_filtered()
 
 
@@ -277,8 +292,24 @@ def render_results():
 
 @app.route("/filteranswers/<questionid>", methods=['POST', 'GET'])
 def answerFilterByQuestionID(questionid):
-    ctrler = Answer(request)
-    return ctrler.render_filtered_by_questionid(questionid)
+    ctrler = Answer()
+    return ctrler.render_filtered(questionID=questionid)
+
+
+@app.route("/filteranswerstbl", methods=['POST', 'GET'])
+def answerFilterTable():
+    if 'limit' in request.args:
+        limit = int(request.args['limit'])
+    if 'offset' in request.args:
+        offset = int(request.args['offset'])
+
+    ctrler = Answer()
+    return ctrler.render_filtered_tbl(limit,offset)
+
+@app.route("/rankresults", methods=['POST', 'GET'])
+def render_results():
+    ctrler = answer.Answer()
+    return ctrler.render_results()
 
 
 @app.route("/has_new_question", methods=['GET', 'POST'])

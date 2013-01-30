@@ -11,40 +11,43 @@
                     $('#error').html("Error while deleting question.");
             });
     }
+    function add_tag(){
+        text = $('#tagText').val();        
+        $.getJSON("/addtags",{tag:text},            
+            function(data){                
+                if (data.succes)
+                {
+                    $('#tagText').val('');
+                    $('#tagForm').append('\
+                    <div class="tags" id="remove_'+data.id+'">\
+                    <div>'+text+'</div>\
+                    <a onclick="javascript:remove_tag('+data.id+');"><i class="icon-remove-sign"></i> delete </a>\
+                    </div>')
+                }
+                else
+                    alert('Empty string');
+            });
+        return false;
+    }
 </script>
 <div id="error"></div>
 
-<form class="form-inline" action="/addtag" method="post">
+<form class="form-inline" method="post">
   <b>New tag:</b>
   <br>
-  <input type="text" name="newTag">
-  <input class="btn-primary btn" type="submit" value="Add Tag">
+  <input id="tagText" type="text" name="newTag">
+  <input class="btn-primary btn" value="Add Tag" onclick=add_tag()>
 </form>
 
-<form action="/removetag" method="post">
+<form id="tagForm" action="/removetag" method="post">
 	<b>Current tags:</b>
 	<br>
     {% for tag in tags %}
         <div class="tags" id="remove_{{tag.id}}">
             <div>{{tag.name}}</div>
-            <a onclick="javascript:remove_tag({{tag.id}});"/><i class="icon-remove-sign"></i> delete </a>
+            <a onclick="javascript:remove_tag({{tag.id}});"><i class="icon-remove-sign"></i> delete </a>
         </div>
     {% endfor %}
 </form>
-
-
-<!--<form action="/removetag" method="post">
-	<b>Current tags:</b>
-	<br>
-    <label class="checkbox">
-        {% for tag in tags %}
-            <input type="checkbox" name="remove_tags" value="{{tag.id}}">
-                {{tag.name}}
-            </input>
-            <br>
-        {% endfor %}
-    </label>
-    <input class="btn" type="submit" value="Delete">
-</form>-->
 
 {% endblock %}

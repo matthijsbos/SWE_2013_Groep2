@@ -9,60 +9,57 @@ from controllers.scheduler import Scheduler
 
 
 class QuestionController():
-    # TODO: remove toggle_question, fix availability
+    # TODO: remove toggle_question, fix availability    
     @staticmethod
-    def toggle_question(q_id, type):
-        '''toggles a question between answerable and not answerable'''
-        if g.lti.is_instructor():
-            active = QuestionController.availability({'id':q_id,'type':type})
-            return json.dumps({"toggle":active, "check": True})
-        else:
-          return json.dumps({"toggle": True, "check": False})
+    def toggle_options(args):        
+            try:
+                type = args['type']
+            except KeyError:
+                return 
+                
+            question = Question.by_id(args['id'])
+            if question is None:
+                return 
 
-    @staticmethod
-    def availability(args):
-        """
-        Handles availability via the question_list form
-        """
-        try:
-            type = args['type']
-        except KeyError:
-            return 
+            if not g.lti.is_instructor() and type != 'Reviewable':
+                return
             
-        question = Question.by_id(args['id'])
-        if question is None:
-            return 
+            rv = None
+            if type == 'Inactive':
+                rv = question.inactive = True
+                question.answerable = question.reviewable = question.archived = False
+                question.state = 'Inactive'
+            
+            if type == 'Answerable':
+                rv = question.answerable = True
+                question.activate_time = datetime.now()
+                question.inactive = question.reviewable = question.archived = False
+                question.state = 'Answerable'
 
-        if not g.lti.is_instructor() and type != 'reviewable':
-            return
-        
-        rv = None
-        if type == 'answerable':
-            rv = question.answerable = not question.answerable
-            question.activate_time = datetime.now()
+            elif type == 'Reviewable':
+                if not question.reviewable:
+                    Scheduler(args['id'])
+                    question.reviewable = True
+                rv = question.reviewable
+                question.inactive = question.answerable = question.archived = False
+                question.state = 'Reviewable'
 
-        elif type == 'reviewable':
-            if not question.reviewable:
-                Scheduler(args['id'])
-                question.reviewable = True
-            rv = question.reviewable
-
-
-        elif type == 'archived':
-            rv = question.archived = not question.archived
-            
-        elif type == 'comments':
-            rv = question.comment = not question.comment
-            
-        elif type == 'tags':
-            rv = question.tags = not question.tags
-            
-        elif type == 'rating':
-            rv = question.rating = not question.rating
-            
-        session.commit()
-            
-        return rv
+            elif type == 'Archived':
+                rv = question.archived = True
+                question.inactive = question.answerable = question.reviewable = False
+                question.state = 'Archived'
+                
+            elif type == 'comments':
+                rv = question.comment = not question.comment
+                
+            elif type == 'tags':
+                rv = question.tags = not question.tags
+                
+            elif type == 'rating':
+                rv = question.rating = not question.rating
+                
+            session.commit()                                             
+            return json.dumps({"toggle": rv, "check": True})                    
 
     @staticmethod
     def edit_question(q_id, question, time):

@@ -17,6 +17,9 @@ class Question(Base, BaseEntity):
     _answerable = Column(Boolean)
     _reviewable = Column(Boolean)
     _archived = Column(Boolean)
+    _inactive = Column(Boolean)
+    
+    state = Column(String)
     time = Column(Integer)
     activate_time = Column(DateTime,nullable=True)
     
@@ -29,22 +32,28 @@ class Question(Base, BaseEntity):
         self.course_id = course_id
         self.question = question
         
+        self.state = 'Inactive'        
         self.comment = comment
         self.tags = tags
         self.rating = rating
-
+        
+        inactive = True
         if(answerable):
             self.activate_time = datetime.now()
+            self.state = 'Answerable'
+            inactive = False
         else:
             self.activate_time = None
 
         self.time = time
+        self.inactive = inactive
         self.answerable = answerable
         self.reviewable = False
         self.archived = False
-
+        
     def __repr__(self):
-        return "<Question ('%s','%s','%s', '%s')>" % (self.user_id,
+        return "<Question ('%s','%s','%s','%s', '%s')>" % (self.user_id,
+                                                self.course_id,
                                                 self.question,
                                                 self.answerable,
                                                 self.reviewable)
@@ -92,10 +101,47 @@ class Question(Base, BaseEntity):
          self._archived = value
          session.add(self)
          session.commit()
+         
+    @property
+    def inactive(self):
+         return self._inactive
+
+    @inactive.setter
+    def inactive(self, value):
+         self._inactive = value
+         session.add(self)
+         session.commit()
 
     @classmethod
     def by_course_id(cls, course_id):
         return session.query(cls).filter(cls.course_id == course_id).all()
 
 
+class UserQuestion(Base, BaseEntity):
+    __tablename__ = "UserQuestions"
+    
+    user_id = Column(String)
+    text = Column(String)
+    
+    def __init__(self, user_id, text):
+        self.user_id = user_id
+        self.text = text
+        
+    @classmethod
+    def add(cls, user_id, text):
+        session.add(cls(user_id, text))
+        session.commit()
+        
+    @classmethod
+    def time_since_last(cls, user_id):
+        created = session.query(cls.created).filter(
+            cls.user_id == user_id).order_by(cls.id.desc()).first()
+        
+        if created is None:
+            return None
+            
+        dt = datetime.now() - created[0]
+        return dt.seconds + dt.days*86400
+        
+        
 Base.metadata.create_all(engine)
