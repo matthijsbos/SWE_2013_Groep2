@@ -89,7 +89,7 @@ function show_question(id, question, time_remaining, question_time, answer) {
                 </div>\
             </div>\
             <div id="counter'+id+'" class="countdowntimesmall"></div><br>\
-            <div id="prolongedText'+id+'"  class="alert alert-info" style="display: none;">Question time has been prolonged</div>\
+            <div id="prolongedText'+id+'"  class="alert alert-info" style="display: none;">Question time has changed</div>\
         </div>\
     </form>\
 <div id="questionWasDeleted'+id+'" class="alert alert-error" style="display: none;">The question was deleted. Your answer was not saved</div>\
@@ -122,7 +122,8 @@ function check_submit_answer(id, question_time){
     {
         submit_answer(id);
     }
-    $('#answerform'+id).remove();
+        $('#answerform'+id).remove();
+        $('#questionWasDeleted'+id).remove();
     window.clearInterval(submit_interval_id[id]);
     submit_interval_id[id] = "";
     if ( $('#questions').is(':empty') )
@@ -150,9 +151,7 @@ function check_remaining_time(id, time_delta){
                 {
                     until: austDay
                 });
-                if (data.question_time > time_delta)
-                    popup_div('#answerform'+id+' #prolongedText'+id, 5000)
-
+                popup_div('#answerform'+id+' #prolongedText'+id, 5000)
                 time_delta = data.question_time;
                 window.clearInterval(submit_interval_id[id]);
                 submit_interval_id[id] = "";
