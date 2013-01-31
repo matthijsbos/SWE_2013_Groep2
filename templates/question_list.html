@@ -7,11 +7,12 @@
     var edit_count = 0;
     var query_interval = 1000 * 5; // Every 5 sec
     var query_interval_id;
+    var adding_question = false;
+    
     $(function() {    
         get_student_questions();
         query_interval_id = setInterval(get_student_questions, query_interval);    
-        if ($('#addQ1').attr('disabled') == 'disabled')
-            $('#addQ1').attr('disabled', 'disabled')
+        
     });
     $(document).ready(function() {
         refresh_table(0,stdlimit);
@@ -28,10 +29,12 @@
                     <td>'+data[key].user+'</td><td id="user_q'+data[key].id+'">'+data[key].text+'</td> \
                     <td><input id="addQ2" type="submit" value="Copy question" class="btn-primary btn" onclick=add_userquestion('+data[key].id+') ></button></td>\
                     <td><a onClick="delete_userquestion('+data[key].id+')" data-toggle="modal" class="delete-question-link link" ><i class="icon-remove-sign"></i> delete</a></td> \
-               </tr>')
+               </tr>')     
             }
+            if (adding_question)
+                $('#addQ2').attr('disabled', 'disabled')
         }
-    )}
+    )}      
     
     function add_userquestion(id){
         text = $('#user_q'+id).text();        
@@ -238,6 +241,7 @@
         }
     }
     function add_question(){
+        adding_question = true;
         $('#addQ1').attr('disabled', 'disabled')
         $('#addQ2').attr('disabled', 'disabled')
         $('#qList tr:first').after(
@@ -265,6 +269,7 @@
     }
 
     function cancel_question(){
+        adding_question = false;
         $('#cancelQ').hide()        
         $('#qList tr:eq(1)').remove()
     }
@@ -286,7 +291,9 @@
                     $('#save_question').attr('disabled', false);
                     $('#addQ1').attr('disabled', false);
                     $('#addQ2').attr('disabled', false);
-                    $('#cancelQ').hide();                    
+                    adding_question = false;
+                    $('#cancelQ').hide();      
+                    $('#qList tr:eq(1)').remove() 
                 }                
                 else {                                       
                     alert("Please fill in a question");
