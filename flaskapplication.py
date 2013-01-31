@@ -86,7 +86,7 @@ def edit_question():
 @app.route("/togglequestion", methods=['GET', 'POST'])
 def toggle_options():
     return Question.toggle_options(request.args)
-    
+
 # this route is used to ask a question to students
 @app.route("/question", methods=['GET', 'POST'])
 def ask_question():
@@ -99,22 +99,22 @@ def ask_question():
 # this route is used for the feedback from inserting the question into the
 # database, it also inserts the question into the database
 @app.route("/handle_question", methods=['GET','POST'])
-def handle_question():    
+def handle_question():
     try:
         question_text = request.args['question']
-    except KeyError: 
-        return json.dumps({'done':False})       
-    
+    except KeyError:
+        return json.dumps({'done':False})
+
     if question_text == '':
-        return json.dumps({'done':False})       
-    
+        return json.dumps({'done':False})
+
     try:
         isActive = request.args['active'] in ['true','True']
     except:
         isActive = False
 
     try:
-        comment = request.args['comment'] in ['true','True'] 
+        comment = request.args['comment'] in ['true','True']
     except:
         comment = False
 
@@ -185,12 +185,12 @@ def question_export():
 def question_import():
     list = yaml.load(request.args['file'])
     print list
-    
+
 @app.route("/student_question", methods=['POST'])
 def student_question():
     ctrlr = Index()
     return ctrlr.student_question(request)
-    
+
 @app.route("/get_student_questions", methods=['GET'])
 def get_student_questions():
     ctrlr = Index()
@@ -203,10 +203,10 @@ def managetags():
     return ctrler.render()
 
 @app.route("/addtags", methods=['GET', 'POST'])
-def addtags():    
+def addtags():
     ctrler = Modifytags()
-    return ctrler.addtag(request.args)    
-    
+    return ctrler.addtag(request.args)
+
 @app.route("/removetag", methods=['GET'])
 def removetags():
     ctrler = Modifytags()
@@ -289,7 +289,7 @@ def do_review_answer_stub():
 
 @app.route("/filteranswers", methods=['POST', 'GET'])
 def answerFilter():
-    ctrler = Answer(request)
+    ctrler = Answer()
     return ctrler.render_filtered()
 
 
@@ -369,12 +369,12 @@ def get_pagination():
 def trust_data_start():
     ctrler = User(request)
     return ctrler.render_with_all()
-    
+
 @app.route("/trustdata", methods=['GET', 'POST'])
 def trust_data():
     ctrler = UserHistory(request)
     return ctrler.render_by_userid(request.args['uid'])
-    
+
 @app.route("/trustdata_adjust", methods=['GET', 'POST'])
 def adjust_trust():
     ctrler = UserHistory(request)
