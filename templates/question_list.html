@@ -260,12 +260,12 @@
                 if (data.done)
                 {
                     reload();
-                    $('#save_question').attr('disabled', '');
+                    $('#save_question').attr('disabled', false);
                     $('#cancelQ').hide();
                     $('#addQ').show();
                 }                
                 else                                        
-                    alert("Empty string");
+                    alert("Please fill in a question");
                     cancel_question();
             });
 				
