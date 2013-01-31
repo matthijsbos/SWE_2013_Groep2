@@ -164,9 +164,9 @@ class AnswerModel(Base, BaseEntity):
         return 1.0 / (1.0 + (10.0**((rating2 - rating1) / 400.0)))
 
     @staticmethod
-    def getUserIdByAnswerId(answerId) :
+    def get_by_answer_id(answerId) :
         temp = session.query(AnswerModel).filter_by(id=answerId).one()
-        return temp.userID
+        return temp
 
     @staticmethod
     def new_rating(winner, loser, K) :
