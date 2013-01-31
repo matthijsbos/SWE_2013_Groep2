@@ -12,20 +12,24 @@
             });
     }
     function add_tag(){
-        text = $('#tagText').val();        
-        $.getJSON("/addtags",{tag:text},            
-            function(data){                
-                if (data.succes)
-                {
+        $('#addTag').attr('disabled', 'disabled')
+        text = $('#tagText').val();
+        $.getJSON("/addtags",{tag:text},
+            function(data){
+                if (data.succes) {
+                    $('#addTag').attr('disabled', false);
                     $('#tagText').val('');
-                    $('#tagForm').append('\
-                    <div class="tags" id="remove_'+data.id+'">\
-                    <div>'+text+'</div>\
-                    <a onclick="javascript:remove_tag('+data.id+');"><i class="icon-remove-sign"></i> delete </a>\
-                    </div>')
+                    $('#tagForm').append(
+                        '<div class="tags" id="remove_' + data.id + '">' +
+                        '<div>' + escapeMarkup(text) + '</div>' +
+                        '<a onclick="javascript:remove_tag(' + data.id + ');">' +
+                            '<i class="icon-remove-sign"></i> delete ' +
+                        '</a>' +
+                        '</div>'
+                    );
                 }
                 else
-                    alert('Empty string');
+                    alert('Please fill in a new tag');
             });
         return false;
     }
@@ -36,7 +40,7 @@
   <b>New tag:</b>
   <br>
   <input id="tagText" type="text" name="newTag">
-  <input class="btn-primary btn" value="Add Tag" onclick=add_tag()>
+  <input id="addTag" class="btn-primary btn" value="Add Tag" onclick=add_tag()>
 </form>
 
 <form id="tagForm" action="/removetag" method="post">

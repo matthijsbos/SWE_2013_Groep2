@@ -5,6 +5,7 @@ from flask import g
 from utilities import render_template
 from models.answer import AnswerModel
 from models.question import UserQuestion
+from models.user import UserModel
 from controllers.answer import Answer
 
 
@@ -56,7 +57,9 @@ class Index():
             rv = []
             user_questions = UserQuestion.get_list(5)
             for q in user_questions:
-                rv.append({'user':q.user_id, 'text':q.text})
+                user = UserModel.by_user_id(q.user_id)
+                if user is not None:
+                    rv.append({'user':user.username, 'text':q.text})
         else:
             rv = dict({'error': True, 'type': ''})
             try:
