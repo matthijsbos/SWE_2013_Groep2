@@ -23,7 +23,7 @@ class UserModel(Base):
         if user is None:
             session.add(UserModel(userid=uid,username=uname))
             session.commit()
-        elif user.username != uname:
+        elif user.username != uname and uname != None:
             user.username = uname
             session.commit()
 
