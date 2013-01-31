@@ -3,8 +3,9 @@
       width: 950px;
       font-family: sans-serif;
 }
-
-br { clear: both; }
+br {
+    clear: both;
+}
 
 #qList input, #addQuestion-table input{
     margin-bottom: 0px;
@@ -46,6 +47,9 @@ br { clear: both; }
 .state-buttons{
     text-align: center;
     width: 70px;
+}
+#buttons{
+    margin-bottom: 20px;
 }
 #qList {
 	width: auto;

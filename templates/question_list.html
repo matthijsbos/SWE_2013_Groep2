@@ -7,10 +7,12 @@
     var edit_count = 0;
     var query_interval = 1000 * 5; // Every 5 sec
     var query_interval_id;
-
+    var adding_question = false;
+    
     $(function() {    
         get_student_questions();
         query_interval_id = setInterval(get_student_questions, query_interval);    
+        
     });
     $(document).ready(function() {
         refresh_table(0,stdlimit);
@@ -24,12 +26,21 @@
            for (key in data) {
                $('#student_questions tr:last').after('\
                <tr id=userrow_'+data[key].id+'> \
-                    <td>'+data[key].user+'</td><td>'+data[key].text+'</td> \
-					<td><a onClick="delete_userquestion('+data[key].id+')" data-toggle="modal" class="delete-question-link link" ><i class="icon-remove-sign"></i> delete</a></td> \
-               </tr>')
+                    <td>'+data[key].user+'</td><td id="user_q'+data[key].id+'">'+data[key].text+'</td> \
+                    <td><input id="addQ" type="submit" value="Copy question" class="btn-primary btn" onclick=add_userquestion('+data[key].id+') ></button></td>\
+                    <td><a onClick="delete_userquestion('+data[key].id+')" data-toggle="modal" class="delete-question-link link" ><i class="icon-remove-sign"></i> delete</a></td> \
+               </tr>')     
             }
+            if (adding_question)
+                $('#addQ').attr('disabled', 'disabled')
         }
-    )}
+    )}      
+    
+    function add_userquestion(id){
+        text = $('#user_q'+id).text();        
+        add_question();
+        $('#qtext').prop('value', text);        
+    }
     
     function delete_userquestion(id){    
         $.getJSON("/delete_userquestion/"+id,{},
@@ -131,6 +142,7 @@
             }
         });
     }
+    
 	var advanced_visible = false;
 	function advanced(){
 		if (advanced_visible) {
@@ -146,6 +158,7 @@
 		}
 		advanced_visible = !advanced_visible;
     }
+    
     function delete_question(id){
         $.getJSON("/delete_question/"+id,{},
         function(data){
@@ -228,7 +241,9 @@
         }
     }
     function add_question(){
-        $('#addQ').hide()
+        adding_question = true;
+        $('#addQ').attr('disabled', 'disabled')
+        $('#addQ').attr('disabled', 'disabled')
         $('#qList tr:first').after(
         '<tr>\
 			<td class="question-field"><input id="qtext" type="text" class="input-block-level" name="question" placeholder="your question"></td> \
@@ -250,12 +265,12 @@
 
         if (edit_count > 0) {
             alert("You have "+edit_count+" open edits, that still need to be submitted.");
-        }
+        }        
     }
 
     function cancel_question(){
-        $('#cancelQ').hide()
-        $('#addQ').show()
+        adding_question = false;
+        $('#cancelQ').hide()        
         $('#qList tr:eq(1)').remove()
     }
 
@@ -272,10 +287,13 @@
             question:questionv,time:timev,rating:ratingv},
             function(data){
                 if (data.done) {
-                    reload();
+                    adding_question = false;                    
                     $('#save_question').attr('disabled', false);
-                    $('#cancelQ').hide();
-                    $('#addQ').show();
+                    $('#addQ').attr('disabled', false);
+                    $('#addQ').attr('disabled', false);                    
+                    $('#cancelQ').hide();      
+                    $('#qList tr:eq(1)').remove() 
+                    reload();
                 }                
                 else {                                       
                     alert("Please fill in a question");
@@ -284,12 +302,29 @@
             });
         return false;
     }
+    
+    var student_questions_visible = false;
+	function student_questions(){
+		if (student_questions_visible) {
+			$('#student_questions').hide();
+            $('#student_questions_btn').prop('value', 'Show student questions');
+		} else {
+			$('#student_questions').show();
+            $('#student_questions_btn').prop('value', 'Hide student questions');
+		}
+		student_questions_visible = !student_questions_visible;
+    }
 
 </script>
 
-<table id="student_questions" class="table table-hover table-bordered table-striped"></table>
-<div id="error" style="background-color: #a33; color: white;"></div>
-<div id="questListForm" onKeyPress="return checkSubmit(event)" style="display:block">
-
+<div id="buttons"> 
+    <input type="submit"id="student_questions_btn" value="Show student questions"class="btn-primary btn" onclick=student_questions() ></button>
 </div>
+<table id="student_questions" class="table table-hover table-bordered table-striped"></table>
+
+<hr>
+
+<div id="error" style="background-color: #a33; color: white;"></div>
+<div id="questListForm" onKeyPress="return checkSubmit(event)" style="display:block"></div>
+
 {% endblock %}
