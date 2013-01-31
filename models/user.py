@@ -11,6 +11,12 @@ class UserModel(Base):
     username = Column(String)
     trust = Column(Float)
 
+
+    def __init__(self,userid,username,trust):
+        self.userid = userid
+        self.username = username
+        self.trust = trust
+
     @classmethod
     def get_all(cls):
         return session.query(cls).filter().all()
