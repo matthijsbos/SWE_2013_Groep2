@@ -1,4 +1,4 @@
-{% extends "_base.html" %}
+﻿{% extends "_base.html" %}
 
 {% block js %}
 {{ super() }}
@@ -17,14 +17,8 @@
     saved</div>
 
 <!-- For answering a question. -->
-<div id="questions" class="accordion"></div>
-
-<!-- For the review button. -->
-<form action="/review" id="reviewform" method="post" style="display:none;">
-    <input type="submit" value="You can review answers!" id="review-answer"/>
-</form>
-
-  <!---
+<div id="questions" class="accordion"><br></div>
+	<!---
         Check to see if there are questions to answer
         or questions to rank. If so link to the appropriate
         answer or rank page by posting the question_id.
@@ -64,4 +58,7 @@
 		{% endfor %}
 		</table>
 	{% endif %}
+
+<!-- For asking questions to instructor -->
+<a href="/question_list/asked" class="blue">Ask a question</a>
 {% endblock %}

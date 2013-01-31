@@ -68,7 +68,7 @@ class Answer():
         except:
             return abort(404)
 
-        if AnswerModel.question_valid(questionid):
+        if AnswerModel.question_valid(questionid) and text != "":
             AnswerModel.save(questionid, userid, text)
 
         return redirect('/index_student')
@@ -80,9 +80,9 @@ class Answer():
 
         flag = "false"
         if self.timeLeft(timerD, questionStartTime):
-            if answer.AnswerModel.checkAnswerExist(uID, qID):
-                aID = answer.AnswerModel.getAnswerID(uID, qID)
-                answer.AnswerModel.updateAnswer(aID, answerText)
+            if answer.AnswerModel.check_answer_exists(uID, qID):
+                aID = answer.AnswerModel.get_answer_id(uID, qID)
+                answer.AnswerModel.update_answer(aID, answerText)
             else:
                 answer.AnswerModel.save(qID, uID, answerText)
             flag = "true"
@@ -108,8 +108,8 @@ class Answer():
         return render_template('answersaved.html', flag='removed')
 
     def answerQuestion(self, uID, qID, qText, timerD, questionStartTime):
-        if answer.AnswerModel.checkAnswerExist(uID, qID):
-            aID = answer.AnswerModel.getAnswerID(uID, qID)
+        if answer.AnswerModel.check_answer_exists(uID, qID):
+            aID = answer.AnswerModel.get_answer_id(uID, qID)
             if self.timeLeft(timerD, questionStartTime):
                 return render_template('answer.html', questionID=qID, userID=uID, questionText=qText, timerDuration=timerD, date=time.mktime(questionStartTime.timetuple()), go="true")
             else:

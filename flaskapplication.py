@@ -10,9 +10,11 @@ import models.tag
 import models.rating
 import models.user
 import models.user_history
+import config
 from dbconnection import Base, engine
-from flask import Flask, request, render_template, g
 from lti import LTI, LTIException
+from utilities import render_template
+
 from controllers import index, answer, answerchoice
 import yaml
 import json
@@ -24,12 +26,19 @@ from controllers.answer import Answer
 from controllers.question import QuestionController as Question
 from controllers.tags import Modifytags, AssignTags
 from controllers.review import ReviewAnswer
+from controllers.stats import Stats
+
+import models.question
+import models.answer
+import models.answerchoice
+import models.tag
+import models.rating
 from controllers.user import User
 from controllers.user_history import UserHistory
 
 app = Flask(__name__)
-app.debug = True
-app.secret_key = "Hurdygurdy"  # Used for Flask sessions, TODO: config?
+app.debug = config.debug
+app.secret_key = config.secret_key  # Used for Flask sessions.
 
 
 @app.before_request
@@ -45,7 +54,8 @@ def init_lti():
         params = request.args.to_dict()
 
     try:
-        g.lti = LTI(request.url, params, dict(request.headers))
+        g.lti = LTI(request.url, params, dict(request.headers),
+                    config.consumers)
     except LTIException as error:
         ret = "Error getting LTI data. Did you run this tool via a " + \
             "consumer such as Sakai?"
@@ -66,6 +76,12 @@ def launch():
     ctrler = Index(debug=True)
     return ctrler.render()
 
+@app.route("/stats", methods=['GET', 'POST'])
+def show_stats():
+  ctrler = Stats()
+  return ctrler.render()
+
+
 
 @app.route("/edit_question", methods=['GET', 'POST'])
 def edit_question():
@@ -73,18 +89,16 @@ def edit_question():
                                   request.args['text'],
                                   request.args['time'])
 
-# this route is called to toggle a question's availability
-
-
-@app.route("/toggle_question", methods=['GET', 'POST'])
-def toggle_question():
-    return Question.toggle_question(request.args['id'], request.args['field'])
-
+@app.route("/togglequestion", methods=['GET', 'POST'])
+def toggle_options():
+    return Question.toggle_options(request.args)
+    
 # this route is used to ask a question to students
 
 
 @app.route("/question", methods=['GET', 'POST'])
 def ask_question():
+    """Used to asked questions to students."""
     if g.lti.is_instructor() == False:
         return render_template("access_restricted.html")
 
@@ -96,44 +110,31 @@ def ask_question():
 
 @app.route("/handle_question", methods=['POST'])
 def handle_question():
-    if g.lti.is_instructor() == False:
-        return render_template("access_restricted.html")
-    try:
-        isActive = request.form['active'] in ['true','True']
-    except:
-        isActive = False
+    """Used for the feedback from inserting a question into the database, and
+    for actually inserting questions into the database."""
 
-    try:
-        comment = request.form['comment'] in ['true','True'] 
-    except:
-        comment = False
-
-    try:
-        tags = request.form['tags'] in ['true','True']
-    except:
-        tags = False
-
-    try:
-        rating = request.form['rating'] in ['true','True']
-    except:
-        rating = False
+    isActive = request.form.get('active', "false") in ['true', 'True']
+    comment = request.form.get('comment', "false") in ['true', 'True']
+    tags = request.form.get('tags', "false") in ['true', 'True']
+    rating = request.form.get('rating', "false") in ['true', 'True']
 
     Question.create_question(request.form['question'],
-                                    g.lti.get_user_id(),
-                                    g.lti.get_course_id(),
-                                    isActive,
-                                    request.form['time'],
-                                    comment,
-                                    tags,
-                                    rating)
-    return json.dumps({'done':True})
+                             g.lti.get_user_id(),
+                             g.lti.get_course_id(),
+                             isActive,
+                             request.form['time'],
+                             comment,
+                             tags,
+                             rating)
+    return json.dumps({'done': True})
 
 
 @app.route("/question_list", methods=['GET', 'POST'])
 def list_questions():
     return render_template('question_list.html')
 
-@app.route("/question_list_table",methods=['GET','POST'])
+
+@app.route("/question_list_table", methods=['GET', 'POST'])
 def list_questions_table():
     limit = 20
     offset = 0
@@ -142,7 +143,18 @@ def list_questions_table():
         limit = int(request.args['limit'])
     if 'offset' in request.args:
         offset = int(request.args['offset'])
-    return Question.get_list_table(limit,offset)
+    return Question.get_list_table(limit, offset)
+
+
+@app.route("/question_list/asked", methods=['GET', 'POST'])
+def list_questions_asked():
+    return Question.get_list_asked()
+
+
+@app.route("/question_list/to_answer", methods=['GET', 'POST'])
+def list_questions_answer():
+    return Question.get_list_to_answer()
+
 
 @app.route("/delete_question/<id>", methods=['GET', 'POST'])
 def delete_question(id):
@@ -159,10 +171,12 @@ def question_export():
                              "attachment;filename=questions_%s.yaml" %
                     g.lti.get_course_name()})
 
+
 @app.route("/question_import", methods=['GET', 'POST'])
 def question_import():
     list = yaml.load(request.args['file'])
     print list
+
 
 @app.route("/managetags", methods=['GET', 'POST'])
 def managetags():
@@ -177,11 +191,11 @@ def addtags():
     return ctrler.render()
 
 
-@app.route("/removetag", methods=['POST'])
+@app.route("/removetag", methods=['GET'])
 def removetags():
     ctrler = Modifytags()
-    ctrler.deletetag(request)
-    return ctrler.render()
+    return ctrler.delete_tag_question(request.args['tagid'])
+    # return ctrler.render()
 
 
 @app.route("/removetaganswer", methods=['POST', 'GET'])
@@ -201,20 +215,24 @@ def answerForm():
     ctrler = Answer(request)
     return ctrler.render()
 
-@app.route("/answerchoice",methods=['GET'])
+
+@app.route("/answerchoice", methods=['GET'])
 def answerChoice():
     ctrler = answerchoice.Answerchoice(request)
     return ctrler.render()
 
-@app.route("/answerchoice",methods=['POST'])
+
+@app.route("/answerchoice", methods=['POST'])
 def processanswerchoice():
     ctrler = answerchoice.Answerchoice(request)
     return ctrler.process()
 
-@app.route("/choicelobby",methods=['GET'])
+
+@app.route("/choicelobby", methods=['GET'])
 def lobby():
     ctrler = answerchoice.Answerchoice(request)
     return ctrler.lobby()
+
 
 @app.route("/assigntags", methods=['POST', 'GET'])
 def assign_tags():
@@ -224,36 +242,40 @@ def assign_tags():
 
 @app.route("/assigntags_done", methods=['POST'])
 def handle_assign_tags():
-    ctrler = AssignTags.assign(request)
+    AssignTags.assign(request)
     return "<a href='/'>back to main</a>"
 
-@app.route("/removetags_done",methods=['POST'])
+
+@app.route("/removetags_done", methods=['POST'])
 def handle_remove_tags():
-    ctrler = AssignTags.remove(request)
+    AssignTags.remove(request)
     return Index(request).render()
 
-@app.route("/json/get_tags",methods=['POST', 'GET'])
+
+@app.route("/json/get_tags", methods=['POST', 'GET'])
 def json_get_tags():
     return Modifytags.json_get_tags()
 
-"""
-To review a answer, return reviewanswer.review(x) should be called from the
-controller deciding wich answer to review, this url handles storing the reviews
-in the database (given a user has permission to do so)
-"""
-@app.route("/reviewanswer",methods=['POST', 'GET'])
+
+@app.route("/reviewanswer", methods=['POST', 'GET'])
 def handle_review_answer():
-    ctrler = ReviewAnswer(request)
-    return ctrler.review(1)
+    """ To review a answer, return reviewanswer.review(x) should be called from
+    the controller deciding wich answer to review, this url handles storing the
+    reviews in the database (given a user has permission to do so) """
+    ReviewAnswer(request)
+    ctrler = Index()
+    return ctrler.render()
 
 @app.route("/reviewanswer_stub", methods=["POST", "GET"])
 def do_review_answer_stub():
-    return ReviewAnswer.review(1)
+    return ReviewAnswer.review()
+
 
 @app.route("/filteranswers", methods=['POST', 'GET'])
 def answerFilter():
     ctrler = Answer(request)
     return ctrler.render_filtered()
+
 
 @app.route("/rankresults", methods=['POST', 'GET'])
 def render_results():
@@ -272,31 +294,44 @@ def has_new_question():
     ctrler = Index()
     return ctrler.has_new_question()
 
+
 @app.route("/answerit", methods=['GET'])
 def answer_it_GET():
     return Answer.renderanswerform()
+
 
 @app.route("/answerit", methods=['POST'])
 def answer_it_POST():
     return Answer.save()
 
+
+@app.route("/start_review", methods=['POST'])
+def start_review():
+    return ReviewAnswer.start_review(request)
+
+
 @app.route("/has_new_review", methods=['GET', 'POST'])
 def has_new_review():
     return ReviewAnswer.has_new_review()
 
-@app.route("/question_remaining_time",methods=['GET','POST'])
+
+@app.route("/question_remaining_time", methods=['GET', 'POST'])
 def get_question_remaining_time():
     return Question().get_remaining_time(request.args['questionID'])
 
-@app.route("/pagination",methods=['GET'])
+
+@app.route("/pagination", methods=['GET'])
 def get_pagination():
     curpage = int(request.args['currentpage'])
     startpage = int(request.args['startpage'])
-    pagecount =  int(request.args['pagecount'])
+    pagecount = int(request.args['pagecount'])
     maxpages = int(request.args['maxpages'])
 
-    return render_template('pagination.html',currentpage=curpage,
-            startpage=startpage,pagecount=pagecount,maxpages=maxpages)
+    return render_template('pagination.html',
+                           currentpage=curpage,
+                           startpage=startpage,
+                           pagecount=pagecount,
+                           maxpages=maxpages)
 
 @app.route("/trustdata_start", methods=['GET', 'POST'])
 def trust_data_start():
@@ -316,4 +351,4 @@ def logout():
 
 if __name__ == '__main__':
     Base.metadata.create_all(engine)
-    app.run(host='0.0.0.0')
+    app.run(host=config.host)

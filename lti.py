@@ -23,8 +23,9 @@ class LTI_OAuthDataStore(oauth.OAuthDataStore):
     It handles the 'users' (consumers) of our LTI api. Each consumer has a
     'password' (secret)."""
 
-    consumers = {'sakai': 'secret',
-                 'blackboard': 'secret'}
+    def __init__(self, consumers):
+        oauth.OAuthDataStore.__init__(self)
+        self.consumers = consumers
 
     def lookup_consumer(self, key):
         if key not in self.consumers:
@@ -49,7 +50,7 @@ class LTI():
     LTI uses OAuth for authentification. Then the LTI specific parameters are
     stored in a Flask session, for further requests."""
 
-    def __init__(self, url, params, headers):
+    def __init__(self, url, params, headers, consumers):
         """Starts or resumes the LTI session.
 
         The current page including the host should be passed for the value of
@@ -62,7 +63,7 @@ class LTI():
         if "oauth_consumer_key" in params:
             # Start new session.
 
-            oauth_server = oauth.OAuthServer(LTI_OAuthDataStore())
+            oauth_server = oauth.OAuthServer(LTI_OAuthDataStore(consumers))
             oauth_server.add_signature_method(
                 oauth.OAuthSignatureMethod_PLAINTEXT())
             oauth_server.add_signature_method(

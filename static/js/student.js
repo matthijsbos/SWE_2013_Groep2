@@ -19,7 +19,7 @@ $(function() {
 function query_new_question() {    
     $.getJSON("/has_new_question", {},
         function(data) {          
-            if (data.has_new) {   
+            if (data.has_new) {
                 for (var i=0;i<data.len;i++){
                     if($('#answerform'+data.questions[i].question_id).length == 0) {
                         show_question(data.questions[i].question_id, data.questions[i].question_text,
@@ -37,7 +37,15 @@ function query_new_question() {
             }
             else {
                 show_review_button(0);
-            }            
+            }
+
+            /* Poll for reviewable questions */
+            $.getJSON("/has_new_review", {},
+                function(data) {
+                    if (data.has_new) {
+                        window.location.href = "reviewanswer_stub";
+                    }          
+                });
         });
 }
 
@@ -70,29 +78,33 @@ function show_question(id, question, time_remaining, question_time, answer) {
         <br>\
         <div class="accordion-group no-border" id="questionArea'+id+'" class="questionArea">\
             <div id="question'+id+'" class="question accordion-header"></div>\
-            <div id="answer'+id+'"  class="accordion-body collapse in">\
-            <div class="accordion-inner"><textarea name="answerText" cols=50 rows=5></textarea>\
-            <br>\
-            <button class="btn btn-info" onclick="submit_answer('+id+'); return false;" value="submit answer">submit answer</button>\
-            <button id="ranking'+id+'" class="btn btn-info" onclick="rank_it('+id+'); return false;" value="rankt it">rank best</button>\
-            <div id="submitted'+id+'" style="display:none" class="submitted alert alert-success"><button type="button" class="close close-submitted" onclick="document.getElementById(\'submitted'+id+'\').style.display = \'none\';">&times;</button><b>Answer saved!</b><br/></div>\
-            </div></div>\
-            <div id="counter'+id+'" class="countdowntime"></div>\
+            <div id="answer'+id+'"  class="accordion-body collapse">\
+                <div class="accordion-inner"><textarea name="answerText" cols=50 rows=5></textarea>\
+                    <br>\
+                    <button class="btn btn-info" onclick="submit_answer('+id+'); return false;" value="submit answer">submit answer</button>\
+                    <button id="ranking'+id+'" class="btn btn-info" onclick="rank_it('+id+'); return false;" value="rankt it">rank best</button>\
+                    <div id="submitted'+id+'" style="display:none" class="submitted alert alert-success"><button type="button" class="close close-submitted" onclick="document.getElementById(\'submitted'+id+'\').style.display = \'none\';">&times;</button><b>Answer saved!</b><br/></div>\
+                </div>\
+            </div>\
+            <div id="counter'+id+'" class="countdowntimesmall"></div>\
             <div id="prolongedText'+id+'" style="display: none;">Question has been prolonged</div>\
         </div>\
     </form>');
+    // <div id="ranking'+id+'"><br><a href="/choicelobby?question_id='+id+'" >rank it!</a><br></div>\
     
     if (question_time != 0) {
         $('#answerform'+id+' #counter'+id).countdown({
             until: austDay,
             compact: true,
             onExpiry: function(){
-            check_submit_answer(id, question_time)}        
+                check_submit_answer(id, question_time)
+                $.post('/start_review', {'question_id': id});
+            }
         });
     }
     
     $('#pleasewait').hide();
-    $('#answerform'+id+' #question'+id).html("<a class='accordion-toggle' data-toggle='collapse' data-parent='#questions' href='#answer"+id+"'>"+question+"</a>");
+    $('#answerform'+id+' #question'+id).html("<a class='accordion-toggle' onclick='collapse_timer("+id+");' data-toggle='collapse' data-parent='#questions' href='#answer"+id+"'>"+question+"</a>");
     $('#answerform'+id+' textarea').val(answer);
     if (answer == '') {
         $('#ranking'+id).hide();
@@ -180,4 +192,20 @@ function submit_answer(id) {
 
 function rank_it(id) {
     window.location="/choicelobby?question_id="+id;
+}
+
+function collapse_timer(id){
+    if($('#answer'+id).height() == 0){
+        $('#counter'+id).removeClass('countdowntimesmall');
+        $('#counter'+id).delay("fast").queue(function(next){
+            $(this).addClass('countdowntime');
+            next();
+        });
+    } else {
+        $('#counter'+id).removeClass('countdowntime');
+        $('#counter'+id).delay("fast").queue(function(next){
+            $(this).addClass('countdowntimesmall');
+            next();
+        });
+    }
 }

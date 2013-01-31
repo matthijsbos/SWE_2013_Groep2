@@ -4,6 +4,7 @@
 <script language="javascript" type="text/javascript">
     var stdlimit = 10;
     var currPage = 1;
+    var edit_count = 0;
 
     $(document).ready(function() {
         refresh_table(0,stdlimit);
@@ -28,7 +29,7 @@
         load_page(currPage);
     }
 
-    function edit_field(id){
+    function edit_field(id){        
         var elem = $('#question_' + id + ' a');
         var time_elem = $('#time_'+id);
         if (elem.hasClass('activated')){
@@ -44,8 +45,10 @@
         var time_field = $('<input type="number" size="3" maxlength="3" placeholder="sec">').val(time);
 
         var editelem = $('#sedit_'+id);
-
-        editelem.click(function(){
+        edit_count++;
+        
+        editelem.click(function(){            
+            edit_count--;
             $('#edit_'+id).show();
             $('#sedit_'+id).hide();
             
@@ -81,7 +84,7 @@
     function edit_question(id,text,time){
         $.getJSON("/edit_question",{id:id,text:text,time:time},
         function(data){
-            if(data.check){
+            if(data.check){                
                 $('#question_'+id).html('<a href=\"/filteranswers/'+data.id+'\">'+data.text+'</a>');
                 $('#time_'+id).html(data.time)
             }
@@ -90,7 +93,21 @@
             }
         });
     }
-
+	
+	var advanced_visible = false;
+	function advanced(){
+		if (advanced_visible) {
+			$('.comment-field').hide();
+			$('.tags-field').hide();
+			$('.rating-field').hide();
+		} else {
+			$('.comment-field').show();
+			$('.tags-field').show();
+			$('.rating-field').show();
+		}
+		advanced_visible = !advanced_visible;
+    }
+	
     function delete_question(id){
         $.getJSON("/delete_question/"+id,{},
         function(data){
@@ -101,15 +118,15 @@
         });
     }
 
-    function toggle_question(id, field){
-        $.getJSON("/toggle_question",{id:id, field:field},
+    function toggle_review_options(id, type){
+        $.getJSON("/togglequestion",{id:id, type:type},
         function(data){
             if(data.check){
                 if(!data.toggle){
-                    $('input[name='+field+''+id+']').attr('checked', false);
+                    $('input[name='+type+''+id+']').attr('checked', false);
                 }
                 else{
-                    $('input[name='+field+''+id+']').attr('checked', true);
+                    $('input[name='+type+''+id+']').attr('checked', true);
                 }
             }
             else{
@@ -118,35 +135,88 @@
         });
     }
 
+    function toggle_state(id, type){
+    answerable = "False"
+    reviewable = "False"
+    archived = "False"
+    $.getJSON("/togglequestion",{id:id, type:type},
+    function(data){
+      if(data.check){
+        if(type == "Answerable"){
+          answerable="True";
+          $('#q'+id+'_drop1').hide();
+          $('#q'+id+'_drop2').show();
+          $('#q'+id+'_drop3').show();
+        }
+        if(type == "Reviewable"){
+          reviewable="True";
+          $('#q'+id+'_drop2').hide();
+          $('#q'+id+'_drop1').show();
+          $('#q'+id+'_drop3').show();
+        }
+        if(type == "Archived"){
+          archived="True";
+          $('#q'+id+'_drop3').hide();
+          $('#q'+id+'_drop1').show();
+          $('#q'+id+'_drop2').show();
+        }
+        $('#state'+id).html(type);
+      }
+      else{
+        $('#error').html("Error while togging question question.");
+      }
+    });    
+    }
+
     function add_question(){
         $('#addQ').hide()
+        $('#cancelQ').show()       
         $('#qList tr:last').after(
         '<tr>\
-                        <td class="question-field"><input id="qtext" type="text" class="input-block-level" name="question" placeholder="your question"></td> \
-                        <td class="time-field"><input id="qtime" type="number" name="time" size="3" maxlength="3" placeholder="sec"></td> \
-                        <td><input id="qact" type="checkbox" name="active"></td> \
-                        <td><input id="qcomm" type="checkbox" name="comment" checked></td> \
-                        <td><input id="qtag" type="checkbox" name="tags" checked></td> \
-                        <td><input id="qrat" type="checkbox" name="rating" checked></td> \
-                        <td colspan=2><input type="submit" onclick=save_question() class="btn btn-block btn-primary" value="Add Question"></td>\
-                    </tr>');
+			<td class="question-field"><input id="qtext" type="text" class="input-block-level" name="question" placeholder="your question"></td> \
+			<td class="time-field"><input id="qtime" type="number" name="time" size="3" maxlength="3" placeholder="sec"></td> \
+			<td class="state-field"><label class="checkbox"><input id="qact" type="checkbox" name="active">Answerable</label></td> \
+			<td class="comment-field"><input id="qcomm" type="checkbox" name="comment" checked></td> \
+			<td class="tags-field"><input id="qtag" type="checkbox" name="tags" checked></td> \
+			<td class="rating-field"><input id="qrat" type="checkbox" name="rating" checked></td> \
+			<td colspan=3><input id="save_question" type="submit" onclick=save_question() class="btn btn-block btn-primary" value="Add Question"></td>\
+		</tr>');
+		if (!advanced_visible) {
+			$('.comment-field').hide();
+			$('.tags-field').hide();
+			$('.rating-field').hide();
+		}
         $('#qtext').focus();
+        
+        if (edit_count > 0) {
+            alert("You have "+edit_count+" open edits, that still need to be submitted.");
+        }
+    }
+    
+    function cancel_question(){
+        $('#cancelQ').hide()
+        $('#addQ').show()        
+        $('#qList tr:last').remove()        
     }
 
     function save_question(){
+		$('#save_question').attr('disabled', 'disabled')
         activev = ($('#qact').is(':checked') ? true : false);
         commentv = ($('#qcomm').is(':checked') ? true : false);
         tagsv = ($('#qtag').is(':checked') ? true : false);
+		ratingv = ($('#qrat').is(':checked') ? true : false);
         timev = $('#qtime').val();
         questionv = $('#qtext').val();
 
         $.post('/handle_question',{active:activev,comment:commentv,tags:tagsv,
-                question:questionv,time:timev},
+                question:questionv,time:timev,rating:ratingv},
                 function(data){
                     reload()
+					$('#save_question').attr('disabled', '')
+                    $('#cancelQ').hide()
+					$('#addQ').show()                    
                 });
-
-        $('#addQ').show()
+				
         return false;
     }
 
