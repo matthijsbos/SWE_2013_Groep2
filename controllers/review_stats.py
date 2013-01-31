@@ -19,6 +19,9 @@ class Review_stats():
     worst_avg=9999999999
     biggest_nr=0
     biggest=0
+    biggest=[]
+    best=[]
+    worst=[]
     for answer in answers:
       answer_text=answer.text
       average_stars=0
@@ -45,14 +48,22 @@ class Review_stats():
         worst_avg=data_set[i][5]
         worst_avg_nr=i
     
-    data_set[biggest_nr].append("biggest cluster")
-    data_set[best_avg_nr].append("best cluster")
-    data_set[worst_avg_nr].append("worst cluster")
+    for i in range (6):
+      biggest.append(data_set[biggest_nr][i])
+      
+    for i in range (6):
+      best.append(data_set[best_avg_nr][i])
+      
+    for i in range (6):
+      worst.append(data_set[worst_avg_nr][i])
     
+    biggest.append("Biggest cluster")
+    best.append("Best rated cluster")
+    worst.append("Worst rated cluster")
     
-    output.append(data_set[biggest_nr])
-    output.append(data_set[best_avg_nr])
-    output.append(data_set[worst_avg_nr])
+    output.append(biggest)
+    output.append(best)
+    output.append(worst)
     
     return output
       
