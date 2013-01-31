@@ -16,8 +16,8 @@
         text = $('#tagText').val();
         $.getJSON("/addtags",{tag:text},
             function(data){
+                $('#addTag').attr('disabled', false);
                 if (data.succes) {
-                    $('#addTag').attr('disabled', false);
                     $('#tagText').val('');
                     $('#tagForm').append(
                         '<div class="tags" id="remove_' + data.id + '">' +
