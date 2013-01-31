@@ -119,6 +119,7 @@ br { clear: both; }
 	text-decoration: none; 
 	font-weight: bold;
 	cursor: pointer;
+}
 #assigned_tags div{
     display: inline-block;
 }
