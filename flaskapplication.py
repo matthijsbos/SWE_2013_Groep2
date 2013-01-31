@@ -165,7 +165,7 @@ def delete_question(id):
     return Question.delete_question(id)
 
 @app.route("/delete_userquestion/<id>", methods=['GET', 'POST'])
-def delete_question(id):
+def delete_user_question(id):
     return Question.delete_userquestion(id)
 
 @app.route("/question_export", methods=['GET', 'POST'])
@@ -264,7 +264,7 @@ def handle_remove_tags():
     AssignTags.remove(request)
     return Index(request).render()
 
-
+    
 @app.route("/json/get_tags", methods=['POST', 'GET'])
 def json_get_tags():
     query = request.args['q'] 
@@ -280,6 +280,7 @@ def handle_review_answer():
     ctrler = Index()
     return ctrler.render()
 
+    
 @app.route("/reviewanswer_stub", methods=["POST", "GET"])
 def do_review_answer_stub():
     return ReviewAnswer.review()
