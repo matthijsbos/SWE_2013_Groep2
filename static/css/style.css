@@ -47,6 +47,9 @@ br { clear: both; }
     text-align: center;
     width: 70px;
 }
+#buttons{
+    margin-bottom: 20px;
+}
 #qList {
 	width: auto;
 }	
