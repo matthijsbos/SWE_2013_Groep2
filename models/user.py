@@ -11,6 +11,12 @@ class UserModel(Base):
     username = Column(String)
     trust = Column(Float)
 
+
+    def __init__(self,userid,username):
+        self.userid = userid
+        self.username = username
+        self.trust = 1000.0
+
     @classmethod
     def get_all(cls):
         return session.query(cls).filter().all()
@@ -27,7 +33,7 @@ class UserModel(Base):
     def save(uid,uname):
         user = UserModel.by_user_id(uid)
         if user is None:
-            session.add(UserModel(userid=uid,username=uname))
+            session.add(UserModel(uid,uname))
             session.commit()
         elif user.username != uname:
             user.username = uname
