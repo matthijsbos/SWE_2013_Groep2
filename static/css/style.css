@@ -115,6 +115,10 @@ br { clear: both; }
 	font-weight: bold;
 	cursor: pointer;
 }
+.link:hover{ 
+	text-decoration: none; 
+	font-weight: bold;
+	cursor: pointer;
 #assigned_tags div{
     display: inline-block;
 }
