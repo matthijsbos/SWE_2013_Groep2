@@ -5,6 +5,7 @@ from datetime import datetime
 from basemodel import BaseEntity
 from models.answer import AnswerModel
 from models.user import UserModel
+from models.user_history import UserHistoryModel
 
 class AnswerChoiceModel(Base,BaseEntity):
 
@@ -37,5 +38,5 @@ class AnswerChoiceModel(Base,BaseEntity):
         winId = AnswerModel.getUserIdByAnswerId(self.best_answer_id)
         losId = AnswerModel.getUserIdByAnswerId(self.other_answer_id)
         newTrust = UserModel.newTrust(winId, losId)
-        UserModel.setTrust(winId, newTrust[0])
-        UserModel.setTrust(losId, newTrust[1])
+        UserHistoryModel(winId, newTrust[0])
+        UserHistoryModel(losId, newTrust[1])

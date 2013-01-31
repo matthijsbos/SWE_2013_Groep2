@@ -342,7 +342,11 @@ def trust_data_start():
 def trust_data():
     ctrler = UserHistory(request)
     return ctrler.render_by_userid(request.args['uid'])
-    #return ctrler.render_by_userid(request.values["uid"])
+    
+@app.route("/trustdata_adjust", methods=['GET', 'POST'])
+def adjust_trust():
+    ctrler = UserHistory(request)
+    return ctrler.render_adjust_trust(request.args['uid'], request.args['new'])
 
 @app.route("/logout")
 def logout():

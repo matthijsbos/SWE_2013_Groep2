@@ -30,7 +30,7 @@ class UserModel(Base):
     def save(uid,uname):
         user = UserModel.by_user_id(uid)
         if user is None:
-            session.add(UserModel(userid=uid,username=uname,trust=1000.0))
+            session.add(UserModel(userid=uid,username=uname))
             session.commit()
         elif user.username != uname:
             user.username = uname

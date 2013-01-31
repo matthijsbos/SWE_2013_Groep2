@@ -5,6 +5,7 @@ from dbconnection import engine, session, Base, exc
 from basemodel import BaseEntity
 from question import Question
 from user import UserModel
+from user_history import UserHistoryModel
 
 class AnswerModel(Base, BaseEntity):
     __tablename__ = 'answer'
@@ -69,9 +70,10 @@ class AnswerModel(Base, BaseEntity):
             ranking = ((session.query(UserModel).filter_by(userid=userID).one().trust - 1000.0) / 4) + 1000.0
         except exc.InvalidRequestError:
             ranking = 1000.0
-        session.add(AnswerModel(
-            questionID=questionID, userID=userID, text=answerText, edit=0, ranking=ranking))
+        session.add(AnswerModel(questionID=questionID, userID=userID, text=answerText, edit=0, ranking=ranking))
         session.commit()
+        # add to history
+        UserHistoryModel.inc_answered(userID)
 
     @staticmethod
     def get_answer_id(uID, qID):

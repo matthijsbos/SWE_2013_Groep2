@@ -15,36 +15,8 @@ from utilities import render_template
 
 class Answerchoice():
     def __init__(self, request):        
-        # lele add dummy questions le
-        if len(Question.get_all()) == 0:
-            print "I MAEK DUMMY SHIZZLE"
-            userID = g.lti.get_user_id()
-            q1 = Question("1","1","What am I?",True,1000)
-            q2 = Question("2","1","Who am I?",True,1000)
-            q3 = Question("3","1","Where am I?",True,1000)
-            session.add(q1)
-            session.add(q2)
-            session.add(q3)
-            a11 = AnswerModel("einseins",1,userID,0,1000.0)
-            a12 = AnswerModel("einszwei",1,1338,  0,1000.0)
-            a13 = AnswerModel("einsdrei",1,1339,  0,1000.0)
-            a21 = AnswerModel("zweieins",2,userID,0,1000.0)
-            a22 = AnswerModel("zweizwei",2,1338,  0,1000.0)
-            a23 = AnswerModel("zweidrei",2,1339,  0,1000.0)
-            a31 = AnswerModel("dreieins",3,userID,0,1000.0)
-            a32 = AnswerModel("dreizwei",3,1338,  0,1000.0)
-            a33 = AnswerModel("dreidrei",3,1339,  0,1000.0)
-            session.add(a11)
-            session.add(a12)
-            session.add(a13)
-            session.add(a21)
-            session.add(a22)
-            session.add(a23)
-            session.add(a31)
-            session.add(a32)
-            session.add(a33)
-            session.commit()
-
+        pass
+    
     def render(self):
         try:
             questionid = int(request.values['questionid'])
@@ -128,8 +100,6 @@ class Answerchoice():
             for answerchoice in answerchoices:
                 if answerchoice.best_answer_id in answers:
                     cnt[answerchoice.best_answer_id] += 1
-                if answerchoice.other_answer_id in answers:
-                    cnt[answerchoice.other_answer_id] += 1
             
             if len(cnt) > 1:
                 return [cnt.most_common()[-1][0],cnt.most_common()[-2][0]]
