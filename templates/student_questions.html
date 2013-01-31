@@ -29,7 +29,7 @@
             else
                 temp="True"
             $('#available_'+id).html(temp);
-            $('#question_'+id).html('<a href=\"/filteranswer/'+data.text+'\">'+data.text+'</a>');
+            $('#question_'+id).html('<a href=\"/filteranswer/'+escapeMarkup(data.text)+'\">'+escapeMarkup(data.text)+'</a>');
         }
         else
             $('#error').html("Error while editing question question.");

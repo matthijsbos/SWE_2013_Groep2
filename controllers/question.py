@@ -1,5 +1,5 @@
 import json
-from flask import escape, g
+from flask import g
 from utilities import render_template
 from dbconnection import session
 from models.question import Question
@@ -65,14 +65,8 @@ class QuestionController():
     def edit_question(q_id, question, time):
         """Updates a question with given contents and activation status."""
         if g.lti.is_instructor():
-            if question is None:
-                escaped_question = None
-            else:
-                escaped_question = escape(question)
-
-            escaped_time = escape(time)
             q = Question.by_id(q_id)
-            q.question = escaped_question
+            q.question = question
             q.time = int(time)
             activate = q.answerable
 
@@ -80,7 +74,7 @@ class QuestionController():
             session.commit()
 
             return json.dumps({"id": q_id,
-                               "text": escaped_question,
+                               "text": question,
                                "answerable": activate,
                                "time":time,
                                "check": g.lti.is_instructor()})
