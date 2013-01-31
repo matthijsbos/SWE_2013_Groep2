@@ -18,9 +18,8 @@ class Index():
             return render_template('index_debug.html',
                                    lti_dump=g.lti.dump_all())
         if g.lti.is_instructor():
-            return render_template('index_instructor.html')
+            return render_template('question_list.html')
         else:
-            print g.lti.get_user_name()
             UserModel.save(g.lti.get_user_id(), g.lti.get_user_name())
 
         return render_template('index_student.html')

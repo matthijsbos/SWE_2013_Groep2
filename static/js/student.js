@@ -27,7 +27,7 @@ function query_new_question() {
                             data.questions[i].answer);
                     }
                 }
-            }
+            } else {
 
                 /* Poll for reviewable questions */
                 $.getJSON("/has_new_review", {}, function(data) {
@@ -35,6 +35,7 @@ function query_new_question() {
 						window.location.href = "reviewanswer_stub";
 					}
 				});
+            }
         });
 }
 

@@ -67,6 +67,7 @@
         load_page(currPage);
     }
 </script>
+{% if data_set %}
 <table class="table table-hover table-bordered table-striped">
   <thead>
     <tr>
@@ -90,6 +91,7 @@
     <td>{{data[5]}}</td>
   </tr>
   {%endfor%}
+  {% endif %}
 </table>
 <div id='tblContainer'></div>
 {% endblock %}
