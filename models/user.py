@@ -12,10 +12,10 @@ class UserModel(Base):
     trust = Column(Float)
 
 
-    def __init__(self,userid,username,trust):
+    def __init__(self,userid,username):
         self.userid = userid
         self.username = username
-        self.trust = trust
+        self.trust = 1000.0
 
     @classmethod
     def get_all(cls):
@@ -36,7 +36,7 @@ class UserModel(Base):
     def save(uid,uname):
         user = UserModel.by_user_id(uid)
         if user is None:
-            session.add(UserModel(uid,uname,1000.0))
+            session.add(UserModel(uid,uname))
             session.commit()
         elif user.username != uname:
             user.username = uname
