@@ -57,4 +57,4 @@ class Review_stats():
     return output
       
   def render(self,qid):
-    return render_template('review_stat.html',data_set=self.run(self,qid))
+    return self.run(self,qid)

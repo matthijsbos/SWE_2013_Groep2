@@ -135,10 +135,10 @@ class Answer():
         # Render all
         return render_template('showanswers.html', answers=answer.AnswerModel.get_all())
 
-    def render_filtered(self,questionID=None):
+    def render_filtered(self,questionID=None,data=None):
         return render_template('answerfilter.html',
                 hasqid=(questionID is not None),
-                questionID=questionID)
+                questionID=questionID, data_set=data)
 
     def render_filtered_tbl(self,limit,offset,**kwargs):
         (answers, curpage, maxpages, startpage, pagecount) = self.get_filtered(limit=limit,

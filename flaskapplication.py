@@ -325,6 +325,12 @@ def render_results():
 def review_stars(questionid):
     ctrler = Review_stats()
     return ctrler.render(questionid)
+    
+@app.route("/filteranswers/<questionid>", methods=['POST', 'GET'])
+def answerFilterByQuestionID(questionid):
+    ctrler = Answer()
+    return ctrler.render_filtered(questionID=questionid, data=Review_stats().render(questionid))
+
 
 
 @app.route("/filteranswerstbl", methods=['POST', 'GET'])
