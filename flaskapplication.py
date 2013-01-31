@@ -267,7 +267,8 @@ def handle_remove_tags():
 
 @app.route("/json/get_tags", methods=['POST', 'GET'])
 def json_get_tags():
-    return Modifytags.json_get_tags()
+    query = request.args['q'] 
+    return Modifytags.json_get_tags(query)
 
 
 @app.route("/reviewanswer", methods=['POST', 'GET'])
