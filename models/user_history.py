@@ -1,8 +1,7 @@
 from dbconnection import engine, Base, session
-from sqlalchemy import String,Column,Float,Integer,Bool
+from sqlalchemy import String,Column,Float,Integer,Boolean
 from basemodel import BaseEntity
 from user import UserModel
-from answer import AnswerModel
 
 class UserHistoryModel(Base, BaseEntity):
     __tablename__ = 'user_history'
@@ -13,7 +12,7 @@ class UserHistoryModel(Base, BaseEntity):
     trust = Column(Float)       # trust rating at this time
     answered = Column(Integer)  # amount of questions answered at this time
     asked = Column(Integer)     # amount of eligible questions at this time
-    qanswered = Column(Bool)    #
+    qanswered = Column(Boolean) #
     
     def __init__(self, a, b, c, d):
         self.userid   = a
@@ -34,10 +33,12 @@ class UserHistoryModel(Base, BaseEntity):
     # also copies over the trust value to the current one in UserModel
     @staticmethod
     def set_trust(uid, trust):
+        """ FIXME: Currently does not make a history entry
         thing = UserHistoryModel.get_user_latest_data(uid)
         thing.trust = trust
-        session.add(UserHistoryModel(thing.userid, thing.trust, thing.answered, thing.asked))
+        #session.add(UserHistoryModel(thing.userid, thing.trust, thing.answered, thing.asked))
         session.commit
+        """
         # also update current trust, in UserModel
         UserModel.setTrust(uid, trust)
         
@@ -49,6 +50,7 @@ class UserHistoryModel(Base, BaseEntity):
 
     # method that adds a new history entry by copying the last known history
     # entry for this student, and updating 'trust' column 
+    """
     @staticmethod
     def inc_question_stats(uid, qid):
         answered = (session.query(AnswerModel).filter_by(userID=uid, questionID=qid))
@@ -84,5 +86,7 @@ class UserHistoryModel(Base, BaseEntity):
             thing.qanswered = True
             session.add(UserHistoryModel(thing.userid, thing.trust, thing.answered, thing.asked))
             session.commit
+            
+    """
 
 Base.metadata.create_all(engine)

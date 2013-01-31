@@ -30,8 +30,9 @@
         <td><a href="/trustdata?uid={{ element.userid }}" class="blue">{{ element.username }}</a></td>
         <td>{{ element.trust }}</td>
         <td id="trust_edit_{{element.userid}}" style="display: none;">
-            <form action="/adjust_trust?uid={{element.userid}}&new=714" name="" method="post">
-                New value: <input type="number" name="new" min="0" max="2500"> </input>
+            <form action="trustdata_adjust" autocomplete="on">
+                <input type="hidden" name="uid" value="{{element.userid}}">
+                New value: <input type="number" name="new" min="0" max="2500">
             </form>
         </td>
         
