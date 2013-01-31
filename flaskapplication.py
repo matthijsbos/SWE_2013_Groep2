@@ -264,7 +264,7 @@ def handle_remove_tags():
     AssignTags.remove(request)
     return Index(request).render()
 
-
+    
 @app.route("/json/get_tags", methods=['POST', 'GET'])
 def json_get_tags():
     return Modifytags.json_get_tags()
@@ -279,6 +279,7 @@ def handle_review_answer():
     ctrler = Index()
     return ctrler.render()
 
+    
 @app.route("/reviewanswer_stub", methods=["POST", "GET"])
 def do_review_answer_stub():
     return ReviewAnswer.review()
