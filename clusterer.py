@@ -115,7 +115,8 @@ class Clusterer():
     return text_clusters
 
 # initialize an instance of this class to do clustering with stars
-class ClustererStars():
+
+class ClustererStars(Clusterer):
   def __init__(self):
     self.answers = []
     self.stars = []
@@ -131,19 +132,7 @@ class ClustererStars():
   def add_answer(self,answer,stars):
     self.answers.append(answer)
     self.stars.append(stars)
-  
-  # sets a number of clusters to add answers to
-  def set_number_of_clusters(self,nr):
-    if nr < 1:
-      raise ClusterError('set_number_of_clusters argument must be at least 1')
-    self.n_clusters = nr
     
-  # change number of tries to search for best cluster
-  def change_nr_tries(self,new_value):
-    if new_value < 1:
-      raise ClusterError('change_nr_tries argument nmust be at least 1')
-    self.nr_tries = new_value
-  
   # runs clustering over the data, run this function only once for a clusterer instance
   def run_clustering(self):
     if len(self.answers) < 1:

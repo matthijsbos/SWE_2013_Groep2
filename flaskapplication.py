@@ -83,7 +83,7 @@ def edit_question():
 @app.route("/togglequestion", methods=['GET', 'POST'])
 def toggle_options():
     return Question.toggle_options(request.args)
-    
+
 # this route is used to ask a question to students
 @app.route("/question", methods=['GET', 'POST'])
 def ask_question():
@@ -96,22 +96,22 @@ def ask_question():
 # this route is used for the feedback from inserting the question into the
 # database, it also inserts the question into the database
 @app.route("/handle_question", methods=['GET','POST'])
-def handle_question():    
+def handle_question():
     try:
         question_text = request.args['question']
-    except KeyError: 
-        return json.dumps({'done':False})       
-    
+    except KeyError:
+        return json.dumps({'done':False})
+
     if question_text == '':
-        return json.dumps({'done':False})       
-    
+        return json.dumps({'done':False})
+
     try:
         isActive = request.args['active'] in ['true','True']
     except:
         isActive = False
 
     try:
-        comment = request.args['comment'] in ['true','True'] 
+        comment = request.args['comment'] in ['true','True']
     except:
         comment = False
 
@@ -166,9 +166,26 @@ def list_questions_answer():
 def delete_question(id):
     return Question.delete_question(id)
 
+@app.route("/import_export", methods=['GET', 'POST'])
+def import_export():
+    return render_template('import_export.html')
 
-@app.route("/question_export", methods=['GET', 'POST'])
-def question_export():
+@app.route("/import", methods=['GET', 'POST'])
+def import_data():
+    # do file uploading stuff
+    print repr(request.files)
+    if 'file' not in request.files or not request.files['file']:
+        return render_template('error.html', error="No file given.")
+
+    data = request.files['file'].read()
+    data = yaml.load(data)
+    return Question.import_course(g.lti.get_user_id(), g.lti.get_course_id(),
+            data)
+
+
+@app.route("/export", methods=['GET', 'POST'])
+def export_data():
+    # TODO: settings (answers, etc?)
     exp = Question.export_course(g.lti.get_course_id())
     exp = yaml.dump(exp, default_flow_style=False)
     return Response(exp,
@@ -182,12 +199,12 @@ def question_export():
 def question_import():
     list = yaml.load(request.args['file'])
     print list
-    
+
 @app.route("/student_question", methods=['POST'])
 def student_question():
     ctrlr = Index()
     return ctrlr.student_question(request)
-    
+
 @app.route("/get_student_questions", methods=['GET'])
 def get_student_questions():
     ctrlr = Index()
@@ -200,10 +217,10 @@ def managetags():
     return ctrler.render()
 
 @app.route("/addtags", methods=['GET', 'POST'])
-def addtags():    
+def addtags():
     ctrler = Modifytags()
-    return ctrler.addtag(request.args)    
-    
+    return ctrler.addtag(request.args)
+
 @app.route("/removetag", methods=['GET'])
 def removetags():
     ctrler = Modifytags()

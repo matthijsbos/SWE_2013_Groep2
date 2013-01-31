@@ -112,6 +112,15 @@ class QuestionController():
         return [{'question': question.question} for question in questions]
 
     @staticmethod
+    def import_course(user_id, course_id, data):
+        for question in data:
+            QuestionController.create_question(question['question'], user_id,
+                    course_id, False, 0, True, True, True)
+
+        questions = map(lambda x: x['question'], data)
+        return render_template('import.html', questions=questions)
+
+    @staticmethod
     def get_list_asked():
        """Retrieves questions asked by the user currently logged in."""
        if g.lti.is_instructor():
