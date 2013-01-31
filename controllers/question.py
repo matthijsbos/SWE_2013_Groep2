@@ -11,8 +11,7 @@ from controllers.scheduler import Scheduler
 class QuestionController():
     # TODO: remove toggle_question, fix availability    
     @staticmethod
-    def toggle_options(args):
-        if g.lti.is_instructor():        
+    def toggle_options(args):        
             try:
                 type = args['type']
             except KeyError:
@@ -22,14 +21,19 @@ class QuestionController():
             if question is None:
                 return 
 
-            if not g.lti.is_instructor() and type != 'reviewable':
+            if not g.lti.is_instructor() and type != 'Reviewable':
                 return
             
             rv = None
+            if type == 'Inactive':
+                rv = question.inactive = True
+                question.answerable = question.reviewable = question.archived = False
+                question.state = 'Inactive'
+            
             if type == 'Answerable':
-                rv = question.answerable = not question.answerable
+                rv = question.answerable = True
                 question.activate_time = datetime.now()
-                question.reviewable = question.archived = False
+                question.inactive = question.reviewable = question.archived = False
                 question.state = 'Answerable'
 
             elif type == 'Reviewable':
@@ -37,12 +41,12 @@ class QuestionController():
                     Scheduler(args['id'])
                     question.reviewable = True
                 rv = question.reviewable
-                question.answerable = question.archived = False
+                question.inactive = question.answerable = question.archived = False
                 question.state = 'Reviewable'
 
             elif type == 'Archived':
-                rv = question.archived = not question.archived
-                question.answerable = question.reviewable = False
+                rv = question.archived = True
+                question.inactive = question.answerable = question.reviewable = False
                 question.state = 'Archived'
                 
             elif type == 'comments':
@@ -55,9 +59,7 @@ class QuestionController():
                 rv = question.rating = not question.rating
                 
             session.commit()                                             
-            return json.dumps({"toggle": rv, "check": True})
-        else:
-            return json.dumps({"toggle": True, "check": False})        
+            return json.dumps({"toggle": rv, "check": True})                    
 
     @staticmethod
     def edit_question(q_id, question, time):

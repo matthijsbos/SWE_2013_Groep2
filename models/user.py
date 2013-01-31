@@ -17,10 +17,7 @@ class UserModel(Base):
 
     @classmethod
     def by_user_id(cls,uid):
-        try:
-            return session.query(cls).filter(cls.userid == uid).one()
-        except:
-            return None
+        return session.query(cls).filter(cls.userid == uid).first()
 
     @staticmethod
     def get_by_username(uid):

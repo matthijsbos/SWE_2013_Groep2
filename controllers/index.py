@@ -4,6 +4,8 @@ from datetime import datetime, timedelta
 from flask import g
 from utilities import render_template
 from models.answer import AnswerModel
+from models.question import UserQuestion
+from models.user import UserModel
 from controllers.answer import Answer
 
 
@@ -52,3 +54,29 @@ class Index():
     
     def unit_test_graph(self):
         return render_template('unit_test_graph.html')
+
+    def student_question(self, request):
+        if g.lti.is_instructor():
+            rv = []
+            user_questions = UserQuestion.get_list(5)
+            for q in user_questions:
+                user = UserModel.by_user_id(q.user_id)
+                if user is not None:
+                    rv.append({'user':user.username, 'text':q.text})
+        else:
+            rv = dict({'error': True, 'type': ''})
+            try:
+                text = request.form['text']
+            except KeyError:
+                rv['type'] = 'key'
+                return json.dumps(rv)
+            
+            min_delay = 10
+            dt = UserQuestion.time_since_last(g.lti.get_user_id())
+            if dt is not None and dt < min_delay:
+                rv['type'] = 'time'
+            else:
+                rv['error'] = False
+                UserQuestion.add(g.lti.get_user_id(), text)
+        
+        return json.dumps(rv)

@@ -73,24 +73,24 @@ class ReviewAnswer():
 
         return render_template('reviewanswer.html', answer=answer,
                                tags=Tag.get_all(), enabledtags=enabledtags,
-                               reviews=reviews, question=question.question)
+                               reviews=reviews, question=question)
 
     @staticmethod
     def start_review(request):
         try:
             question_id = request.form['question_id']
         except:
-            return json.dumps({'reviewable':False})
+            return json.dumps({'Reviewable':False})
         
         question = Question.by_id(question_id)
         reviewable = False
         if question is not None:
             if g.lti.is_instructor() or \
                     (question.get_time_left() <= 0 and question.time > 0):
-                reviewable = QuestionController.availability(
-                {'id':question_id, 'type':'reviewable'})
+                return QuestionController.toggle_options(
+                {'id':question_id, 'type':'Reviewable'})
             
-        return json.dumps({'reviewable':reviewable})
+        return json.dumps({'Reviewable':reviewable})
         
     @staticmethod 
     def has_new_review():

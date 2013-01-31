@@ -171,10 +171,12 @@ textarea:focus{
 .question:hover{
     text-decoration: underline;
 }
-.submitted{
-    display: inline;
+#questions .submitted{
+    display: inline-block;
     margin:0;
-    margin-left: 10px;
+    margin-left: 5px;
+    padding: 4px 40px 4px 10px;
+    margin-top: 1px;
 }
 .ranking{
     display: inline;
@@ -183,8 +185,8 @@ textarea:focus{
 }
 #questions .submitted button.close-submitted{
     top: -1px;
-right: -134px;
-float:none;
+    right: -134px;
+    float:none;
 }
 .countdowntime{
     margin: -34px 0 0 330px;
