@@ -20,6 +20,7 @@ from controllers.question import QuestionController as Question
 from controllers.tags import Modifytags, AssignTags
 from controllers.review import ReviewAnswer
 from controllers.stats import Stats
+from controllers.review_stats import Review_stats
 
 import models.question
 import models.answer
@@ -295,10 +296,10 @@ def render_results():
     return ctrler.render_results()
 
 
-@app.route("/filteranswers/<questionid>", methods=['POST', 'GET'])
-def answerFilterByQuestionID(questionid):
-    ctrler = Answer()
-    return ctrler.render_filtered(questionID=questionid)
+@app.route("/review_stat/<questionid>", methods=['POST', 'GET'])
+def review_stars(questionid):
+    ctrler = Review_stats()
+    return ctrler.render(questionid)
 
 
 @app.route("/filteranswerstbl", methods=['POST', 'GET'])
