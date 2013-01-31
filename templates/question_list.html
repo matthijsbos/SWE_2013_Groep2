@@ -303,7 +303,7 @@
         return false;
     }
     
-    var student_questions_visible = true;
+    var student_questions_visible = false;
 	function student_questions(){
 		if (student_questions_visible) {
 			$('#student_questions').hide();
@@ -317,12 +317,14 @@
 
 </script>
 
+<div id="buttons"> 
+    <input type="submit"id="student_questions_btn" value="Show student questions"class="btn-primary btn" onclick=student_questions() ></button>
+</div>
+<table id="student_questions" class="table table-hover table-bordered table-striped"></table>
+
+<hr>
 
 <div id="error" style="background-color: #a33; color: white;"></div>
 <div id="questListForm" onKeyPress="return checkSubmit(event)" style="display:block"></div>
-<hr>
-<div id="buttons"> 
-    <input type="submit"id="student_questions_btn" value="Hide student questions"class="btn-primary btn" onclick=student_questions() ></button>
-</div>
-<table id="student_questions" class="table table-hover table-bordered table-striped"></table>
+
 {% endblock %}
