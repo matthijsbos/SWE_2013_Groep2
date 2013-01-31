@@ -155,7 +155,6 @@ def list_questions_table():
 def list_questions_asked():
     return Question.get_list_asked()
 
-
 @app.route("/question_list/to_answer", methods=['GET', 'POST'])
 def list_questions_answer():
     return Question.get_list_to_answer()
@@ -165,6 +164,9 @@ def list_questions_answer():
 def delete_question(id):
     return Question.delete_question(id)
 
+@app.route("/delete_userquestion/<id>", methods=['GET', 'POST'])
+def delete_user_question(id):
+    return Question.delete_userquestion(id)
 
 @app.route("/question_export", methods=['GET', 'POST'])
 def question_export():
@@ -191,7 +193,6 @@ def student_question():
 def get_student_questions():
     ctrlr = Index()
     return ctrlr.student_question(request)
-
 
 @app.route("/managetags", methods=['GET', 'POST'])
 def managetags():
@@ -263,10 +264,11 @@ def handle_remove_tags():
     AssignTags.remove(request)
     return Index(request).render()
 
-
+    
 @app.route("/json/get_tags", methods=['POST', 'GET'])
 def json_get_tags():
-    return Modifytags.json_get_tags()
+    query = request.args['q'] 
+    return Modifytags.json_get_tags(query)
 
 
 @app.route("/reviewanswer", methods=['POST', 'GET'])
@@ -278,6 +280,7 @@ def handle_review_answer():
     ctrler = Index()
     return ctrler.render()
 
+    
 @app.route("/reviewanswer_stub", methods=["POST", "GET"])
 def do_review_answer_stub():
     return ReviewAnswer.review()

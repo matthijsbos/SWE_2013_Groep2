@@ -41,7 +41,7 @@ class Modifytags():
        #list of dicytionaries
        data = []
        for tag in tags:
-           data.append( {"id":tag.id, "name":tag.name} )
+           data.append( {"id":str(tag.id), "name":tag.name} )
 
        #Qreturn "Test return"
        return json.dumps(data)

@@ -1,4 +1,4 @@
-body{
+﻿body{
       color:#009DCE;
       width: 950px;
       font-family: sans-serif;
@@ -112,6 +112,11 @@ br { clear: both; }
 	word-wrap:break-word;
 }
 .tags a:hover{ 
+	text-decoration: none; 
+	font-weight: bold;
+	cursor: pointer;
+}
+.link:hover{ 
 	text-decoration: none; 
 	font-weight: bold;
 	cursor: pointer;
