@@ -1,4 +1,4 @@
-{% extends "_base.html" %}
+﻿{% extends "_base.html" %}
 {% block content %}
 
 <script language="javascript" type="text/javascript">
@@ -24,7 +24,7 @@
                $('#student_questions tr:last').after('\
                <tr id=userrow_'+data[key].id+'> \
                     <td>'+data[key].user+'</td><td>'+data[key].text+'</td> \
-                    <td class="delete-field"><a onclick=delete_userquestion('+data[key].id+') data-toggle="modal" class="delete-question-link link" ><i class="icon-remove-sign"></i> delete</a></td>\
+					<td><a onClick="delete_userquestion('+data[key].id+')" data-toggle="modal" class="delete-question-link link" ><i class="icon-remove-sign"></i> delete</a></td> \
                </tr>')
             }
         }

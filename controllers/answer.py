@@ -1,4 +1,4 @@
-from models import answer, question, user
+﻿from models import answer, question, user
 from models.question import Question
 from models.answer import AnswerModel
 from flask import g, request, redirect
@@ -83,7 +83,6 @@ class Answer():
             else:
                 answer.AnswerModel.save(qID, uID, answerText)
             flag = "true"
-        user.UserModel.save(uID,g.lti.get_user_name())
         return True#render_template('answersaved.html', flag=flag)
 
     def viewAnswer(self):
