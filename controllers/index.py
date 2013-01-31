@@ -1,9 +1,12 @@
-﻿import json
+import json
+import time
+from datetime import datetime, timedelta
 from flask import g
 from utilities import render_template
 from models.answer import AnswerModel
 from models.question import UserQuestion
 from models.user import UserModel
+from controllers.answer import Answer
 
 
 class Index():
@@ -45,7 +48,7 @@ class Index():
                       'answer':answer_text}        
                       
             array.append(object)
-                
+       
         output['questions'] = array
         
         return json.dumps(output)
@@ -56,7 +59,6 @@ class Index():
             user_questions = UserQuestion.get_list(5)
             for q in user_questions:
                 user = UserModel.by_user_id(q.user_id)
-                print user
                 if user is not None:
                     rv.append({'user':user.username, 'text':q.text, 'id':q.id})
         else:

@@ -1,5 +1,5 @@
 import json
-from flask import escape, g
+from flask import g
 from utilities import render_template
 from dbconnection import session
 from models.question import Question, UserQuestion
@@ -9,27 +9,27 @@ from controllers.scheduler import Scheduler
 
 
 class QuestionController():
-    # TODO: remove toggle_question, fix availability    
+    # TODO: remove toggle_question, fix availability
     @staticmethod
-    def toggle_options(args):        
+    def toggle_options(args):
             try:
                 type = args['type']
             except KeyError:
-                return 
-                
+                return
+
             question = Question.by_id(args['id'])
             if question is None:
-                return 
+                return
 
             if not g.lti.is_instructor() and type != 'Reviewable':
                 return
-            
+
             rv = None
             if type == 'Inactive':
                 rv = question.inactive = True
                 question.answerable = question.reviewable = question.archived = False
                 question.state = 'Inactive'
-            
+
             if type == 'Answerable':
                 rv = question.answerable = True
                 question.activate_time = datetime.now()
@@ -48,31 +48,25 @@ class QuestionController():
                 rv = question.archived = True
                 question.inactive = question.answerable = question.reviewable = False
                 question.state = 'Archived'
-                
+
             elif type == 'comments':
                 rv = question.comment = not question.comment
-                
+
             elif type == 'tags':
                 rv = question.tags = not question.tags
-                
+
             elif type == 'rating':
                 rv = question.rating = not question.rating
-                
-            session.commit()                                             
-            return json.dumps({"toggle": rv, "check": True})                    
+
+            session.commit()
+            return json.dumps({"toggle": rv, "check": True})
 
     @staticmethod
     def edit_question(q_id, question, time):
         """Updates a question with given contents and activation status."""
         if g.lti.is_instructor():
-            if question is None:
-                escaped_question = None
-            else:
-                escaped_question = escape(question)
-
-            escaped_time = escape(time)
             q = Question.by_id(q_id)
-            q.question = escaped_question
+            q.question = question
             q.time = int(time)
             activate = q.answerable
 
@@ -80,7 +74,7 @@ class QuestionController():
             session.commit()
 
             return json.dumps({"id": q_id,
-                               "text": escaped_question,
+                               "text": question,
                                "answerable": activate,
                                "time":time,
                                "check": g.lti.is_instructor()})
@@ -90,11 +84,11 @@ class QuestionController():
                                "answerable": activate,
                                "time": time,
                                "check": g.lti.is_instructor()})
-    
+
     @staticmethod
     def get_remaining_time(q_id):
         question = Question.by_id(q_id)
-        
+
         if question is not None and question.activate_time is not None:
             time_remaining = question.get_time_left()
             question_time =  question.time
@@ -135,7 +129,7 @@ class QuestionController():
         questions = Question.get_filtered()
         for question in questions:
             if question is not None and question.activate_time is not None:
-                if question.get_time_left() < 0:          
+                if question.get_time_left() < 0:
                     question.answerable = False
         session.commit()
         return render_template('question_list.html', questions=questions)
@@ -143,10 +137,10 @@ class QuestionController():
     @staticmethod
     def get_list_table(limit,offset):
         (questions, curpage, maxpages, startpage, pagecount) = Question.get_filtered_offset(limit,offset,orderby='created')
-        
+
         for question in questions:
             if question is not None and question.activate_time is not None:
-                if question.get_time_left() < 0:         
+                if question.get_time_left() < 0:
                     question.answerable = False
         session.commit()
 
@@ -161,7 +155,7 @@ class QuestionController():
          return render_template('answer_student_questions.html',
                                 questions=session.query(Question).\
                                     filter(Question.course_id == g.lti.get_course_id() ).\
-                                    filter(Question.course_id != g.lti.get_user_id() ))         #Filter questions by instructor                                    
+                                    filter(Question.course_id != g.lti.get_user_id() ))         #Filter questions by instructor
 
      #Only instructors can answer these questions
      else:
