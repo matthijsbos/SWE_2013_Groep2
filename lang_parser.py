@@ -122,5 +122,5 @@ class LanguageParser():
         return keywords
 
     def detect_language(self):
-        if detector:
+        if self.lang_detector:
             self.language = self.lang_detector.parse_answers(texts)

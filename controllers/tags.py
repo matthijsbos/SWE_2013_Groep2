@@ -14,8 +14,16 @@ class Modifytags():
     def __init__(self):
         pass
     
-    def addtag(self, request):
-        Tag.add_tag(request.form['newTag'])
+    def addtag(self, args):
+        tag = args['tag']
+        if tag != '':
+            response = Tag.add_tag(tag);
+            if not response:                
+                return json.dumps({"succes": False})
+            else:
+                return json.dumps({"succes": True, "id":response})
+        else:
+            return json.dumps({"succes": False})
 
     def delete_tag_question(self, id):
         if g.lti.is_instructor():
@@ -24,25 +32,16 @@ class Modifytags():
 
     def render(self):
         self.taglist = Tag.get_all()
-        return render_template('modifytags.html',tags=self.taglist)
+        return render_template('modifytags.html',tags=self.taglist)        
         
     @staticmethod
     def json_get_tags():    
        #create json file of all tags
-       data = Tag.get_all()
-
+       tags = Tag.get_all()
        #list of dicytionaries
-       data = [
-                   {"id":"856","name":"Ruby"},
-                   {"id":"1035","name":"Python"},
-                   {"id":"856","name":"JavaScript"},
-                   {"id":"1035","name":"ActionScript"},
-                   {"id":"856","name":"Scheme"},
-                   {"id":"1035","name":"Lisp"},
-                   {"id":"1035","name":"Visual Basic"},
-                   {"id":"856","name":"C"},
-                   {"id":"856","name":"Java"}
-       ]
+       data = []
+       for tag in tags:
+           data.append( {"id":tag.id, "name":tag.name} )
 
        #Qreturn "Test return"
        return json.dumps(data)

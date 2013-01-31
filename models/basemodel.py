@@ -52,10 +52,14 @@ class BaseEntity(object):
         pagecount = startpage + 5 if maxpages >= startpage+5 else maxpages
 
         if len(kws) > 0:
-            return session.query(cls).filter_by(**kws).order_by(getattr(cls,orderby).desc()).offset(offset).limit(limit)
-        return (session.query(cls).order_by(getattr(cls,orderby).desc()).offset(offset).limit(limit),
+            return(session.query(cls).filter_by(**kws).order_by(getattr(cls,orderby).desc()).offset(offset).limit(limit),
                 curpage,
                 maxpages,
                 startpage,
                 pagecount)
-
+        else:
+            return (session.query(cls).order_by(getattr(cls,orderby).desc()).offset(offset).limit(limit),
+                curpage,
+                maxpages,
+                startpage,
+                pagecount)

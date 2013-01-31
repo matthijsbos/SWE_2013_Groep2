@@ -10,8 +10,8 @@ class AnswerModel(Base, BaseEntity):
     __tablename__ = 'answer'
 
     text = Column(String)
-    questionID = Column(Integer)
-    userID = Column(Integer)
+    questionID = Column(Integer, ForeignKey('questions.id',ondelete='CASCADE'))
+    userID = Column(String)
     edit = Column(Integer)
     ranking = Column(Float)
 
@@ -30,12 +30,17 @@ class AnswerModel(Base, BaseEntity):
         return user.username
 
     def __repr__(self):
-        return "<Answer('%s','%s','%s', %s, %s)>" % (self.id,
+        return "<Answer('%s','%s','%s')>" % (self.id,
                                                 self.questionID,
                                                 self.userID)
 
     def __str__(self):
         return self.text
+	
+    @staticmethod
+    def get_rating(questionID):
+        rating = 1
+        return rating
     
     @staticmethod
     def savereview(questionID, userID, answerText, edit):
@@ -45,7 +50,8 @@ class AnswerModel(Base, BaseEntity):
 
     @staticmethod
     def get_question_answers(question_id):
-        return session.query(AnswerModel).filter(AnswerModel.questionID==question_id)
+        return session.query(AnswerModel).filter(
+			AnswerModel.questionID==question_id)
         
     @staticmethod
     def get_answers_ordered_by_rank(question_id):
@@ -53,7 +59,7 @@ class AnswerModel(Base, BaseEntity):
         #return session.query(AnswerModel).filter(AnswerModel.questionID==question_id).order_by(AnswerModel.ranking.desc())
 
     @staticmethod
-    def updateAnswer(answerID, answerText):
+    def update_answer(answerID, answerText):
         session.query(AnswerModel).filter_by(id=answerID).update(
             {"text": answerText}, synchronize_session=False)
 
@@ -64,12 +70,12 @@ class AnswerModel(Base, BaseEntity):
         session.commit()
 
     @staticmethod
-    def getAnswerID(uID, qID):
+    def get_answer_id(uID, qID):
         answer = session.query(AnswerModel).filter_by(questionID=qID, userID=uID, edit=0).one()
         return answer.id
 
     @staticmethod
-    def checkAnswerExist(uID, qID):
+    def check_answer_exists(uID, qID):
         if engine.dialect.has_table(engine.connect(), "answer"):
             try:
                 answer = session.query(AnswerModel).filter_by(questionID=qID, userID=uID, edit=0).one()
@@ -80,7 +86,7 @@ class AnswerModel(Base, BaseEntity):
             return 0
 
     @staticmethod
-    def get_active_questions(userid,courseid):
+    def get_active_questions(userid, courseid):
         anssub = session.query(AnswerModel).filter(AnswerModel.userID == userid).\
             subquery()
 
@@ -90,7 +96,7 @@ class AnswerModel(Base, BaseEntity):
         # Need to use the old Alias.c.[columname] when using subquery!
         tmp = session.query(Question).\
                 outerjoin(anssub, anssub.c.questionID == Question.id).\
-                filter(Question.available == True).\
+                filter(Question._answerable == True).\
                 filter(Question.course_id == courseid)        
 
         #print tmp
@@ -101,33 +107,10 @@ class AnswerModel(Base, BaseEntity):
         for x in tmp:           
             if x.time == 0:
                 questions.append(x)
-            elif x.modified + timedelta(seconds=x.time) > datetime.now():
+            elif x.activate_time + timedelta(seconds=x.time) > datetime.now():
                 questions.append(x)
          
         return questions
-    
-    @staticmethod
-    def get_answered_active_questions(userid, courseid):
-        """
-        Exactly the same as get_unanswered_questions except we want the answered
-        ones
-        """
-        anssub = session.query(AnswerModel).filter(AnswerModel.userID == userid).\
-            subquery()
-
-
-        # Need to use the old Alias.c.[columname] when using subquery!
-        tmp = session.query(Question).\
-                outerjoin(annsub, anssub.c.questionID == Question.id).\
-                filter(Question.available == True).\
-                filter(Question.course_id == courseid).\
-                filter(anssub.c.id != None).all()
-				
-        print tmp
-        print [(x.modified + timedelta(seconds=x.time), datetime.now()) for x in tmp]
-
-        return [x for x in tmp if x.modified + timedelta(seconds=x.time) >
-                datetime.now()]
 				
     @staticmethod
     def question_valid(questionid):
@@ -136,33 +119,27 @@ class AnswerModel(Base, BaseEntity):
         return [questionTmp.modified + timedelta(seconds=questionTmp.time) >
                 datetime.now()]
 
-
     @staticmethod
-    def getTimeStamp(answerID):
-        answer = session.query(AnswerModel).filter_by(id=answerID).one()
-        return answer.created
-
-    @staticmethod
-    def getRanking(answerID):
+    def get_ranking(answerID):
         answer = session.query(AnswerModel).filter_by(id=answerID).one()
         return answer.ranking
 
     @staticmethod
-    def setRanking(answerID, ranking):
+    def set_ranking(answerID, ranking):
         answer = session.query(AnswerModel).filter_by(id=answerID).one()
         answer.ranking = ranking
 
     @staticmethod
-    def winningProbability(rating1, rating2) :
+    def winning_probability(rating1, rating2):
         return 1.0 / (1.0 + (10.0**((rating2 - rating1) / 400.0)))
 
     @staticmethod
-    def newRating(winner, loser) :
+    def new_rating(winner, loser):
         K = 100.0
-        winnerRanking = AnswerModel.getRanking(winner)
-        loserRanking = AnswerModel.getRanking(loser)
-        newWinnerRanking = winnerRanking + (K * (1.0 - AnswerModel.winningProbability(winnerRanking, loserRanking)))
-        newLoserRanking = loserRanking + (K * (0.0 - AnswerModel.winningProbability(loserRanking, winnerRanking)))
+        winnerRanking = AnswerModel.get_ranking(winner)
+        loserRanking = AnswerModel.get_ranking(loser)
+        newWinnerRanking = winnerRanking + (K * (1.0 - AnswerModel.winning_probability(winnerRanking, loserRanking)))
+        newLoserRanking = loserRanking + (K * (0.0 - AnswerModel.winning_probability(loserRanking, winnerRanking)))
         return newWinnerRanking, newLoserRanking
 
     @staticmethod

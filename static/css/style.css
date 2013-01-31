@@ -9,7 +9,6 @@ br { clear: both; }
 #qList input, #addQuestion-table input{
     margin-bottom: 0px;
 }
-
 .question-field{
     width: 400px;
 }
@@ -44,7 +43,43 @@ br { clear: both; }
 .welcome-message{
     width: 640px;
 }
-
+.state-buttons{
+    text-align: center;
+    width: 70px;
+}
+#qList {
+	width: auto;
+}	
+#qList .question-field {
+	width: 250px;
+}
+#qList .time-field {
+	width: 40px;
+}
+#qList .state-field label{
+	width: 80px;
+}
+#qList .comment-field {
+	width: 30px;
+	display: none;
+}
+#qList .tags-field {
+	width: 30px;
+	display: none;
+}
+#qList .rating-field {
+	width: 30px;
+	display: none;
+}
+#qList .rankscore-field {
+	width: 30px;
+}
+#qList .edit-field {
+	width: 70px;
+}
+#qList .delete-field {
+	width: 70px;
+}
 #qList td, #addQuestion-table td{
     max-width: 500px;
     word-wrap: break-word;
@@ -147,17 +182,17 @@ right: -134px;
 float:none;
 }
 .countdowntime{
-    float: right;
-    margin-top: -25px;
-    margin-right: 5px;
+    margin: -34px 0 0 330px;
     font-size: 25px;
 }
-.questionArea{
-    width: 500px;
+
+.countdowntimesmall{
+    float: left;
+    font-size: 15px;
 }
-.questionArea textarea{
-    margin-top: 8px;
-    width: 96%;
+#questions textarea{
+    width: 400px;
+    height: 120px;
 }
 #answer{
     font-size: 18px;

@@ -1,0 +1,107 @@
+{% extends "_base.html" %}
+{% block content %}
+
+<script language="javascript" type="text/javascript">
+    function edit_field(id){
+        var elem = $('#question_' + id + ' a');
+        if (elem.hasClass('activated')){
+            return;
+        }
+        var text = elem.text();
+        elem.addClass('activated');
+        elem.text('');
+        var edit_field = $('<input type="text" size="50"/>').val(text);
+        edit_field.blur(function(){
+            edit_question(id, $(this).val());
+            var newText = elem.val();
+            $(this).parent().text(newText).removeClass('activated');
+            $(this).remove();
+        });
+        edit_field.appendTo(elem).focus();
+    }
+
+    function edit_question(id,text){
+    $.getJSON("/edit_question",{id:id,text:text},
+    function(data){
+        if(data.check){
+            if(!data.available)
+                temp="False"
+            else
+                temp="True"
+            $('#available_'+id).html(temp);
+            $('#question_'+id).html('<a href=\"/filteranswer/'+data.text+'\">'+data.text+'</a>');
+        }
+        else
+            $('#error').html("Error while editing question question.");
+        });
+    }
+
+    function delete_question(id){
+        $.getJSON("/delete_question/"+id,{},
+            function(data){
+                if (data.deleted)
+                    $('#row_'+id).remove();
+                else
+                    $('#error').html("Error while deleting question.");
+            });
+    }
+
+    function toggle_question(id){
+        $.getJSON("/toggle_question",{id:id},
+        function(data){
+            if(data.check){
+                if(!data.toggle)
+                    temp="False"
+                else
+                    temp="True"
+                $('#available_'+id).html(temp);
+            }
+            else
+                $('#error').html("Error while togging question question.");
+        });
+    }
+
+    function add_question(){
+        $('#addQ').hide()
+            $('#qList tr:last').after(
+                    '<tr><td colspan="6"><center>FIREFOX MURDERS FORM IN TD //mustfix</center></td></tr> \
+                <tr><th colspan="6"> \
+                    <form action="/handle_question" method="post" style="display:block"> \
+                        <input type="textbox" name="question"> \
+                        <input type="number" name="time" size="3" maxlength="3"> \
+                        <input type="checkbox" name="active"> \
+                        <input type="submit" value="Submit">\
+                    </form> \
+                </th></tr>');
+    }
+
+</script>
+
+<div id="error" style="background-color: #a33; color: white;"></div>
+<table id="qList" border=1 class="black">
+    <tr>
+        <!--<th>id</th>-->
+        <th>Question</th>
+        <th>Active</th>
+        <th>Time</th>
+        <th>Activate</th>
+        <th>Edit</th>
+        <th>Delete</th>
+    </tr>
+    {% for question in questions %}
+        <tr id="row_{{question.id}}">
+            <!--<td id="id_{{question.id}}">{{question.id}}</td>-->
+            <td id="question_{{question.id}}">
+                <a href="/filteranswers/{{question.id}}" class="blue">{{question.question}}</a>
+            </td>
+            <td id="available_{{question.id}}">{{question.available}}</td>
+            <td id="time_{{question.id}}">{{question.time}}</td>
+            <td><button value="edit" onclick=edit_field({{question.id}}) />edit</button></td>
+            <td><button value="toggle" onclick=toggle_question({{question.id}}) />toggle</button></td>
+            <td><button value="delete" onclick=delete_question({{question.id}}) />delete</button></td>
+        </tr>
+    {% endfor %}
+</table>
+<button id="addQ" value="add" onclick=add_question() />Add Question</button>
+<a href="/" class="blue">Back</a>
+{% endblock %}

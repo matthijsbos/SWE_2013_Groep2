@@ -4,6 +4,7 @@ from datetime import datetime, timedelta
 from flask import g
 from utilities import render_template
 from models.answer import AnswerModel
+from models.question import UserQuestion
 from controllers.answer import Answer
 
 
@@ -21,9 +22,6 @@ class Index():
         return render_template('index_student.html')
 
     def has_new_question(self):
-        if g.lti.is_instructor():
-            return json.dumps({'has_new': False})
-
         questions = AnswerModel.get_active_questions(g.lti.get_user_id(),
                                                     g.lti.get_course_id())
 
@@ -34,14 +32,11 @@ class Index():
         array = []        
         
         for question in questions:        
-            time_remaining = datetime.now() - (question.activate_time +
-                    timedelta(seconds=question.time))
-            time_remaining = time_remaining.seconds + time_remaining.days * 86400
-            time_remaining = -time_remaining      
+            time_remaining = question.get_time_left()
             
             answer_text = ''
-            if AnswerModel.checkAnswerExist(g.lti.get_user_id(), question.id) == 1:
-                answer_text = AnswerModel.by_id(AnswerModel.getAnswerID(g.lti.get_user_id(), question.id)).text
+            if AnswerModel.check_answer_exists(g.lti.get_user_id(), question.id) == 1:
+                answer_text = AnswerModel.by_id(AnswerModel.get_answer_id(g.lti.get_user_id(), question.id)).text
             
             object = {'question_id': question.id,
                       'question_text': question.question,
@@ -55,3 +50,27 @@ class Index():
         output['questions'] = array
         
         return json.dumps(output)
+
+    def student_question(self, request):
+        if g.lti.is_instructor():
+            rv = []
+            user_questions = UserQuestion.get_list(5)
+            for q in user_questions:
+                rv.append({'user':q.user_id, 'text':q.text})
+        else:
+            rv = dict({'error': True, 'type': ''})
+            try:
+                text = request.form['text']
+            except KeyError:
+                rv['type'] = 'key'
+                return json.dumps(rv)
+            
+            min_delay = 10
+            dt = UserQuestion.time_since_last(g.lti.get_user_id())
+            if dt is not None and dt < min_delay:
+                rv['type'] = 'time'
+            else:
+                rv['error'] = False
+                UserQuestion.add(g.lti.get_user_id(), text)
+        
+        return json.dumps(rv)
