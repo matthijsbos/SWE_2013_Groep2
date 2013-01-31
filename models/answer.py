@@ -73,7 +73,7 @@ class AnswerModel(Base, BaseEntity):
         session.add(AnswerModel(questionID=questionID, userID=userID, text=answerText, edit=0, ranking=ranking))
         session.commit()
         # add to history
-        UserHistoryModel.inc_answered(userID)
+        # UserHistoryModel.inc_answered(userID) 
 
     @staticmethod
     def get_answer_id(uID, qID):

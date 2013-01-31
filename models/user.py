@@ -10,7 +10,7 @@ class UserModel(Base):
     userid = Column(String, primary_key=True)
     username = Column(String)
     trust = Column(Float)
-
+    
     @classmethod
     def get_all(cls):
         return session.query(cls).filter().all()
@@ -25,13 +25,20 @@ class UserModel(Base):
 
     @staticmethod
     def save(uid,uname):
+        print "models/user.py - SAVE CALLED"
         user = UserModel.by_user_id(uid)
         if user is None:
-            print "GET HERE"
-            session.add(UserModel(userid=uid,username=uname))
+            print "models/user.py - SAVE CALLED, user does not yet exist   "
+            tmp = UserModel(userid=uid,username=uname)
+            print tmp.userid
+            print tmp.username
+            tmp.trust = 1000.0
+            print tmp.trust
+            print "----end---"
+            session.add(tmp)
             session.commit()
         elif user.username != uname:
-            print "OR DO U GET HERE"
+            print "models/user.py - SAVE CALLED, user already exists."
             user.username = uname
             session.commit()
 
