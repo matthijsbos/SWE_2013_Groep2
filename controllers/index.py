@@ -1,11 +1,9 @@
-import json
-import time
-from datetime import datetime, timedelta
+﻿import json
 from flask import g
 from utilities import render_template
 from models.answer import AnswerModel
 from models.question import UserQuestion
-from controllers.answer import Answer
+from models.user import UserModel
 
 
 class Index():
@@ -55,7 +53,9 @@ class Index():
             rv = []
             user_questions = UserQuestion.get_list(5)
             for q in user_questions:
-                rv.append({'user':q.user_id, 'text':q.text, 'id':q.id})
+                user = UserModel.by_user_id(q.user_id)
+                if user is not None:
+                    rv.append({'user':user.username, 'text':q.text, 'id':q.id})
         else:
             rv = dict({'error': True, 'type': ''})
             try:
@@ -71,5 +71,5 @@ class Index():
             else:
                 rv['error'] = False
                 UserQuestion.add(g.lti.get_user_id(), text)
+        
         return json.dumps(rv)
- 
