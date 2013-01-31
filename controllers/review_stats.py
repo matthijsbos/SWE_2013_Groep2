@@ -44,7 +44,12 @@ class Review_stats():
       if data_set[i][5] < worst_avg:
         worst_avg=data_set[i][5]
         worst_avg_nr=i
-      
+    
+    data_set[biggest_nr].append("biggest cluster")
+    data_set[best_avg_nr].append("best cluster")
+    data_set[worst_avg_nr].append("worst cluster")
+    
+    
     output.append(data_set[biggest_nr])
     output.append(data_set[best_avg_nr])
     output.append(data_set[worst_avg_nr])

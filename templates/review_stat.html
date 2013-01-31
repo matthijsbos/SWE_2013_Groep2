@@ -1,6 +1,7 @@
 <table>
   <thead>
     <tr>
+      <th></th>
       <th>best answer</th>
       <th>stars of best answer</th>
       <th>worst answer</th>
@@ -11,6 +12,7 @@
   </thead>
   {%for data in data_set%}
   <tr>
+    <td>{{data[6]}}</td>
     <td>{{data[1]}}</td>
     <td>{{data[0]}}</td>
     <td>{{data[3]}}</td>
