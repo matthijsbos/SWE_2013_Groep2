@@ -8,7 +8,7 @@
     var query_interval = 1000 * 5; // Every 5 sec
     var query_interval_id;
     $(function() {    
-        get_student_questions()
+        get_student_questions();
         query_interval_id = setInterval(get_student_questions, query_interval);    
     });
     $(document).ready(function() {
@@ -268,16 +268,16 @@
         $.getJSON('/handle_question',{active:activev,comment:commentv,tags:tagsv,
             question:questionv,time:timev,rating:ratingv},
             function(data){
-                if (data.done)
-                {
+                if (data.done) {
                     reload();
                     $('#save_question').attr('disabled', false);
                     $('#cancelQ').hide();
                     $('#addQ').show();
                 }                
-                else                                        
+                else {                                       
                     alert("Please fill in a question");
                     cancel_question();
+                }
             });
 				
         return false;

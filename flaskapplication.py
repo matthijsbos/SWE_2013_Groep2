@@ -165,7 +165,7 @@ def delete_question(id):
     return Question.delete_question(id)
 
 @app.route("/delete_userquestion/<id>", methods=['GET', 'POST'])
-def delete_question(id):
+def delete_userquestion(id):
     return Question.delete_userquestion(id)
 
 @app.route("/question_export", methods=['GET', 'POST'])
