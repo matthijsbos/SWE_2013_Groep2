@@ -7,10 +7,11 @@
     var edit_count = 0;
     var query_interval = 1000 * 5; // Every 5 sec
     var query_interval_id;
-<<<<<<< HEAD
     $(function() {    
         get_student_questions();
         query_interval_id = setInterval(get_student_questions, query_interval);    
+        if ($('#addQ1').attr('disabled') == 'disabled')
+            $('#addQ1').attr('disabled', 'disabled')
     });
     $(document).ready(function() {
         refresh_table(0,stdlimit);
@@ -24,12 +25,19 @@
            for (key in data) {
                $('#student_questions tr:last').after('\
                <tr id=userrow_'+data[key].id+'> \
-                    <td>'+data[key].user+'</td><td>'+data[key].text+'</td> \
-					<td><a onClick="delete_userquestion('+data[key].id+')" data-toggle="modal" class="delete-question-link link" ><i class="icon-remove-sign"></i> delete</a></td> \
+                    <td>'+data[key].user+'</td><td id="user_q'+data[key].id+'">'+data[key].text+'</td> \
+                    <td><input id="addQ2" type="submit" value="Copy question" class="btn-primary btn" onclick=add_userquestion('+data[key].id+') ></button></td>\
+                    <td><a onClick="delete_userquestion('+data[key].id+')" data-toggle="modal" class="delete-question-link link" ><i class="icon-remove-sign"></i> delete</a></td> \
                </tr>')
             }
         }
     )}
+    
+    function add_userquestion(id){
+        text = $('#user_q'+id).text();        
+        add_question();
+        $('#qtext').prop('value', text);        
+    }
     
     function delete_userquestion(id){    
         $.getJSON("/delete_userquestion/"+id,{},
@@ -228,7 +236,8 @@
         }
     }
     function add_question(){
-        $('#addQ').hide()
+        $('#addQ1').attr('disabled', 'disabled')
+        $('#addQ2').attr('disabled', 'disabled')
         $('#qList tr:first').after(
         '<tr>\
 			<td class="question-field"><input id="qtext" type="text" class="input-block-level" name="question" placeholder="your question"></td> \
@@ -250,12 +259,11 @@
 
         if (edit_count > 0) {
             alert("You have "+edit_count+" open edits, that still need to be submitted.");
-        }
+        }        
     }
 
     function cancel_question(){
-        $('#cancelQ').hide()
-        $('#addQ').show()
+        $('#cancelQ').hide()        
         $('#qList tr:eq(1)').remove()
     }
 
@@ -274,8 +282,9 @@
                 if (data.done) {
                     reload();
                     $('#save_question').attr('disabled', false);
-                    $('#cancelQ').hide();
-                    $('#addQ').show();
+                    $('#addQ1').attr('disabled', false);
+                    $('#addQ2').attr('disabled', false);
+                    $('#cancelQ').hide();                    
                 }                
                 else {                                       
                     alert("Please fill in a question");
