@@ -130,6 +130,7 @@
             }
         });
     }
+    
 	var advanced_visible = false;
 	function advanced(){
 		if (advanced_visible) {
@@ -145,6 +146,7 @@
 		}
 		advanced_visible = !advanced_visible;
     }
+    
     function delete_question(id){
         $.getJSON("/delete_question/"+id,{},
         function(data){
@@ -283,12 +285,27 @@
             });
         return false;
     }
+    
+    var student_questions_visible = true;
+	function student_questions(){
+		if (student_questions_visible) {
+			$('#student_questions').hide();
+            $('#student_questions_btn').prop('value', 'Show student questions');
+		} else {
+			$('#student_questions').show();
+            $('#student_questions_btn').prop('value', 'Hide student questions');
+		}
+		student_questions_visible = !student_questions_visible;
+    }
 
 </script>
 
-<table id="student_questions" class="table table-hover table-bordered table-striped"></table>
-<div id="error" style="background-color: #a33; color: white;"></div>
-<div id="questListForm" onKeyPress="return checkSubmit(event)" style="display:block">
 
+<div id="error" style="background-color: #a33; color: white;"></div>
+<div id="questListForm" onKeyPress="return checkSubmit(event)" style="display:block"></div>
+<hr>
+<div id="buttons"> 
+    <input type="submit"id="student_questions_btn" value="Hide student questions"class="btn-primary btn" onclick=student_questions() ></button>
 </div>
+<table id="student_questions" class="table table-hover table-bordered table-striped"></table>
 {% endblock %}
