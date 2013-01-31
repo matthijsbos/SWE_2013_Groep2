@@ -17,6 +17,7 @@ class Index():
         if g.lti.is_instructor():
             return render_template('index_instructor.html')
         else:
+            print g.lti.get_user_name()
             UserModel.save(g.lti.get_user_id(), g.lti.get_user_name())
 
         return render_template('index_student.html')
@@ -56,7 +57,6 @@ class Index():
             user_questions = UserQuestion.get_list(5)
             for q in user_questions:
                 user = UserModel.by_user_id(q.user_id)
-                print user
                 if user is not None:
                     rv.append({'user':user.username, 'text':q.text, 'id':q.id})
         else:
