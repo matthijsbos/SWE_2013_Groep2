@@ -1,4 +1,4 @@
-{% extends "_base.html" %}
+﻿{% extends "_base.html" %}
 {% block content %}
 
 <script>
@@ -57,11 +57,16 @@
 <div id="error"></div>
 <form action="/reviewanswer" method="POST">
     <div class="reviewanswer_left">
+		<div class="question accordion-header">{{ question.question }}</div>
+		<hr>
 		<div id="answer" class="question accordion-header">
 			{{ answer }} <br>
 		</div>
+        {% if question.comment %}
         <textarea name="comments" rows="4" cols="50" placeholder="Insert your comment here..."></textarea>
-
+        {% endif %}
+        
+        {% if question.rating %}
         <input type="hidden" name="rating" id="input_rating" value="3">
         <div class="starRate">
             <div><b></b></div>
@@ -73,6 +78,9 @@
                 <li><a href="#" onclick="javascript:rating2(1);" id="1" value="1"><span>Rate it 1 star</span></a></li>
             </ul>
         </div>        
+        {% endif %}
+        
+        {% if question.tags %}                
         <div id="remove_tags">
 		<b>Current tags:</b>
         {% for tag in tags %}
@@ -94,7 +102,8 @@
                 {% endif %}
             {% endfor %}
         </div>
-
+        {% endif %}
+        
         <br>
         <input type="submit" class="btn-primary btn" name="rating" value="Submit review">
     </div>

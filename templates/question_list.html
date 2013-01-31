@@ -4,11 +4,28 @@
 <script language="javascript" type="text/javascript">
     var stdlimit = 10;
     var currPage = 1;
-
+    var edit_count = 0;
+    var query_interval = 1000 * 5; // Every 5 sec
+    var query_interval_id;
+    $(function() {    
+        get_student_questions()
+        query_interval_id = setInterval(get_student_questions, query_interval);    
+    });
     $(document).ready(function() {
         refresh_table(0,stdlimit);
+        
     });
-
+    
+    function get_student_questions(){
+        $.getJSON("/get_student_questions", {},
+        function(data) {          
+            $('#student_questions').html('<thead><tr><td><b>student name</b></td><td><b>suggested question</b></td></tr></thead><tr></tr>');
+           for (key in data) {
+               $('#student_questions tr:last').after('<tr><td>'+data[key].user+'</td><td>'+data[key].text+'</td></tr>')
+            }
+        }
+    )
+    }
     function refresh_table(offset,limit){
         $.get('/question_list_table',{offset:offset,limit:limit},
             function(data){
@@ -28,34 +45,41 @@
         load_page(currPage);
     }
 
-    function edit_field(id){
+    function edit_field(id){        
         var elem = $('#question_' + id + ' a');
         var time_elem = $('#time_'+id);
-        if (elem.hasClass('activated')){
-            return;
-        }
+
         var text = elem.text();
         var time = time_elem.text();
-        elem.addClass('activated');
-        elem.text('');
+        
+        if (isNaN(time))
+            time = 0;
+        
         elem.hide();
         time_elem.text('');
-        var edit_field = $('<input type="text" class="input-block-level" placeholder="your question">').val(text);
-        var time_field = $('<input type="number" size="3" maxlength="3" placeholder="sec">').val(time);
+        
+        var edit_field = $('<input type="text" class="input-block-level" placeholder="your question">').prop('value', text);
+        var time_field = $('<input type="number" size="3" maxlength="3" value="" placeholder="sec">').prop('value', parseInt(time));
 
         var editelem = $('#sedit_'+id);
-
-        editelem.click(function(){
+        edit_count++;
+        
+        editelem.click(function(){            
+            edit_count--;
             $('#edit_'+id).show();
+            elem.show();
             $('#sedit_'+id).hide();
             
-            var newTime = time_field.val();
-            edit_question(id,edit_field.val(),newTime);
+            var newTime = time_field.val();            
+            var newText = edit_field.val();
 
-            var newText = elem.val();
+                
+            edit_question(id,newText,newTime);
+            
+            if (newTime == 0)
+                newTime = $("<div/>").html('&#8734').text();
+
             elem.text(newText);
-            elem.removeClass('activated');
-
             time_elem.text(newTime);
             
             $(time_field).remove();
@@ -72,7 +96,6 @@
             editelem.css('color', 'darkorange');
             editelem.css('font-weight', 'bold');
         });
-        
         edit_field.appendTo(elem.parent());
         time_field.appendTo(time_elem);
         edit_field.focus();
@@ -81,16 +104,33 @@
     function edit_question(id,text,time){
         $.getJSON("/edit_question",{id:id,text:text,time:time},
         function(data){
-            if(data.check){
+            if(data.check){                
                 $('#question_'+id).html('<a href=\"/filteranswers/'+data.id+'\">'+data.text+'</a>');
-                $('#time_'+id).html(data.time)
+                if (data.time == 0)timeDisplay = '&#8734;'; else timeDisplay = data.time;
+                $('#time_'+id).html(timeDisplay)
             }
             else{
                 $('#error').html("Error while editing question question.");
             }
         });
     }
-
+	
+	var advanced_visible = false;
+	function advanced(){
+		if (advanced_visible) {
+			$('.comment-field').hide();
+			$('.tags-field').hide();
+			$('.rating-field').hide();
+            $('#advanced').prop('value', 'Advanced');
+		} else {
+			$('.comment-field').show();
+			$('.tags-field').show();
+			$('.rating-field').show();
+            $('#advanced').prop('value', 'Simple');
+		}
+		advanced_visible = !advanced_visible;
+    }
+	
     function delete_question(id){
         $.getJSON("/delete_question/"+id,{},
         function(data){
@@ -101,15 +141,15 @@
         });
     }
 
-    function toggle_question(id, field){
-        $.getJSON("/toggle_question",{id:id, field:field},
+    function toggle_review_options(id, type){
+        $.getJSON("/togglequestion",{id:id, type:type},
         function(data){
             if(data.check){
                 if(!data.toggle){
-                    $('input[name='+field+''+id+']').attr('checked', false);
+                    $('input[name='+type+''+id+']').attr('checked', false);
                 }
                 else{
-                    $('input[name='+field+''+id+']').attr('checked', true);
+                    $('input[name='+type+''+id+']').attr('checked', true);
                 }
             }
             else{
@@ -117,43 +157,125 @@
             }
         });
     }
+    
+    function next_state(id){
+        current_state = $('#state'+id).text();
+        if(current_state == 'Inactive')
+            toggle_state(id, 'Answerable');        
+    }
+    
+    function toggle_state(id, type){   
+    $.getJSON("/togglequestion",{id:id, type:type},
+    function(data){
+      if(data.check){
+        if(type == "Inactive"){
+          answerable="True";
+          $('#q'+id+'_drop1').hide();
+          $('#q'+id+'_drop2').show();
+          $('#q'+id+'_drop3').show();
+          $('#q'+id+'_drop4').show();
+        }
+        if(type == "Answerable"){
+          answerable="True";
+          $('#q'+id+'_drop2').hide();
+          $('#q'+id+'_drop1').show();
+          $('#q'+id+'_drop3').show();
+          $('#q'+id+'_drop4').show();
+        }
+        if(type == "Reviewable"){
+          reviewable="True";
+          $('#q'+id+'_drop3').hide();
+          $('#q'+id+'_drop1').show();
+          $('#q'+id+'_drop2').show();
+          $('#q'+id+'_drop4').show();
+        }
+        if(type == "Archived"){
+          archived="True";
+          $('#q'+id+'_drop4').hide();
+          $('#q'+id+'_drop1').show();
+          $('#q'+id+'_drop2').show();
+          $('#q'+id+'_drop3').show();
+        }
+        $('#state'+id).html(type);
+      }
+      else{
+        $('#error').html("Error while togging question question.");
+      }
+    });    
+    }
 
+    function checkSubmit(e)
+    {
+        if(e && e.keyCode == 13)
+        {
+            if( document.getElementById('addQ').style.display == 'none')
+                save_question();
+        }
+    }
     function add_question(){
         $('#addQ').hide()
-        $('#qList tr:last').after(
+            
+        $('#qList tr:first').after(
         '<tr>\
-                        <td class="question-field"><input id="qtext" type="text" class="input-block-level" name="question" placeholder="your question"></td> \
-                        <td class="time-field"><input id="qtime" type="number" name="time" size="3" maxlength="3" placeholder="sec"></td> \
-                        <td><input id="qact" type="checkbox" name="active"></td> \
-                        <td><input id="qcomm" type="checkbox" name="comment" checked></td> \
-                        <td><input id="qtag" type="checkbox" name="tags" checked></td> \
-                        <td><input id="qrat" type="checkbox" name="rating" checked></td> \
-                        <td colspan=2><input type="submit" onclick=save_question() class="btn btn-block btn-primary" value="Add Question"></td>\
-                    </tr>');
+			<td class="question-field"><input id="qtext" type="text" class="input-block-level" name="question" placeholder="your question"></td> \
+			<td class="time-field"><input id="qtime" type="number" name="time" size="3" maxlength="3" placeholder="sec"></td> \
+			<td class="state-field"><label class="checkbox"><input id="qact" type="checkbox" name="active">Answerable</label></td> \
+			<td class="comment-field"><input id="qcomm" type="checkbox" name="comment" checked></td> \
+			<td class="tags-field"><input id="qtag" type="checkbox" name="tags" checked></td> \
+			<td class="rating-field"><input id="qrat" type="checkbox" name="rating" checked></td> \
+			<td colspan=2><input id="save_question" type="submit" onclick=save_question() class="btn btn-block btn-primary" value="Add Question"></td>\\n\
+                        <td><input style="display:none" type="submit"id="cancelQ" value="Cancel" class="btn" onclick=cancel_question() ></button></td>\
+		</tr>');
+		if (!advanced_visible) {
+			$('.comment-field').hide();
+			$('.tags-field').hide();
+			$('.rating-field').hide();
+		}
+        $('#cancelQ').show()   
         $('#qtext').focus();
+        
+        if (edit_count > 0) {
+            alert("You have "+edit_count+" open edits, that still need to be submitted.");
+        }
+    }
+    
+    function cancel_question(){
+        $('#cancelQ').hide()
+        $('#addQ').show()        
+        $('#qList tr:eq(1)').remove()        
     }
 
     function save_question(){
+		$('#save_question').attr('disabled', 'disabled')
         activev = ($('#qact').is(':checked') ? true : false);
         commentv = ($('#qcomm').is(':checked') ? true : false);
         tagsv = ($('#qtag').is(':checked') ? true : false);
+		ratingv = ($('#qrat').is(':checked') ? true : false);
         timev = $('#qtime').val();
         questionv = $('#qtext').val();
 
-        $.post('/handle_question',{active:activev,comment:commentv,tags:tagsv,
-                question:questionv,time:timev},
-                function(data){
-                    reload()
-                });
-
-        $('#addQ').show()
+        $.getJSON('/handle_question',{active:activev,comment:commentv,tags:tagsv,
+            question:questionv,time:timev,rating:ratingv},
+            function(data){
+                if (data.done)
+                {
+                    reload();
+                    $('#save_question').attr('disabled', false);
+                    $('#cancelQ').hide();
+                    $('#addQ').show();
+                }                
+                else                                        
+                    alert("Please fill in a question");
+                    cancel_question();
+            });
+				
         return false;
     }
 
 </script>
-
+<table id="student_questions" class="table table-hover table-bordered table-striped"></table>
 <div id="error" style="background-color: #a33; color: white;"></div>
-<div id="questListForm" style="display:block">
+<div id="questListForm" onKeyPress="return checkSubmit(event)" style="display:block">
 
 </div>
 {% endblock %}
