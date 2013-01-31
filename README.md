@@ -17,7 +17,7 @@ De installatie voor het draaien van een lokale instance van de software die via 
     Run de file flaskapplication.py met python (commando: python flaskapplication.py)
     Roep de tool aan via de sakai omgeving over poort 5000 (URL: localhost:5000)
 
-Wij hebben een compatibele Sakai server staan op www.sakai.chozo.nl waarmee getest kan worden.
+Wij hebben een compatibele Sakai server staan op http://sakai.chozo.nl waarmee getest kan worden.
 Inloggen kan hier met de acccounts: inst1, inst2, inst3, inst4, stud1, stud2, stud3, stud4.
 Kies bovenin de subsite "Hurdygurdy" en ga vervolgens naar de pagina 'LTI' te vinden in de kantlijn
 Als instructor kan hier een vraag gesteld worden en als student kunnen er vragen beantwoord worden
