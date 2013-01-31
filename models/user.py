@@ -27,9 +27,11 @@ class UserModel(Base):
     def save(uid,uname):
         user = UserModel.by_user_id(uid)
         if user is None:
+            print "GET HERE"
             session.add(UserModel(userid=uid,username=uname))
             session.commit()
         elif user.username != uname:
+            print "OR DO U GET HERE"
             user.username = uname
             session.commit()
 
