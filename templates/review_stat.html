@@ -1,0 +1,22 @@
+<table>
+  <thead>
+    <tr>
+      <th>best answer</th>
+      <th>stars of best answer</th>
+      <th>worst answer</th>
+      <th>stars of worst answer</th>
+      <th>size of cluster</th>
+      <th>average stars in cluster</th>
+    </tr>
+  </thead>
+  {%for data in data_set%}
+  <tr>
+    <td>{{data[1]}}</td>
+    <td>{{data[0]}}</td>
+    <td>{{data[3]}}</td>
+    <td>{{data[2]}}</td>
+    <td>{{data[4]}}</td>
+    <td>{{data[5]}}</td>
+  </tr>
+  {%endfor%}
+</table>

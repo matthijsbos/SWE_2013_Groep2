@@ -39,7 +39,7 @@
         {% for question in questions %}
         <tr id="row_{{question.id}}">
             <td class="question-field" id="question_{{question.id}}">
-                <a href="/filteranswers/{{question.id}}" class="blue">{{question.question}}</a>
+                <a href="/review_stat/{{question.id}}" class="blue">{{question.question}}</a>
             </td>
             <td class="time-field" id="time_{{question.id}}">{% if question.time == 0 %}&#8734; {% else %} {{question.time}} {% endif %}</td>
             <td class="state-field" id="available_{{question.id}}">

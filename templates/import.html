@@ -1,0 +1,9 @@
+{% extends "_base.html" %}
+{% block content %}
+The following questions have been added:
+<ul>
+{% for question in questions %}
+    <li>{{ question }}</li>
+{% endfor %}
+</ul>
+{% endblock %}

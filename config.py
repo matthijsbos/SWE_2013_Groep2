@@ -16,5 +16,6 @@ secret_key = 'Hurdygurdy'
 # Both key and secret should always be surrounded by quotes!
 consumers = {
     'sakai': 'secret',
-    'blackboard': 'secret'
+    'blackboard': 'secret',
+    'moodle': 'secret'
 }
