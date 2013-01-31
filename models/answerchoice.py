@@ -30,9 +30,9 @@ class AnswerChoiceModel(Base,BaseEntity):
 
     def calcNewRating(self):
         K = UserModel.getTrust(self.user_id) / 20.0
-        newRating = AnswerModel.newRating(self.best_answer_id, self.other_answer_id, K)
-        AnswerModel.setRanking(self.best_answer_id, newRating[0])
-        AnswerModel.setRanking(self.other_answer_id, newRating[1])
+        new_rating = AnswerModel.new_rating(self.best_answer_id, self.other_answer_id, K)
+        AnswerModel.set_ranking(self.best_answer_id, new_rating[0])
+        AnswerModel.set_ranking(self.other_answer_id, new_rating[1])
 
     def calcNewTrust(self) :
         winId = AnswerModel.getUserIdByAnswerId(self.best_answer_id)

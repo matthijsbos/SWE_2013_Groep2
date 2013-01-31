@@ -39,7 +39,12 @@ var datasets = {
                 ,
                 {% endif %}
                 {% set i = i + 1 %}
-                [{{i}}, {{ (element.answered / element.asked * 100)}}]
+                {% if element.asked != 0 %}
+                    [{{i}}, {{ (element.answered / element.asked * 100)}}]
+                {% endif %}
+                {% if element.asked == 0 %}
+                    [{{i}}, 0]
+                {% endif %}
             {% endfor %}
             ]
         }
@@ -62,7 +67,12 @@ set_explanation(text);
     <tr>
         <td>{{ element.created }}</td>
         <td>{{ element.trust }}</td>
-        <td>{{ (element.answered / element.asked * 100)|round }}%</td>
+        {% if element.asked != 0 %}
+            <td>{{ (element.answered / element.asked * 100)|round }}%</td>
+        {% endif %}
+        {% if element.asked == 0 %}
+            <td>N/A</td>
+        {% endif %}
     </tr>
     {% endfor %}
 </table>

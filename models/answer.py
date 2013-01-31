@@ -39,11 +39,6 @@ class AnswerModel(Base, BaseEntity):
         return self.text
 	
     @staticmethod
-    def get_rating(questionID):
-        rating = 1
-        return rating
-    
-    @staticmethod
     def savereview(questionID, userID, answerText, edit):
         session.add(AnswerModel(questionID=questionID,
                     userID=userID, text=answerText, edit=edit + 1))
@@ -175,10 +170,10 @@ class AnswerModel(Base, BaseEntity):
 
     @staticmethod
     def new_rating(winner, loser, K) :
-        winnerRanking = AnswerModel.getRanking(winner)
-        loserRanking = AnswerModel.getRanking(loser)
-        newWinnerRanking = winnerRanking + (K * (1.0 - AnswerModel.winningProbability(winnerRanking, loserRanking)))
-        newLoserRanking = loserRanking + (K * (0.0 - AnswerModel.winningProbability(loserRanking, winnerRanking)))
+        winnerRanking = AnswerModel.get_ranking(winner)
+        loserRanking = AnswerModel.get_ranking(loser)
+        newWinnerRanking = winnerRanking + (K * (1.0 - AnswerModel.winning_probability(winnerRanking, loserRanking)))
+        newLoserRanking = loserRanking + (K * (0.0 - AnswerModel.winning_probability(loserRanking, winnerRanking)))
         return newWinnerRanking, newLoserRanking
 
     @staticmethod

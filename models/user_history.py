@@ -1,7 +1,7 @@
 from dbconnection import engine, Base, session
 from sqlalchemy import String,Column,Float,Integer,Boolean
 from basemodel import BaseEntity
-from user import UserModel
+#from user import UserModel
 
 class UserHistoryModel(Base, BaseEntity):
     __tablename__ = 'user_history'
@@ -15,10 +15,12 @@ class UserHistoryModel(Base, BaseEntity):
     qanswered = Column(Boolean) #
 
     def __init__(self, a, b, c, d):
-        self.userid   = a
-        self.trust    = b
-        self.answered = c
-        self.asked    = d
+        self.userid    = a
+        self.trust     = b
+        self.answered  = c
+        self.asked     = d
+        self.source_id = 0
+        self.qanswered = False
 
     @staticmethod
     def get_by_user_id(uid):
@@ -33,14 +35,12 @@ class UserHistoryModel(Base, BaseEntity):
     # also copies over the trust value to the current one in UserModel
     @staticmethod
     def set_trust(uid, trust):
-        """ FIXME: Currently does not make a history entry
         thing = UserHistoryModel.get_user_latest_data(uid)
         thing.trust = trust
-        #session.add(UserHistoryModel(thing.userid, thing.trust, thing.answered, thing.asked))
+        session.add(UserHistoryModel(thing.userid, thing.trust, thing.answered, thing.asked))
         session.commit
-        """
         # also update current trust, in UserModel
-        UserModel.setTrust(uid, trust)
+        #UserModel.setTrust(uid, trust)
 
     @staticmethod
     def update_question_stats(cls, qid):

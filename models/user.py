@@ -2,6 +2,7 @@ from dbconnection import engine, session, Base, exc
 from sqlalchemy import String,Column,Float
 from basemodel import BaseEntity
 from question import Question
+from user_history import UserHistoryModel
 
 class UserModel(Base):
     __tablename__ = 'user'
@@ -25,20 +26,18 @@ class UserModel(Base):
 
     @staticmethod
     def save(uid,uname):
-        print "models/user.py - SAVE CALLED"
         user = UserModel.by_user_id(uid)
         if user is None:
-            print "models/user.py - SAVE CALLED, user does not yet exist   "
+            # add user to UserModel
             tmp = UserModel(userid=uid,username=uname)
-            print tmp.userid
-            print tmp.username
             tmp.trust = 1000.0
-            print tmp.trust
-            print "----end---"
             session.add(tmp)
             session.commit()
+            # add user's first entry to UserHistoryModel
+            history = UserHistoryModel(uid, 1000.0, 0, 0)
+            session.add(history)
+            session.commit()
         elif user.username != uname:
-            print "models/user.py - SAVE CALLED, user already exists."
             user.username = uname
             session.commit()
 
