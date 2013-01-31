@@ -1,5 +1,5 @@
 /*
- * Handles all actions for studentis: showing them the current question and
+ * Handles all actions for students: showing them the current question and
  * letting them answer it.
  *
  * Note: This can later easily be refactored to also ask for ratings and stuff.
@@ -30,27 +30,12 @@ function query_new_question() {
             }
             
                 /* Poll for reviewable questions */
-                $.getJSON("/has_new_review", {},
-                    function(data) {
-                        if (data.has_new) {
-                            show_review_button();
-                        }
-                        else {
-                            hide_review_button();
-                        }            
-                    });
-            
+                $.getJSON("/has_new_review", {}, function(data) {
+					if (data.has_new) {
+						window.location.href = "reviewanswer_stub";
+					}          
+				});
         });
-}
-
-function show_review_button() {
-    console.log("GOT REVIEW");
-    $('#reviewform #review-answer').val('You have a reviewable answer waiting for you!');
-    $('#reviewform').show();
-}
-
-function hide_review_button() {
-    $('#reviewform').hide();
 }
 
 function toggleQ(id){
@@ -61,27 +46,35 @@ function toggleQ(id){
 }
 function show_question(id, question, time_remaining, question_time, answer) {
     console.log("GOT QUESTION", id, question, time_remaining);
-    submit_interval_id[id] = setInterval(function(){
+    submit_interval_id[id] = window.setInterval(function(){
         check_remaining_time(id, question_time)
     },time_check_interval)
     
     var austDay = new Date();
     austDay.setSeconds(austDay.getSeconds() + time_remaining);
     console.log(austDay);
+      if ( $('#questions').is(':empty') ){
+          expanded = 'in';
+          timersize= '';
+      }else{
+          expanded = '';
+          timersize = 'small';}
     $('#questions').append('<form id="answerform'+id+'" method="post" style="display:none;">\
         <div class="accordion-group no-border" id="questionArea'+id+'" class="questionArea">\
             <div id="question'+id+'" class="question accordion-header"></div>\
-            <div id="answer'+id+'"  class="accordion-body collapse">\
+            <div id="answer'+id+'"  class="accordion-body collapse '+expanded+'">\
                 <div class="accordion-inner"><textarea name="answerText" cols=50 rows=5></textarea>\
                     <br>\
                     <button class="btn btn-info" onclick="submit_answer('+id+'); return false;" value="submit answer">submit answer</button>\
                     <div id="submitted'+id+'" style="display:none" class="submitted alert alert-success"><button type="button" class="close close-submitted" onclick="document.getElementById(\'submitted'+id+'\').style.display = \'none\';">&times;</button><b>Answer saved!</b><br/></div>\
                 </div>\
             </div>\
-            <div id="counter'+id+'" class="countdowntimesmall"></div>\
-            <div id="prolongedText'+id+'" style="display: none;">Question has been prolonged</div>\
+            <div id="counter'+id+'" class="countdowntime'+timersize+'"></div><br>\
+            <div id="prolongedText'+id+'"  class="alert alert-info" style="display: none;">Question time has changed</div>\
         </div>\
-    </form>');
+    </form>\
+<div id="questionWasDeleted'+id+'" class="alert alert-error" style="display: none;">The question was deleted. Your answer was not saved</div>\
+');
     // <div id="ranking'+id+'"><br><a href="/choicelobby?question_id='+id+'" >rank it!</a><br></div>\
     
     if (question_time != 0) {
@@ -110,8 +103,10 @@ function check_submit_answer(id, question_time){
     {
         submit_answer(id);
     }
-    $('#answerform'+id).remove();
-    clearInterval(submit_interval_id[id]);
+        $('#answerform'+id).remove();
+        $('#questionWasDeleted'+id).remove();
+    window.clearInterval(submit_interval_id[id]);
+    submit_interval_id[id] = "";
     if ( $('#questions').is(':empty') )
     {
         $('#pleasewait').show();
@@ -125,7 +120,7 @@ function check_remaining_time(id, time_delta){
     },
     function(data) {
         res = false;
-        if (data.still_available)
+        if (data.still_answerable)
         {
             if (data.question_time != time_delta)
             {
@@ -137,11 +132,11 @@ function check_remaining_time(id, time_delta){
                 {
                     until: austDay
                 });
-                if (data.question_time > time_delta)
-                    popup_div('#answerform'+id+' #prolongedText'+id)
-
+                popup_div('#answerform'+id+' #prolongedText'+id, 5000)
                 time_delta = data.question_time;
-                submit_interval_id[id] = setInterval(function(){
+                window.clearInterval(submit_interval_id[id]);
+                submit_interval_id[id] = "";
+                submit_interval_id[id] = window.setInterval(function(){
                     check_remaining_time(id, time_delta)
                 },time_check_interval)
                 res = true;
@@ -156,8 +151,14 @@ function check_remaining_time(id, time_delta){
                     $('#pleasewait').show();
                 }
                 $('#answerform'+id).remove();      
-                clearInterval(submit_interval_id[id]);
+                window.clearInterval(submit_interval_id[id]);
+                submit_interval_id[id] = "";
                 popup_div('#questionWasDeleted',5000)
+                $('#answerform'+id).remove();      
+                window.clearInterval(submit_interval_id[id]);
+                submit_interval_id[id] = "";
+                popup_div('#questionWasDeleted'+id,5000)
+                setTimeout(function() {if ( $('#questions').is(':empty') )$('#pleasewait').show();},5000);
             }
         }
     });
@@ -168,14 +169,19 @@ function check_remaining_time(id, time_delta){
 function popup_div(div,time) {
     time = (typeof time === "undefined") ? 1500 : time;
     $(div).show();
-    $(div).delay(time).hide(1);
+    if (div.substring(0,3) == '#qu')
+                setTimeout(function() {
+  $(div).remove();
+}, 5000)
+    else
+        $(div).delay(time).hide(1);
 }
 
 function submit_answer(id) {
     console.log("SUBMIT");
     document.getElementById('submitted'+id).style.display = ""
     $('#ranking'+id).show();
-    $('#submitted'+id).delay(5000).hide("slow")
+    $('#submitted'+id).delay(5000).hide(1)
     $.post("/answer", {
         "questionID": id,
         "answerText": $('#answerform'+id+' textarea').val()
@@ -189,11 +195,34 @@ function collapse_timer(id){
             $(this).addClass('countdowntime');
             next();
         });
-    } else {
+    } else if ($('#answer'+id).hasClass("in") && $('#answer'+id).height() >= 189){
         $('#counter'+id).removeClass('countdowntime');
         $('#counter'+id).delay("fast").queue(function(next){
             $(this).addClass('countdowntimesmall');
             next();
         });
     }
+}
+
+function submit_student_question() {
+	text = $('#student_question').val();
+	if(text != '') {
+		$.post("/student_question", {'text': text}, function(data) {
+			succes = $('#question_succes');
+			error = $('#question_error');
+			if(!data.error) {
+				error.hide()
+				succes.show()
+				succes.text('Your question has been submitted.');
+				succes.delay(4000).fadeOut(500);
+			} else if(data.type == 'time') {
+				if(!succes.is(':visible')) {
+					error.show()
+					error.text("You've recently added a question,\
+						please wait a few seconds.");
+					error.delay(4000).fadeOut(500);
+				}
+			}
+		}, 'JSON');
+	}
 }

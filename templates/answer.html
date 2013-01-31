@@ -1,8 +1,14 @@
 <html>
 <head>
-    <script type="text/javascript" src="../static/js/jquery.min.js"></script>
+    <script type="text/javascript" src="../static/js/jquery-1.7.min.js"></script>
     <script type="text/javascript" src="../static/js/jquery.countdown.js"></script>
     <link rel="stylesheet" type="text/css" href="../static/css/style.css" media="screen" />
+    
+    <!-- Includes used for autocomplete -->
+    <script type="text/javascript" src="../static/js/jquery.tokeninput.js"></script>
+    <link rel="stylesheet" href="../static/css/token-input.css" type="text/css" />
+    <link rel="stylesheet" href="../static/css/token-input-facebook.css" type="text/css" />
+    
 </head>
 
 <body>
@@ -27,19 +33,19 @@
     </div>
     
     <div>
-      <input type="text" id="demo-input-facebook-theme" name="blah2" />
-      <input type="button" value="Submit" />
-      <script type="text/javascript">
-        $(document).ready(function() {
-        $("#demo-input-facebook-theme").tokenInput("http://localhost:5000/json/get_tags", {
-        theme: "facebook"
-        });
-        });
-      </script>
+        <input type="text" id="demo-input-facebook-theme" name="blah2" />
+        <input type="button" value="Submit" />
+        <script type="text/javascript">
+            $(document).ready(function() {
+                $("#demo-input-facebook-theme").tokenInput("http://localhost:5000/json/get_tags", {
+                theme: "facebook"
+                });
+            });
+        </script>
     </div>
     
 {% else %}
-<p>You have already answered this question.</p>
+    <p>You have already answered this question.</p>
 {% endif %}
 </body>
 </html>

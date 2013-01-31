@@ -1,34 +1,72 @@
 {% extends "_base.html" %}
 {% block content %}
-<form method="POST" class="form-inline" id="answerfilter-form">
-    <b>Filter by:</b><br>
-    <label>ID</label> <input type="text" name="id"/>
-    <label>UserID</label> <input type="text" name="userID"/>
-    <label>QuestionID</label> <input type="text" name="questionID"/>
-    <input type="submit" value="Search" class="btn btn-primary"/>
-</form>
-<table class="table table-hover table-bordered table-striped">
-    <thead>
-        <tr>
-            <th>id</th>
-            <th>questionID</th>
-            <th>student</th>
-            <th>answer</th>
-            <th>created on</th>
-            <th>modified on</th>
-            <th>rankscore</th>
-        </tr>
-    </thead>
-    {% for answer in answers %}
-    <tr>
-        <td>{{ answer.id }}</td>
-        <td>{{ answer.questionID }}</td>
-        <td>{{ answer.username }}</td>
-        <td>{{ answer.text }}</td>
-        <td>{{ answer.created }}</td>
-        <td>{{ answer.modified }}</td>
-        <td>{{ answer.ranking }}</td>
-    </tr>
-    {% endfor %}
-</table>
+<script language="javascript" type="text/javascript">
+    var stdlimit = 10;
+    var currPage = 1;
+{% if hasqid %}
+    var currentQuestionFilter = {{questionID}};
+{% else %}
+    var currentQuestionFilter = -1;
+{% endif %}
+    var currentUserFilter = -1;
+
+    $(document).ready(function() {
+        refresh_table_default();
+    });
+
+    function setfilteruser(userid,username){
+        currentUserFilter = userid;
+        $('a#userfiltertext').text(username)
+        reload();
+    }   
+
+    function clearfilteruser(){
+        currentUserFilter = -1;
+        $('a#userfiltertext').text('Select User')
+        reload();
+    }
+
+    function setfilterquestion(questid,questtext){
+        currentQuestionFilter = questid;
+        $('a#questionfiltertext').text(questtext.substring(10)+'...')
+        reload();
+    }   
+
+    function clearfilterquestion(){
+        currentQuestionFilter = -1;
+        $('a#questionfiltertext').text('Select Question')
+        reload();
+    }
+    function load_page(page){
+        currPage = page;
+        refresh_table((page-1)*stdlimit,stdlimit);
+    }
+
+    function refresh_table_default(){
+        refresh_table(0,stdlimit);
+    }
+
+    function refresh_table(offset,limit){
+        var dict = {offset:offset,limit:limit}
+
+        if (currentUserFilter != -1){
+            dict['userID'] = currentUserFilter;
+        }
+
+        if (currentQuestionFilter != -1){
+            dict['questionID'] = currentQuestionFilter;
+        }
+
+        $.get('/filteranswerstbl',
+            dict,
+            function(data){
+            $('#tblContainer').html(data);});
+    }
+
+    function reload(){
+        load_page(currPage);
+    }
+</script>
+
+<div id='tblContainer'></div>
 {% endblock %}

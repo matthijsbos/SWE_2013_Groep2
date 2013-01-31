@@ -11,9 +11,6 @@ import sqlalchemy.orm.exc as sqlalchemyExp
 
 
 class Answer():
-    def __init__(self, request):
-        self.request = request
-
     def render(self):
         # dummy shit, get some real data
         qText = 'wat is het antwoord op deze dummy vraag?'
@@ -23,8 +20,8 @@ class Answer():
         timerD = 25
 
         # Post should be real data
-        if self.request.method == 'POST' and 'questionID' in self.request.form:
-            qID = int(self.request.form['questionID'])
+        if request.method == 'POST' and 'questionID' in request.form:
+            qID = int(request.form['questionID'])
             q = question.Question.by_id(qID)
             if q is not None:
                 qText = q.question
@@ -32,19 +29,19 @@ class Answer():
                 timerD = q.time
         
         print 'Retrieved question information'
-        if 'answerText' in self.request.values:
+        if 'answerText' in request.values:
             print self.saveAnswer(uID, qID, timerD, questionStartTime)
             return json.dumps({"result":True})
-        elif 'showall' in self.request.values:
+        elif 'showall' in request.values:
             # Render all
             return self.render_all()
-        elif 'viewanswer' in self.request.values:
+        elif 'viewanswer' in request.values:
             # show answer
             return self.viewAnswer()
-        elif 'reviewAnswer' in self.request.values:
+        elif 'reviewAnswer' in request.values:
             # save review answer
             return self.saveReviewAnswer()
-        elif 'removeAnswer' in self.request.values:
+        elif 'removeAnswer' in request.values:
             return self.removeAnswer()
         else:
             return self.answerQuestion(uID, qID, qText, timerD, questionStartTime)
@@ -76,7 +73,7 @@ class Answer():
     def saveAnswer(self, uID, qID, timerD, questionStartTime):
         # save answer
         print "ANSW", uID, qID, timerD
-        answerText = self.request.form['answerText']
+        answerText = request.form['answerText']
 
         flag = "false"
         if self.timeLeft(timerD, questionStartTime):
@@ -90,20 +87,20 @@ class Answer():
         return True#render_template('answersaved.html', flag=flag)
 
     def viewAnswer(self):
-        aid = int(self.request.form['id'])
+        aid = int(request.form['id'])
         return render_template('editanswer.html', answer=answer.AnswerModel.by_id(aid))
 
     def saveReviewAnswer(self):
-        questionID = int(self.request.form['questionID'])
-        userID = self.request.form['userID']
-        reviewAnswer = self.request.form['reviewAnswer']
-        edit = int(self.request.form['edit'])
+        questionID = int(request.form['questionID'])
+        userID = request.form['userID']
+        reviewAnswer = request.form['reviewAnswer']
+        edit = int(request.form['edit'])
         answer.AnswerModel.savereview(
             questionID, userID, reviewAnswer, edit)
         return render_template('answersaved.html', flag='true')
 
     def removeAnswer(self):
-        id = int(self.request.form['id'])
+        id = int(request.form['id'])
         answer.AnswerModel.remove_by_id(id)
         return render_template('answersaved.html', flag='removed')
 
@@ -132,20 +129,6 @@ class Answer():
             else:
                 return False
 
-    def render_filtered(self):
-        postdata = self.request.form
-
-        args = {}
-        if self.request.method == "POST":
-            if "questionID" in postdata and len(postdata["questionID"]) > 0:
-                args["questionID"] = postdata["questionID"]
-            if "userID" in postdata and len(postdata["userID"]) > 0:
-                args["userID"] = postdata["userID"]
-            if "id" in postdata and len(postdata["id"]) > 0:
-                args["id"] = postdata["id"]
-
-        return render_template('answerfilter.html', answers=answer.AnswerModel.get_filtered(**args))
-
     def render_results(self):
         return render_template('rankresults.html', answers=answer.AnswerModel.get_answers_ordered_by_rank(request.values["questionid"]))
         
@@ -153,20 +136,55 @@ class Answer():
         # Render all
         return render_template('showanswers.html', answers=answer.AnswerModel.get_all())
 
-    def render_filtered_by_questionid(self,questionid):
-        postdata = self.request.form
-        args = {"questionID": questionid}
+    def render_filtered(self,questionID=None):
+        return render_template('answerfilter.html',
+                hasqid=(questionID is not None),
+                questionID=questionID)
 
-        if self.request.method == "POST":
-            if "userID" in postdata and len(postdata["userID"]) > 0:
-                args["userID"] = postdata["userID"]
-            if "id" in postdata and len(postdata["id"]) > 0:
-                args["id"] = postdata["id"]
+    def render_filtered_tbl(self,limit,offset,**kwargs):
+        (answers, curpage, maxpages, startpage, pagecount) = self.get_filtered(limit=limit,
+                                                                        offset=offset)
 
-        return render_template('answerfilter_by_questionid.html', answers=answer.AnswerModel.get_filtered(**args))
+        hasqid = ('questionID'in kwargs)
+        course = g.lti.get_course_id()
+
+        return render_template('answer_filter_tbl.html',
+                answers=answers,currentpage=curpage,
+                maxpages=maxpages,startpage=startpage,pagecount=pagecount,
+                hasQuestionID=hasqid,
+                users=user.UserModel.get_all(),
+                questions = [] if hasqid else Question.by_course_id(course))
+
+    def get_filtered(self,limit=None,offset=None):
+        args = self.get_args_for_filter()
+
+        if len(args) > 0:
+            if offset is None or limit is None:
+                return answer.AnswerModel.get_filtered(**args)
+            else:
+                return answer.AnswerModel.get_filtered_offset(limit,offset,orderby='created',**args)
+        else:
+            if offset is None or limit is None:
+                return answer.AnswerModel.get_filtered()
+            else:
+                return answer.AnswerModel.get_filtered_offset(limit,offset,orderby='created')
+
+    def get_args_for_filter(self):
+        postdata = request.form if request.method == 'POST' else request.args
+
+        args = {}
+        if "questionID" in postdata and len(postdata["questionID"]) > 0:
+            args["questionID"] = postdata["questionID"]
+        if "userID" in postdata and len(postdata["userID"]) > 0:
+            args["userID"] = postdata["userID"]
+        if "id" in postdata and len(postdata["id"]) > 0:
+            args["id"] = postdata["id"]
+
+        return args
 
     def studenthistory(self):
         return render_template('studenthistory.html')
         
     def studenthistory_result(self):
         return render_template('studenthistory_result.html', studid=answer.AnswerModel.get_answers_by_userid(request.values['sid']))
+
