@@ -105,7 +105,7 @@
         $.getJSON("/edit_question",{id:id,text:text,time:time},
         function(data){
             if(data.check){
-            $('#question_'+id).html('<a href=\"/filteranswers/'+data.id+'\">'+
+                $('#question_'+id).html('<a href=\"/filteranswers/'+data.id+'\">'+
                     escapeMarkup(data.text) +
                     '</a>'
                 );
