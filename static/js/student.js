@@ -66,7 +66,9 @@ function show_question(id, question, time_remaining, question_time, answer) {
                 <div class="accordion-inner"><textarea name="answerText" cols=50 rows=5></textarea>\
                     <br>\
                     <button class="btn btn-info" onclick="submit_answer('+id+'); return false;" value="submit answer">submit answer</button>\
-                    <div id="submitted'+id+'" style="display:none" class="submitted alert alert-success"><button type="button" class="close close-submitted" onclick="document.getElementById(\'submitted'+id+'\').style.display = \'none\';">&times;</button><b>Answer saved!</b><br/></div>\
+                    <div id="submitted'+id+'" style="display:none" class="submitted alert alert-success">\
+                        <button type="button" class="close close-submitted" onclick="document.getElementById(\'submitted'+id+'\').style.display = \'none\';">&times;</button><b>Answer saved!</b><br/>\
+                    </div>\
                 </div>\
             </div>\
             <div id="counter'+id+'" class="countdowntime'+timersize+'"></div><br>\
