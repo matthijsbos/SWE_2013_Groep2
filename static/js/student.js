@@ -195,7 +195,7 @@ function collapse_timer(id){
             $(this).addClass('countdowntime');
             next();
         });
-    } else if ($('#answer'+id).hasClass("in") && $('#answer'+id).height() >= 189){
+    } else { //if ($('#answer'+id).hasClass("in") && $('#answer'+id).height() >= 189){ who keeps adding this? it messes up the timer
         $('#counter'+id).removeClass('countdowntime');
         $('#counter'+id).delay("fast").queue(function(next){
             $(this).addClass('countdowntimesmall');
