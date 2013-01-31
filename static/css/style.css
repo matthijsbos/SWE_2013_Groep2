@@ -107,8 +107,9 @@ br { clear: both; }
     color: #000;
 }
 .tags div{
-    width:80px;
+    width:120px;
     display:inline-block;
+	word-wrap:break-word;
 }
 .tags a:hover{ 
 	text-decoration: none; 
