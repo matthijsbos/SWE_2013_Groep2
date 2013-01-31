@@ -19,12 +19,23 @@
     function get_student_questions(){
         $.getJSON("/get_student_questions", {},
         function(data) {          
-            $('#student_questions').html('<thead><tr><td><b>student name</b></td><td><b>suggested question</b></td></tr></thead><tr></tr>');
+            $('#student_questions').html('<thead><tr><td><b>Student name</b></td><td><b>Suggested question</b></td></tr></thead><tr></tr>');
            for (key in data) {
-               $('#student_questions tr:last').after('<tr><td>'+data[key].user+'</td><td>'+data[key].text+'</td></tr>')
+               $('#student_questions tr:last').after('\
+               <tr id=userrow_'+data[key].id+'> \
+                    <td>'+data[key].user+'</td><td>'+data[key].text+'</td> \
+                    <td><input type="submit" id="cancelUQ" value="Delete" class="btn" onclick=delete_userquestion('+data[key].id+') ></button></td>\
+               </tr>')
             }
         }
-    )
+    )}
+    
+    function delete_userquestion(id){    
+        $.getJSON("/delete_userquestion/"+id,{},
+        function(data){            
+            if (data.deleted)
+                $('#userrow_'+id).remove();                
+        });
     }
     function refresh_table(offset,limit){
         $.get('/question_list_table',{offset:offset,limit:limit},

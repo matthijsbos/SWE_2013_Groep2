@@ -45,8 +45,7 @@ class Index():
                       'answer':answer_text}        
                       
             array.append(object)
-        
-        #qArray = {'questions': array}        
+                
         output['questions'] = array
         
         return json.dumps(output)
@@ -56,7 +55,7 @@ class Index():
             rv = []
             user_questions = UserQuestion.get_list(5)
             for q in user_questions:
-                rv.append({'user':q.user_id, 'text':q.text})
+                rv.append({'user':q.user_id, 'text':q.text, 'id':q.id})
         else:
             rv = dict({'error': True, 'type': ''})
             try:

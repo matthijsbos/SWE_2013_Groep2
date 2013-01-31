@@ -2,7 +2,7 @@ import json
 from flask import escape, g
 from utilities import render_template
 from dbconnection import session
-from models.question import Question
+from models.question import Question, UserQuestion
 from datetime import datetime, timedelta
 
 from controllers.scheduler import Scheduler
@@ -171,6 +171,16 @@ class QuestionController():
     def delete_question(qid):
         '''removes the question with the provided id from the database'''
         question = Question.by_id(int(qid))
+        if g.lti.is_instructor():
+            session.delete(question)
+            session.commit()
+
+        return json.dumps({'deleted': g.lti.is_instructor()})
+    
+    @staticmethod    
+    def delete_userquestion(qid):
+        '''removes the question with the provided id from the database'''
+        question = UserQuestion.by_id(int(qid))
         if g.lti.is_instructor():
             session.delete(question)
             session.commit()
