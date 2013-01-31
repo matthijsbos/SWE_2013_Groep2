@@ -5,7 +5,7 @@ from datetime import datetime
 from basemodel import BaseEntity
 from models.answer import AnswerModel
 from models.user import UserModel
-from models.user_history import UserHistoryMode
+from models.user_history import UserHistoryModel
 
 class AnswerChoiceModel(Base,BaseEntity):
 
