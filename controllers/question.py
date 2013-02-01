@@ -24,6 +24,9 @@ class QuestionController():
             if not g.lti.is_instructor() and type != 'Reviewable':
                 return
 
+            if question.state == 'Answerable' and (type == 'Inactive' or type == 'Reviewable' or type == 'Archived'):
+                AnswerModel.update_q_history(args['id'])
+
             rv = None
             if type == 'Inactive':
                 rv = question.inactive = True
@@ -179,8 +182,8 @@ class QuestionController():
             session.commit()
 
         return json.dumps({'deleted': g.lti.is_instructor()})
-    
-    @staticmethod    
+
+    @staticmethod
     def delete_userquestion(qid):
         '''removes the question with the provided id from the database'''
         question = UserQuestion.by_id(int(qid))

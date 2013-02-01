@@ -39,7 +39,7 @@ class AnswerModel(Base, BaseEntity):
 
     def __str__(self):
         return self.text
-	
+
     @staticmethod
     def savereview(questionID, userID, answerText, edit):
         session.add(AnswerModel(questionID=questionID,
@@ -50,7 +50,7 @@ class AnswerModel(Base, BaseEntity):
     def get_question_answers(question_id):
         return session.query(AnswerModel).filter(
 			AnswerModel.questionID==question_id)
-        
+
     @staticmethod
     def get_answers_ordered_by_rank(question_id):
         return session.query(AnswerModel).filter(AnswerModel.questionID==question_id).order_by(AnswerModel.ranking.desc())
@@ -71,14 +71,14 @@ class AnswerModel(Base, BaseEntity):
         session.commit()
         # add to history -> TODO
         # should be replaced to trip when a question closes
-        AnswerModel.update_q_history(questionID)
-        
+        # AnswerModel.update_q_history(questionID)
+
     @staticmethod
     def update_q_history(qid):
         temp = UserModel.get_all()
         for element in temp:
-            AnswerModel.add_q_stats(element.userid, qid)            
- 
+            AnswerModel.add_q_stats(element.userid, qid)
+
     @staticmethod
     def add_q_stats(uid, qid):
         answered = (session.query(AnswerModel).filter_by(userID=uid, questionID=qid)).one()
@@ -143,7 +143,7 @@ class AnswerModel(Base, BaseEntity):
         tmp = session.query(Question).\
                 outerjoin(anssub, anssub.c.questionID == Question.id).\
                 filter(Question._answerable == True).\
-                filter(Question.course_id == courseid)        
+                filter(Question.course_id == courseid)
 
         #print tmp
         #print [(x.modified + timedelta(seconds=x.time), datetime.now()) for x in tmp]
@@ -155,9 +155,9 @@ class AnswerModel(Base, BaseEntity):
                 questions.append(x)
             elif x.activate_time + timedelta(seconds=x.time) > datetime.now():
                 questions.append(x)
-         
+
         return questions
-    
+
     @staticmethod
     def get_answered_active_questions(userid, courseid):
         """
@@ -174,13 +174,13 @@ class AnswerModel(Base, BaseEntity):
                 filter(Question.available == True).\
                 filter(Question.course_id == courseid).\
                 filter(anssub.c.id != None).all()
-				
+
         print tmp
         print [(x.modified + timedelta(seconds=x.time), datetime.now()) for x in tmp]
 
         return [x for x in tmp if x.modified + timedelta(seconds=x.time) >
                 datetime.now()]
-				
+
     @staticmethod
     def question_valid(questionid):
         questionTmp = Question.by_id(questionid)
