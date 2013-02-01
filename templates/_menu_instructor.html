@@ -3,6 +3,8 @@
     $(function() {
         if (location.pathname.split("/")[1] != ''){
             $('li[menu-url^="/' + location.pathname.split("/")[1] + '"]').addClass('active');
+        }else{
+            $('li[menu-url^="/question_list"]').addClass('active');
         }
     });
 

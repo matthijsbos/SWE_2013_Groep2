@@ -114,7 +114,7 @@ $.extend(Countdown.prototype, {
 
 	/* List of currently active countdown targets. */
 	_timerTargets: [],
-	
+
 	/* Override the default settings for all instances of the countdown widget.
 	   @param  options  (object) the new settings to use as defaults */
 	setDefaults: function(options) {
@@ -306,7 +306,7 @@ $.extend(Countdown.prototype, {
 			}
 		}
 	},
-	
+
 	/* Calculate interal settings for an instance.
 	   @param  target  (element) the containing division
 	   @param  inst    (object) the current settings for this instance */

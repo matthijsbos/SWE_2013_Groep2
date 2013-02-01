@@ -4,6 +4,7 @@
 #          the request.form field.
 
 import json
+
 import yaml
 from flask import Flask, Response, request, g
 
@@ -19,6 +20,7 @@ from controllers.question import QuestionController as Question
 from controllers.tags import Modifytags, AssignTags
 from controllers.review import ReviewAnswer
 from controllers.stats import Stats
+from controllers.review_stats import Review_stats
 
 import models.question
 import models.answer
@@ -70,11 +72,11 @@ def launch():
     ctrler = Index(debug=True)
     return ctrler.render()
 
+
 @app.route("/stats", methods=['GET', 'POST'])
 def show_stats():
-  ctrler = Stats()
-  return ctrler.render()
-
+    ctrler = Stats()
+    return ctrler.render()
 
 
 @app.route("/edit_question", methods=['GET', 'POST'])
@@ -82,6 +84,7 @@ def edit_question():
     return Question.edit_question(request.args['id'],
                                   request.args['text'],
                                   request.args['time'])
+
 
 @app.route("/togglequestion", methods=['GET', 'POST'])
 def toggle_options():
@@ -98,45 +101,30 @@ def ask_question():
 
 # this route is used for the feedback from inserting the question into the
 # database, it also inserts the question into the database
-@app.route("/handle_question", methods=['GET','POST'])
+
+@app.route("/handle_question", methods=['GET', 'POST'])
 def handle_question():
-    try:
-        question_text = request.args['question']
-    except KeyError:
-        return json.dumps({'done':False})
+    """Used inserting the question into the database and its feedback."""
 
-    if question_text == '':
-        return json.dumps({'done':False})
+    if 'question' not in request.args or request.args['question'] == '':
+        return json.dumps({'done': False})
 
-    try:
-        isActive = request.args['active'] in ['true','True']
-    except:
-        isActive = False
-
-    try:
-        comment = request.args['comment'] in ['true','True']
-    except:
-        comment = False
-
-    try:
-        tags = request.args['tags'] in ['true','True']
-    except:
-        tags = False
-
-    try:
-        rating = request.args['rating'] in ['true','True']
-    except:
-        rating = False
+    question_text = request.args['question']
+    isActive = request.args.get('active', "false") in ['true', 'True']
+    comment = request.args.get('comment', "false") in ['true', 'True']
+    tags = request.args.get('tags', "false") in ['true', 'True']
+    rating = request.args.get('rating', "false") in ['true', 'True']
 
     Question.create_question(question_text,
-                                    g.lti.get_user_id(),
-                                    g.lti.get_course_id(),
-                                    isActive,
-                                    request.args['time'],
-                                    comment,
-                                    tags,
-                                    rating)
-    return json.dumps({'done':True})
+                             g.lti.get_user_id(),
+                             g.lti.get_course_id(),
+                             isActive,
+                             request.args['time'],
+                             comment,
+                             tags,
+                             rating)
+    return json.dumps({'done': True})
+
 
 @app.route("/question_list", methods=['GET', 'POST'])
 def list_questions():
@@ -170,8 +158,30 @@ def delete_question(id):
     return Question.delete_question(id)
 
 
-@app.route("/question_export", methods=['GET', 'POST'])
-def question_export():
+@app.route("/delete_userquestion/<id>", methods=['GET', 'POST'])
+def delete_user_question(id):
+    return Question.delete_userquestion(id)
+
+
+@app.route("/import_export", methods=['GET', 'POST'])
+def import_export():
+    return render_template('import_export.html')
+
+
+@app.route("/import", methods=['GET', 'POST'])
+def import_data():
+    if 'file' not in request.files or not request.files['file']:
+        return render_template('error.html', error="No file given.")
+
+    data = request.files['file'].read()
+    data = yaml.load(data)
+    return Question.import_course(g.lti.get_user_id(), g.lti.get_course_id(),
+                                  data)
+
+
+@app.route("/export", methods=['GET', 'POST'])
+def export_data():
+    # TODO: settings (answers, etc?)
     exp = Question.export_course(g.lti.get_course_id())
     exp = yaml.dump(exp, default_flow_style=False)
     return Response(exp,
@@ -186,10 +196,12 @@ def question_import():
     list = yaml.load(request.args['file'])
     print list
 
+
 @app.route("/student_question", methods=['POST'])
 def student_question():
     ctrlr = Index()
     return ctrlr.student_question(request)
+
 
 @app.route("/get_student_questions", methods=['GET'])
 def get_student_questions():
@@ -202,10 +214,12 @@ def managetags():
     ctrler = Modifytags()
     return ctrler.render()
 
+
 @app.route("/addtags", methods=['GET', 'POST'])
-def addtags():
+def addtags():    
     ctrler = Modifytags()
     return ctrler.addtag(request.args)
+
 
 @app.route("/removetag", methods=['GET'])
 def removetags():
@@ -282,6 +296,7 @@ def handle_review_answer():
     ctrler = Index()
     return ctrler.render()
 
+
 @app.route("/reviewanswer_stub", methods=["POST", "GET"])
 def do_review_answer_stub():
     return ReviewAnswer.review()
@@ -299,10 +314,17 @@ def render_results():
     return ctrler.render_results()
 
 
+@app.route("/review_stat/<questionid>", methods=['POST', 'GET'])
+def review_stars(questionid):
+    ctrler = Review_stats()
+    return ctrler.render(questionid)
+
+
 @app.route("/filteranswers/<questionid>", methods=['POST', 'GET'])
 def answerFilterByQuestionID(questionid):
     ctrler = Answer()
-    return ctrler.render_filtered(questionID=questionid)
+    return ctrler.render_filtered(questionID=questionid,
+                                  data=Review_stats().render(questionid))
 
 
 @app.route("/filteranswerstbl", methods=['POST', 'GET'])
@@ -313,7 +335,8 @@ def answerFilterTable():
         offset = int(request.args['offset'])
 
     ctrler = Answer()
-    return ctrler.render_filtered_tbl(limit,offset)
+    return ctrler.render_filtered_tbl(limit, offset)
+
 
 @app.route("/rankresults", methods=['POST', 'GET'])
 def render_results():

@@ -18,7 +18,9 @@ class Index():
             return render_template('index_debug.html',
                                    lti_dump=g.lti.dump_all())
         if g.lti.is_instructor():
-            return render_template('index_instructor.html')
+            return render_template('question_list.html')
+        else:
+            UserModel.save(g.lti.get_user_id(), g.lti.get_user_name())
 
         return render_template('index_student.html')
 
@@ -46,8 +48,7 @@ class Index():
                       'answer':answer_text}        
                       
             array.append(object)
-        
-        #qArray = {'questions': array}        
+       
         output['questions'] = array
         
         return json.dumps(output)
@@ -62,7 +63,7 @@ class Index():
             for q in user_questions:
                 user = UserModel.by_user_id(q.user_id)
                 if user is not None:
-                    rv.append({'user':user.username, 'text':q.text})
+                    rv.append({'user':user.username, 'text':q.text, 'id':q.id})
         else:
             rv = dict({'error': True, 'type': ''})
             try:
