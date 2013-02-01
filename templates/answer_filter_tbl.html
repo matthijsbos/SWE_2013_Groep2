@@ -71,6 +71,7 @@
             <th>Created on</th>
             <th>Modified on</th>
             <th>Rankscore</th>
+            <th>Tags</th>
         </tr>
     </thead>
     {% for answer in answers %}
@@ -86,9 +87,7 @@
         <td>{{ answer.created }}</td>
         <td>{{ answer.modified }}</td>
         <td>{{ answer.ranking }}</td>
-        <td>{% for tag in answer.tags %}
-            {{ tag }}
-            {% endfor %}</td>
+        <td>{{ answer.tags }}</td>
     </tr>
     {% endfor %}
 </table>

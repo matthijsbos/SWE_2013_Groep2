@@ -1,7 +1,7 @@
 ﻿from models import answer, question, user
 from models.question import Question
 from models.answer import AnswerModel
-from models.tag import AnswerTag
+from models.tag import AnswerTag, Tag
 from flask import g, request, redirect
 from utilities import render_template
 from dbconnection import session
@@ -18,8 +18,7 @@ class Answer():
         questionStartTime = datetime.datetime.now();
         uID = g.lti.get_user_id()
         qID = -1
-        timerD = 25
-        tags = []
+        timerD = 25        
 
         # Post should be real data
         if request.method == 'POST' and 'questionID' in request.form:
@@ -150,10 +149,13 @@ class Answer():
         course = g.lti.get_course_id()
         
         for a in answers:
-            tag_ids = get_tag_ids(a.id)
-            for id in tag_ids:
-                tag = get_tag(id)
-                a.tags.append(tag)
+            a.tags = ''
+            tag_ids = AnswerTag.get_tag_ids(a.id)
+            if tag_ids != []:           
+                for id in tag_ids:
+                    tag_name = Tag.get_tag(id)                     
+                    a.tags += tag_name + ', ' 
+                a.tags = a.tags[:-2]            
 
         return render_template('answer_filter_tbl.html',
                 answers=answers,currentpage=curpage,
