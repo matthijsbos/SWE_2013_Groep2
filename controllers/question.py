@@ -3,9 +3,11 @@ from flask import g
 from utilities import render_template
 from dbconnection import session
 from models.question import Question, UserQuestion
+from models.answer import AnswerModel
 from datetime import datetime, timedelta
 
 from controllers.scheduler import Scheduler
+from controllers.answer import Answer as AnswerController
 
 
 class QuestionController():
@@ -107,15 +109,32 @@ class QuestionController():
         return session.query(Question).order_by(Question.answerable.desc())[:n]
 
     @staticmethod
-    def export_course(course_id):
+    def export_course(course_id, export_answers=True):
         questions = Question.by_course_id(course_id)
-        return [{'question': question.question} for question in questions]
+        ret = []
+        for question in questions:
+            q = {'question': question.question}
+            if export_answers:
+                answers = AnswerModel.get_filtered(questionID=question.id)
+                q['answers'] = []
+                for x in answers:
+                    q['answers'].append(x.text)
+            ret.append(q)
+        return ret
+
 
     @staticmethod
-    def import_course(user_id, course_id, data):
+    def import_course(user_id, course_id, data):  #, import_answers):
         for question in data:
-            QuestionController.create_question(question['question'], user_id,
-                    course_id, False, 0, True, True, True)
+            qid = QuestionController.create_question(question['question'],
+                    user_id, course_id, False, 0, True, True, True)
+            # In order to import answers, you need a unique user id for every
+            # answer. This introduces a lot of bugs and is therefore not active.
+            #if import_answers and 'answers' in question:
+            #    start_time = datetime.now();
+            #    for answer in question['answers']:
+            #        AnswerController().saveAnswer(user_id, qid, 0, start_time,
+            #                answer)
 
         questions = map(lambda x: x['question'], data)
         return render_template('import.html', questions=questions)
@@ -145,7 +164,8 @@ class QuestionController():
 
     @staticmethod
     def get_list_table(limit,offset):
-        (questions, curpage, maxpages, startpage, pagecount) = Question.get_filtered_offset(limit,offset,orderby='created')
+        (questions, curpage, maxpages, startpage, pagecount) = \
+                Question.get_filtered_offset(limit,offset,orderby='created')
 
         for question in questions:
             if question is not None and question.activate_time is not None:
@@ -179,8 +199,8 @@ class QuestionController():
             session.commit()
 
         return json.dumps({'deleted': g.lti.is_instructor()})
-    
-    @staticmethod    
+
+    @staticmethod
     def delete_userquestion(qid):
         '''removes the question with the provided id from the database'''
         question = UserQuestion.by_id(int(qid))
@@ -197,10 +217,13 @@ class QuestionController():
 
     @staticmethod
     def create_question(question, instructor, course, active, time, comment, tags, rating):
-        '''formats a question for database insertion and inserts it, calls a result screen afterwards'''
+        '''Formats a question for database insertion and inserts it, calls a
+        result screen afterwards. Returns the id of the added question.'''
         try:
             time = int(time)
         except ValueError:
             time = 0
-        session.add(Question(instructor, course, question, active, time, comment, tags, rating))
+        q = Question(instructor, course, question, active, time, comment, tags, rating)
+        session.add(q)
         session.commit()
+        return q.id

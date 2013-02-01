@@ -166,16 +166,18 @@ def import_data():
     if 'file' not in request.files or not request.files['file']:
         return render_template('error.html', error="No file given.")
 
+    #answers = request.form.get('answers', False) == 'on'
     data = request.files['file'].read()
     data = yaml.load(data)
     return Question.import_course(g.lti.get_user_id(), g.lti.get_course_id(),
-                                  data)
+                                  data)  #, answers)
 
 
 @app.route("/export", methods=['GET', 'POST'])
 def export_data():
     # TODO: settings (answers, etc?)
-    exp = Question.export_course(g.lti.get_course_id())
+    answers = request.form.get('answers', False) == 'on'
+    exp = Question.export_course(g.lti.get_course_id(), answers)
     exp = yaml.dump(exp, default_flow_style=False)
     return Response(exp,
                     mimetype="text/plain",
