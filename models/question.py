@@ -16,7 +16,7 @@ class Question(Base, BaseEntity):
     # just use if Question.xavailble: bla bla
     _answerable = Column(Boolean)
     _reviewable = Column(Boolean)
-    _archived = Column(Boolean)
+    _closed = Column(Boolean)
     _inactive = Column(Boolean)
     
     state = Column(String)
@@ -49,7 +49,7 @@ class Question(Base, BaseEntity):
         self.inactive = inactive
         self.answerable = answerable
         self.reviewable = False
-        self.archived = False
+        self.closed = False
         
     def __repr__(self):
         return "<Question ('%s','%s','%s','%s', '%s')>" % (self.user_id,
@@ -93,12 +93,12 @@ class Question(Base, BaseEntity):
          session.commit()
 
     @property
-    def archived(self):
-         return self._archived
+    def closed(self):
+         return self._closed
 
-    @archived.setter
-    def archived(self, value):
-         self._archived = value
+    @closed.setter
+    def closed(self, value):
+         self._closed = value
          session.add(self)
          session.commit()
          
