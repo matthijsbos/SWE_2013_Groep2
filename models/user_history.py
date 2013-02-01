@@ -30,7 +30,7 @@ class UserHistoryModel(Base, BaseEntity):
 
     @staticmethod
     def get_user_latest_data(uid):
-        return session.query(UserHistoryModel).filter(UserHistoryModel.userid == uid).order_by(UserHistoryModel.created.asc()).first()
+        return session.query(UserHistoryModel).filter(UserHistoryModel.userid == uid).order_by(UserHistoryModel.created.desc()).first()
 
     """ OBSOLETE - Use setTrust from user.py instead
     @staticmethod

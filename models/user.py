@@ -51,8 +51,12 @@ class UserModel(Base):
         # set current trust (in usermodel)
         user = session.query(UserModel).filter_by(userid=uID).one()
         user.trust = trust
+        # fetch last known history record
+        old = UserHistoryModel.get_user_latest_data(uID)
+        print old.answered
+        print old.asked
         # create a new trust entry in userhistory
-        history = UserHistoryModel(uID, trust, 1, 2)
+        history = UserHistoryModel(uID, trust, old.answered, old.asked)
         session.add(history)
         session.commit()
 
