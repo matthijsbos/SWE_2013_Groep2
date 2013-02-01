@@ -219,9 +219,11 @@ class ClustererStars(Clusterer):
         if data.stars > best_stars:
           best_stars = data.stars
           best_str = data.string
-        if data.stars < worst_stars:
+        if data.stars < worst_stars and data.stars > 0:
           worst_stars = data.stars
           worst_str = data.string
+        if data.stars < 0:
+          data.stars=1
         number += 1
         avg_stars += data.stars
       if number != 0:
