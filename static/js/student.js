@@ -29,14 +29,14 @@ function query_new_question() {
                 }
             }
 
-                /* Poll for reviewable questions */
-                $.getJSON("/has_new_review", {}, function(data) {
-                    if (data.has_new) {
-                        window.location.href = "reviewanswer_stub";
-                    }
-                });
-            }
-        });
+            /* Poll for reviewable questions */
+            $.getJSON("/has_new_review", {}, function(data) {
+                if (data.has_new) {
+                    window.location.href = "reviewanswer_stub";
+                }
+            });
+        }
+    );
 }
 
 function show_review_button(number) {
@@ -79,10 +79,11 @@ function show_question(id, question, time_remaining, question_time, answer) {
                     '<div class="accordion-inner"><textarea name="answerText" cols=50 rows=5></textarea>' +
                         '<br>' +
                         '<button class="btn btn-info" onclick="submit_answer('+id+'); return false;" value="submit answer">submit answer</button>' +
+                        '<button id="ranking'+id+'" class="btn btn-info" onclick="rank_it('+id+'); return false;" value="rankt it">rank best</button>' +
                         '<div id="submitted'+id+'" style="display:none" class="submitted alert alert-success">' +
                             '<button type="button" class="close close-submitted" onclick="document.getElementById(\'submitted'+ id + '\').style.display = \'none\';">&times;</button>' +
                             '<b>Answer saved!</b><br/>' +
-                            '</div>' +
+                        '</div>' +
                     '</div>' +
                 '</div>' +
                 '<div id="counter'+id+'" class="countdowntime'+timersize+'"></div><br>' +
