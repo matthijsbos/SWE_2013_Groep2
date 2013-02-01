@@ -1,4 +1,5 @@
-﻿from models import answer, question, user
+from models import answer, question, user
+from models.user import UserModel
 from models.question import Question
 from models.answer import AnswerModel
 from flask import g, request, redirect
@@ -83,6 +84,7 @@ class Answer():
             else:
                 answer.AnswerModel.save(qID, uID, answerText)
             flag = "true"
+        user.UserModel.save(uID,g.lti.get_user_name())
         return True#render_template('answersaved.html', flag=flag)
 
     def viewAnswer(self):
@@ -135,7 +137,7 @@ class Answer():
         # Render all
         return render_template('showanswers.html', answers=answer.AnswerModel.get_all())
 
-    def render_filtered(self,questionID=None,data=None):
+    def render_filtered(self,questionID=None):
         return render_template('answerfilter.html',
                 hasqid=(questionID is not None),
                 questionID=questionID, data_set=data)

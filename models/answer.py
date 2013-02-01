@@ -67,8 +67,51 @@ class AnswerModel(Base, BaseEntity):
             ranking = 1000.0
         session.add(AnswerModel(questionID=questionID, userID=userID, text=answerText, edit=0, ranking=ranking))
         session.commit()
-        # add to history
-        # UserHistoryModel.inc_answered(userID) 
+        # add to history -> TODO
+        # should be replaced to trip when a question closes
+        AnswerModel.update_q_history(questionID)
+        
+    @staticmethod
+    def update_q_history(qid):
+        temp = UserModel.get_all()
+        for element in temp:
+            AnswerModel.add_q_stats(element.userid, qid)            
+ 
+    @staticmethod
+    def add_q_stats(uid, qid):
+        answered = (session.query(AnswerModel).filter_by(userID=uid, questionID=qid)).one()
+        recorded = (session.query(UserHistoryModel).filter_by(userid=uid, source_id=qid)).first()
+        if (recorded != None):
+            boole = recorded.qanswered
+
+        thing = UserHistoryModel.get_user_latest_data(uid)
+
+        # in case the question was immediately answered
+        if (answered != None) and (recorded == None):
+            thing = UserHistoryModel.get_user_latest_data(uid)
+            thing.asked = thing.asked + 1
+            thing.answered = thing.answered + 1
+            thing.qanswered = True
+            session.add(UserHistoryModel(thing.userid, thing.trust, thing.answered, thing.asked))
+            session.commit
+
+        # in case the question was not answered at all
+        elif (answered == None) and (recorded == None):
+            thing = UserHistoryModel.get_user_latest_data(uid)
+            thing.asked = thing.asked + 1
+            #thing.answered = thing.answered + 0
+            thing.qanswered = False
+            session.add(UserHistoryModel(thing.userid, thing.trust, thing.answered, thing.asked))
+            session.commit
+
+        # in case the question was previously asked, but only answered after unlocking it
+        elif (answered != None) and (recorded != None) and not (boole):
+            thing = UserHistoryModel.get_user_latest_data(uid)
+            #thing.asked = thing.asked + 0
+            thing.answered = thing.answered + 1
+            thing.qanswered = True
+            session.add(UserHistoryModel(thing.userid, thing.trust, thing.answered, thing.asked))
+            session.commit
 
     @staticmethod
     def get_answer_id(uID, qID):
