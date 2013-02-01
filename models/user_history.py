@@ -19,21 +19,20 @@ class UserHistoryModel(Base, BaseEntity):
         self.trust     = b
         self.answered  = c
         self.asked     = d
-        self.source_id = 0
-        self.qanswered = False
 
     @staticmethod
     def get_by_user_id(uid):
-        temp = session.query(UserHistoryModel).filter(UserHistoryModel.userid == uid).order_by(UserHistoryModel.created.asc())
-        return temp
+        return session.query(UserHistoryModel).filter(UserHistoryModel.userid == uid).order_by(UserHistoryModel.created.asc())[:1]
+        
+    @staticmethod
+    def get_by_user_id_more(uid):
+        return session.query(UserHistoryModel).filter(UserHistoryModel.userid == uid).order_by(UserHistoryModel.created.asc())
 
     @staticmethod
     def get_user_latest_data(uid):
         return session.query(UserHistoryModel).filter(UserHistoryModel.userid == uid).order_by(UserHistoryModel.created.asc()).first()
 
-    # method creates a new history entry by copying the last known history
-    # entry of the student, and updating the 'trust' column
-    # also copies over the trust value to the current one in UserModel
+    """ OBSOLETE - Use setTrust from user.py instead
     @staticmethod
     def set_trust(uid, trust):
         thing = UserHistoryModel.get_user_latest_data(uid)
@@ -42,6 +41,7 @@ class UserHistoryModel(Base, BaseEntity):
         session.commit
         # also update current trust, in UserModel
         #UserModel.setTrust(uid, trust)
+    """
 
     @staticmethod
     def update_question_stats(cls, qid):

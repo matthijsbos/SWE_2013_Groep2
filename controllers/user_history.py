@@ -10,9 +10,9 @@ class UserHistory():
         return "<UserHistory ('%s', '%s', '%s', '%s')>" % (self.key, self.userid, self.time, self.trust)
 
     def render_by_userid(self, uid):
-        return render_template('trustdata.html', data=UserHistoryModel.get_by_user_id(uid), data2=UserModel.by_user_id(uid))
+        return render_template('trustdata.html', data=UserHistoryModel.get_by_user_id_more(uid), data2=UserModel.by_user_id(uid))
         
     def render_adjust_trust(self, uid, trust):
-        UserHistoryModel.set_trust(uid, trust)
+        UserModel.setTrust(uid, trust)
         return render_template('trustdata_start.html', data=UserModel.get_all())
         

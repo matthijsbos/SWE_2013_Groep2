@@ -48,8 +48,13 @@ class UserModel(Base):
 
     @staticmethod
     def setTrust(uID, trust):
+        # set current trust (in usermodel)
         user = session.query(UserModel).filter_by(userid=uID).one()
         user.trust = trust
+        # create a new trust entry in userhistory
+        history = UserHistoryModel(uID, trust, 1, 2)
+        session.add(history)
+        session.commit()
 
     @staticmethod
     def winningProbability(rating1, rating2) :
