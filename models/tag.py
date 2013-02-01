@@ -42,9 +42,9 @@ class Tag(Base, BaseEntity):
     
     @staticmethod
     def get_searched_tags(q):
-        return session.query(Tag).filter(Tag.name == q)
+        q = str("%"+q+"%")
+        return session.query(Tag).filter(Tag.name.like(q))
     
-
     @staticmethod
     def add_tag(name):
         if session.query(Tag.name).filter(Tag.name == name).first() is None:
