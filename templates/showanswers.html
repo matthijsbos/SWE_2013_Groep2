@@ -2,10 +2,10 @@
 {% block content %}
 <table>
     <!-- table is hardcoded, should be dependening on amount of allowed reviews
-         it might do some weird stuff as questionID and userID combinations should 
+         it might do some weird stuff as questionID and userID combinations should
          be unique, which is not the case in the dummy version -->
     {% for answer in answers %}
-        {% if answer.edit==0 %}  
+        {% if answer.edit==0 %}
         <tr>
             <td><a href="#" class="blue" onclick="document.reviewAnswer.id.value={{answer.id}}; document.reviewAnswer.submit(); return false;">{{ answer }}</a></td>
             {% for answer2 in answers %}
@@ -15,7 +15,7 @@
             {% endfor %}
         </tr>
         {% endif %}
-    {% endfor %}            
+    {% endfor %}
 </table>
 <form action='http://localhost:5000/answer' method='POST' name='reviewAnswer' style='display:none'>
   <input name='viewanswer' type='hidden' />
