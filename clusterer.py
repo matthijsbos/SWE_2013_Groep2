@@ -19,13 +19,13 @@ def test():
 class ClusterError(Exception):
   def __init__(self,msg):
     self.msg = msg
-  
+
   def __str__(self):
     return repr(self.msg)
 
 # initialize an instance of this class to do clustering
 class Clusterer():
-  def __init__(self):
+  def __init__(self, detector = None):
     self.answers = []
     self.data = _DataClusterer()
     self.best_error = sys.maxsize
@@ -34,36 +34,37 @@ class Clusterer():
     self.clustering_list = []
     self.n_clusters = 0
     self.best_n = None
-  
+    self.lang_detector = detector
+
   # add answer to cluster module
   def add_answer(self,answer):
     self.answers.append(answer)
-  
+
   # sets a number of clusters to add answers to
   def set_number_of_clusters(self,nr):
     if nr < 1:
       raise ClusterError('set_number_of_clusters argument must be at least 1')
     self.n_clusters = nr
-    
+
   # change number of tries to search for best cluster
   def change_nr_tries(self,new_value):
     if new_value < 1:
       raise ClusterError('change_nr_tries argument nmust be at least 1')
     self.nr_tries = new_value
-  
+
   # runs clustering over the data, run this function only once for a clusterer instance
   def run_clustering(self):
     if len(self.answers) < 1:
       raise ClusterError('you need to add at least 1 answer to Clusterer before calling run_clustering')
-    lp = lang_parser.LanguageParser('en',self.answers)
+    lp = lang_parser.LanguageParser('en', self.answers, lang_detector)
     lemma_answers = lp.get_keywords()
-    
+
     # add lemmatized answers to data analyzer
     for i in range(len(lemma_answers)):
       self.data.add_answer(lemma_answers[i],self.answers[i])
     self.data.tokenize_all()
     self.data.count_frequency()
-    
+
     # determine best cluster found in n tries
     for n in range(self.nr_tries):
       self.clustering_list.append(_N_random())
@@ -75,7 +76,7 @@ class Clusterer():
       if self.clustering_list[n].error < self.best_error:
         self.best_clustering = n
         self.best_error=self.clustering_list[n].error
-    
+
     # change best cluster into list of string lists for easier reading
     self.best_n = self.clustering_list[self.best_clustering]
     best_clusters = self.best_n.clusters
@@ -86,7 +87,7 @@ class Clusterer():
         data = best_clusters[c][v]
         text_clusters[c].append(data.string)
     return text_clusters
-  
+
   # remove cluster with index 'index' and rerun clustering
   def remove_cluster(self,index):
     if len(self.best_n.selected_indices) < 2:
@@ -98,12 +99,12 @@ class Clusterer():
     self.best_n.error = 0
     for a in range(len(self.best_n.selected_indices)):
       self.best_n.clusters.append([])
-    
+
     # rerun clustering
     self.best_n.assign_cluster()
     for c in self.best_n.clusters:
       self.best_n.calc_average_error(c)
-    
+
     # form human readable output
     best_clusters = self.best_n.clusters
     text_clusters = []
@@ -127,25 +128,26 @@ class ClustererStars(Clusterer):
     self.clustering_list = []
     self.n_clusters = 0
     self.best_n = None
-  
+
   # add answer to cluster module
   def add_answer(self,answer,stars):
     self.answers.append(answer)
     self.stars.append(stars)
-    
+
   # runs clustering over the data, run this function only once for a clusterer instance
   def run_clustering(self):
     if len(self.answers) < 1:
       raise ClusterError('you need to add at least 1 answer to Clusterer before calling run_clustering')
-    lp = lang_parser.LanguageParser('en',self.answers)
+    # Init ldig to enable language detection
+    lp = lang_parser.LanguageParser('en', self.answers, lang_detector)
     lemma_answers = lp.get_keywords()
-    
+
     # add lemmatized answers to data analyzer
     for i in range(len(lemma_answers)):
       self.data.add_answer(lemma_answers[i],self.answers[i],self.stars[i])
     self.data.tokenize_all()
     self.data.count_frequency()
-    
+
     # determine best cluster found in n tries
     for n in range(self.nr_tries):
       self.clustering_list.append(_N_random())
@@ -157,7 +159,7 @@ class ClustererStars(Clusterer):
       if self.clustering_list[n].error < self.best_error:
         self.best_clustering = n
         self.best_error=self.clustering_list[n].error
-    
+
     # generate info for cluster
     self.best_n = self.clustering_list[self.best_clustering]
     best_clusters = self.best_n.clusters
@@ -194,12 +196,12 @@ class ClustererStars(Clusterer):
     self.best_n.error = 0
     for a in range(len(self.best_n.selected_indices)):
       self.best_n.clusters.append([])
-    
+
     # rerun clustering
     self.best_n.assign_cluster()
     for c in self.best_n.clusters:
       self.best_n.calc_average_error(c)
-    
+
     # generate info for cluster
     self.best_n = self.clustering_list[self.best_clustering]
     best_clusters = self.best_n.clusters
@@ -224,9 +226,9 @@ class ClustererStars(Clusterer):
         avg_stars /= number
       cluster_info.append([best_stars,best_str,worst_stars,worst_str,number,avg_stars])
     return cluster_info
-    
+
 # contains an answer and its vector representation
-class _Data():  
+class _Data():
   def __init__(self):
     self.answer = ""
     self.string = ""
@@ -239,7 +241,7 @@ class _DataClusterer():
     self.answers = []
     self.tokens = []
     self.token_occurs = []
-  
+
   # add answer to list
   def add_answer(self,answer,string,stars=0):
     data = _Data()
@@ -247,7 +249,7 @@ class _DataClusterer():
     data.string = string
     data.stars = stars
     self.answers.append(data)
-  
+
   # tokenize all answers, generate list of tokens and create term frequency matrix
   def tokenize_all(self):
     for str in self.answers:
@@ -256,7 +258,7 @@ class _DataClusterer():
           self.tokens.append(token)
     # initialize term frequency matrix
     self.token_occurs = np.zeros((len(self.answers),len(self.tokens)))
-  
+
   # counts the frequency of each term in each answer and adds them to the term frequency matrix
   def count_frequency(self):
     for i in range(len(self.answers)):
@@ -272,7 +274,7 @@ class _DataClusterer():
           self.answers[i].vector.append(0)
 
 # select some clusters n times and cluster all answers to those clusters
-class _N_random():  
+class _N_random():
   def __init__(self):
     self.n = 0
     self.data = []
@@ -282,7 +284,7 @@ class _N_random():
     self.clusters = []
     self.error = 0
     self.static_n = False
-    
+
   # executes all functionalities of this class
   def execute(self):
     self.calc_n()
@@ -290,26 +292,26 @@ class _N_random():
     self.assign_cluster()
     for c in self.clusters:
       self.calc_average_error(c)
-    
+
   # calculate distance between two vectors
   def distance(self,vector1,vector2):
     diff = np.abs(np.array(vector1) - np.array(vector2))
     length = np.sum(diff)
     return length
-    
+
   # add data element to class
   def add_data(self,data):
     self.data.append(data)
-  
+
   # let user set a n
   def set_n(self,n):
     self.static_n = n
-  
+
   # determine n
   def calc_n(self):
     if self.static_n == False:
       self.n = min((int(log(len(self.data[0].vector),2)) + 1),(int(log(len(self.data),2)) + 1))
-  
+
   # randomly select n clusters
   def select_n(self):
     if self.n < 1:
@@ -322,7 +324,7 @@ class _N_random():
     for i in self.selected_indices:
       self.selected_data.append(self.data[i])
       self.clusters.append([])
-  
+
   # assign each answer to a cluster
   def assign_cluster(self):
     for d in self.data:
@@ -334,7 +336,7 @@ class _N_random():
           best_dist = dist
           best_selected = s
       self.clusters[best_selected].append(d)
-  
+
   # calcluates the average vector of a cluster
   def average(self,cluster):
     sum = []
@@ -345,7 +347,7 @@ class _N_random():
       sum += np.array(c.vector)
     sum /= len(cluster)
     return sum
-  
+
   # calculate the average error of a cluster and adds this to the total error of this clustering try
   def calc_average_error(self,cluster):
     if cluster == []:
