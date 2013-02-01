@@ -257,10 +257,10 @@
 			<td colspan=2><input id="save_question" type="submit" onclick=save_question() class="btn btn-block btn-primary" value="Add Question"></td>\\n\
                         <td><input style="display:none" type="submit"id="cancelQ" value="Cancel" class="btn" onclick=cancel_question() ></button></td>\
 		</tr>');
-		if (!advanced_visible) {
-			$('.comment-field').hide();
-			$('.tags-field').hide();
-			$('.rating-field').hide();
+		if (advanced_visible) {
+            $('.comment-field').show();
+			$('.tags-field').show();
+			$('.rating-field').show();
 		}
         $('#cancelQ').show()
         $('#qtext').focus();
