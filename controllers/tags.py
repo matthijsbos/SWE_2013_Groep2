@@ -36,15 +36,10 @@ class Modifytags():
         
     @staticmethod
     def json_get_tags(q):    
-       #create json file of all tags
-       #tags = Tag.get_all()
        tags = Tag.get_searched_tags(q)
-       #list of dicytionaries
        data = []
        for tag in tags:
            data.append( {"id":str(tag.id), "name":tag.name} )
-
-       #Qreturn "Test return"
        return json.dumps(data)
 
 
