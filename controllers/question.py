@@ -26,6 +26,9 @@ class QuestionController():
             if not g.lti.is_instructor() and type != 'Reviewable':
                 return
 
+            if question.state == 'Answerable' and (type == 'Inactive' or type == 'Reviewable' or type == 'Archived'):
+                AnswerModel.update_q_history(args['id'])
+
             rv = None
             if type == 'Inactive':
                 rv = question.inactive = True

@@ -1,0 +1,80 @@
+{% extends "_base.html" %}
+{% block content %}
+
+<!-- Scripts required for graphs -->
+<script language="javascript" type="text/javascript" src="../static/js/flot.js"></script>
+<script language="javascript" type="text/javascript" src="../static/js/jquery.flot.js"></script>
+<script language="javascript" type="text/javascript" src="../static/js/graphing.js"></script>
+
+<p>The trust tracker is a useful tool in measuring the participation of students over time. Trust is gained when students answer questions, and have their questions ranked positively by other students. Trust is lost when not participating in questions or ranking, or when answers are ranked negatively by other students.</p>
+
+<p><a href="/trustdata_start" class="blue">Go back</a></p>
+
+<p><b>Record for {{ data2.username }} with current trust {{ data2.trust }}.</b></p>
+<div id="placeholder" style="width:600px;height:300px;"></div>
+<p id="choices">Show:</p>
+
+<script type="text/javascript">
+var datasets = {
+        "Trust": {
+            label: "Trust",
+            data: [
+            {% set i = 0 %}
+            {% for element in data %}
+                {% if i != 0 %}
+                ,
+                {% endif %}
+                {% set i = i + 1 %}
+                [{{i}}, {{element.trust}}]
+            {% endfor %}
+            ]
+        },
+
+        "Participation %": {
+            label: "Participation %",
+            data: [
+            {% set i = 0 %}
+            {% for element in data %}
+                {% if i != 0 %}
+                ,
+                {% endif %}
+                {% set i = i + 1 %}
+                {% if element.asked != 0 %}
+                    [{{i}}, {{ (element.answered / element.asked * 100)}}]
+                {% endif %}
+                {% if element.asked == 0 %}
+                    [{{i}}, 0]
+                {% endif %}
+            {% endfor %}
+            ]
+        }
+        
+    };
+
+plot_graph(datasets);
+set_explanation(text);
+</script>
+
+<table class="table table-hover table-bordered table-striped">
+    <thead>
+        <tr>
+            <th>time</th>
+            <th>trust</th>
+            <th>participation</th>
+        </tr>
+    </thead>
+    {% for element in data %}
+    <tr>
+        <td>{{ element.created }}</td>
+        <td>{{ element.trust }}</td>
+        {% if element.asked != 0 %}
+            <td>{{ (element.answered / element.asked * 100)|round }}%</td>
+        {% endif %}
+        {% if element.asked == 0 %}
+            <td>N/A</td>
+        {% endif %}
+    </tr>
+    {% endfor %}
+</table>
+
+{% endblock %}

@@ -29,7 +29,7 @@ class Clusterer():
     self.answers = []
     self.data = _DataClusterer()
     self.best_error = sys.maxsize
-    self.nr_tries = 10
+    self.nr_tries = 20
     self.best_clustering = self.nr_tries + 1
     self.clustering_list = []
     self.n_clusters = 0
@@ -176,11 +176,13 @@ class ClustererStars(Clusterer):
         if data.stars > best_stars:
           best_stars = data.stars
           best_str = data.string
-        if data.stars < worst_stars:
+        if data.stars < worst_stars and data.stars > 0:
           worst_stars = data.stars
           worst_str = data.string
-        number += 1
+        if data.stars < 0:
+          data.stars=1
         avg_stars += data.stars
+        number += 1
       if number != 0:
         avg_stars /= number
       cluster_info.append([best_stars,best_str,worst_stars,worst_str,number,avg_stars])
@@ -218,9 +220,11 @@ class ClustererStars(Clusterer):
         if data.stars > best_stars:
           best_stars = data.stars
           best_str = data.string
-        if data.stars < worst_stars:
+        if data.stars < worst_stars and data.stars > 0:
           worst_stars = data.stars
           worst_str = data.string
+        if data.stars < 0:
+          data.stars=1
         number += 1
         avg_stars += data.stars
       if number != 0:

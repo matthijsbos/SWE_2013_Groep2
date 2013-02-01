@@ -649,6 +649,7 @@ $.extend(Countdown.prototype, {
 		show[S] = (format.match('s') ? '?' : (format.match('S') ? '!' : null));
 		return show;
 	},
+
 	/* Calculate the requested periods between now and the target time.
 	   @param  inst         (object) the current settings for this instance
 	   @param  show         (string[7]) flags indicating which periods are requested/required
