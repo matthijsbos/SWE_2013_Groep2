@@ -114,7 +114,6 @@ $.extend(Countdown.prototype, {
 
 	/* List of currently active countdown targets. */
 	_timerTargets: [],
-
 	/* Override the default settings for all instances of the countdown widget.
 	   @param  options  (object) the new settings to use as defaults */
 	setDefaults: function(options) {
@@ -306,7 +305,6 @@ $.extend(Countdown.prototype, {
 			}
 		}
 	},
-
 	/* Calculate interal settings for an instance.
 	   @param  target  (element) the containing division
 	   @param  inst    (object) the current settings for this instance */
@@ -651,7 +649,6 @@ $.extend(Countdown.prototype, {
 		show[S] = (format.match('s') ? '?' : (format.match('S') ? '!' : null));
 		return show;
 	},
-
 	/* Calculate the requested periods between now and the target time.
 	   @param  inst         (object) the current settings for this instance
 	   @param  show         (string[7]) flags indicating which periods are requested/required

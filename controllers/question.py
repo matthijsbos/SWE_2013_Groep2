@@ -27,13 +27,13 @@ class QuestionController():
             rv = None
             if type == 'Inactive':
                 rv = question.inactive = True
-                question.answerable = question.reviewable = question.archived = False
+                question.answerable = question.reviewable = question.closed = False
                 question.state = 'Inactive'
 
             if type == 'Answerable':
                 rv = question.answerable = True
                 question.activate_time = datetime.now()
-                question.inactive = question.reviewable = question.archived = False
+                question.inactive = question.reviewable = question.closed = False
                 question.state = 'Answerable'
 
             elif type == 'Reviewable':
@@ -41,13 +41,13 @@ class QuestionController():
                     Scheduler(args['id'])
                     question.reviewable = True
                 rv = question.reviewable
-                question.inactive = question.answerable = question.archived = False
+                question.inactive = question.answerable = question.closed = False
                 question.state = 'Reviewable'
 
-            elif type == 'Archived':
-                rv = question.archived = True
+            elif type == 'Closed':
+                rv = question.closed = True
                 question.inactive = question.answerable = question.reviewable = False
-                question.state = 'Archived'
+                question.state = 'Closed'
 
             elif type == 'comments':
                 rv = question.comment = not question.comment

@@ -39,7 +39,12 @@ class Tag(Base, BaseEntity):
     @staticmethod
     def get_all():
         return session.query(Tag).filter().all()
-
+    
+    @staticmethod
+    def get_searched_tags(q):
+        q = str("%"+q+"%")
+        return session.query(Tag).filter(Tag.name.like(q))
+    
     @staticmethod
     def add_tag(name):
         if session.query(Tag.name).filter(Tag.name == name).first() is None:
@@ -55,6 +60,11 @@ class Tag(Base, BaseEntity):
         tag = session.query(Tag).filter(Tag.id == tag_id).first()
         session.delete(tag)
         session.commit()
+        
+    @staticmethod
+    def get_tag(tag_id):
+        tag = session.query(Tag).filter(Tag.id == tag_id).first().name
+        return tag
 
 
 class AnswerTag(Base):
