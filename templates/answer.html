@@ -1,6 +1,6 @@
 <html>
 <head>
-    <script type="text/javascript" src="../static/js/jquery-1.7.min.js"></script>
+    <script type="text/javascript" src="../static/js/jquery.min.js"></script>
     <script type="text/javascript" src="../static/js/jquery.countdown.js"></script>
     <link rel="stylesheet" type="text/css" href="../static/css/style.css" media="screen" />
     
@@ -12,20 +12,19 @@
 </head>
 
 <body>
-{% if go == "true" %}   
-    <div>
+{% if go == "true" %}
+    <div id="answer_form">
         <form action="/answer" id="answerform" method="post">
             <br>
-            {{questionText}}
+            <div id="question">{{questionText}}</div>
             <input type="hidden"  name="questionID" value="{{questionID}}" />
-            <input type="text" name="userID" value="{{userID}}" />
+            uid: <input type="text" name="userID" value="{{userID}}" />
             <br>
             Answer: <br><textarea name="answerText" cols=50 rows=10></textarea>
             <br>
-            <input type="submit" value="go"/>
-            {{answerID}}
+            <input type="submit" value="go" class="submit-answer"/>
         </form>
-        <div id="counter"></div>
+        <div id="counter" class="countdowntime"></div>
         <div class="desc">
             <div>Minutes</div>
             <div>Seconds</div>
@@ -37,7 +36,7 @@
         <input type="button" value="Submit" />
         <script type="text/javascript">
             $(document).ready(function() {
-                $("#demo-input-facebook-theme").tokenInput("http://localhost:5000/json/get_tags", {
+                $("#demo-input-facebook-theme").tokenInput("/json/get_tags", {
                 theme: "facebook"
                 });
             });
@@ -45,7 +44,7 @@
     </div>
     
 {% else %}
-    <p>You have already answered this question.</p>
+<p>You have already answered this question.</p>
 {% endif %}
 </body>
 </html>

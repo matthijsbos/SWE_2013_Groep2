@@ -27,6 +27,10 @@ import models.answer
 import models.answerchoice
 import models.tag
 import models.rating
+import models.user
+import models.user_history
+from controllers.user import User
+from controllers.user_history import UserHistory
 
 app = Flask(__name__)
 app.debug = config.debug
@@ -56,6 +60,7 @@ def init_lti():
         return ret
 
 
+# define the routes for our application
 @app.route("/", methods=['GET', 'POST'])
 def home():
     ctrler = Index()
@@ -85,7 +90,7 @@ def edit_question():
 def toggle_options():
     return Question.toggle_options(request.args)
 
-
+# this route is used to ask a question to students
 @app.route("/question", methods=['GET', 'POST'])
 def ask_question():
     """Used to asked questions to students."""
@@ -94,6 +99,8 @@ def ask_question():
 
     return Question.ask_question(g.lti.get_user_id())
 
+# this route is used for the feedback from inserting the question into the
+# database, it also inserts the question into the database
 
 @app.route("/handle_question", methods=['GET', 'POST'])
 def handle_question():
@@ -209,7 +216,7 @@ def managetags():
 
 
 @app.route("/addtags", methods=['GET', 'POST'])
-def addtags():
+def addtags():    
     ctrler = Modifytags()
     return ctrler.addtag(request.args)
 
@@ -218,20 +225,19 @@ def addtags():
 def removetags():
     ctrler = Modifytags()
     return ctrler.delete_tag_question(request.args['tagid'])
+    # return ctrler.render()
 
 
 @app.route("/removetaganswer", methods=['POST', 'GET'])
 def removetag_answer():
     ctrler = ReviewAnswer(request)
-    return ctrler.remove_tag_answer(request.args['answerid'],
-                                    request.args['tagid'])
+    return ctrler.remove_tag_answer(request.args['answerid'], request.args['tagid'])
 
 
 @app.route("/addtaganswer", methods=['POST', 'GET'])
 def addtag_answer():
     ctrler = ReviewAnswer(request)
-    return ctrler.add_tag_answer(request.args['answerid'],
-                                 request.args['tagid'])
+    return ctrler.add_tag_answer(request.args['answerid'], request.args['tagid'])
 
 
 @app.route("/answer", methods=['GET', 'POST'])
@@ -278,15 +284,14 @@ def handle_remove_tags():
 
 @app.route("/json/get_tags", methods=['POST', 'GET'])
 def json_get_tags():
-    query = request.args['q']
-    return Modifytags.json_get_tags(query)
+    return Modifytags.json_get_tags()
 
 
 @app.route("/reviewanswer", methods=['POST', 'GET'])
 def handle_review_answer():
-    """To review a answer, return reviewanswer.review(x) should be called from
+    """ To review a answer, return reviewanswer.review(x) should be called from
     the controller deciding wich answer to review, this url handles storing the
-    reviews in the database (given a user has permission to do so)."""
+    reviews in the database (given a user has permission to do so) """
     ReviewAnswer(request)
     ctrler = Index()
     return ctrler.render()
@@ -383,6 +388,20 @@ def get_pagination():
                            pagecount=pagecount,
                            maxpages=maxpages)
 
+@app.route("/trustdata_start", methods=['GET', 'POST'])
+def trust_data_start():
+    ctrler = User(request)
+    return ctrler.render_with_all()
+
+@app.route("/trustdata", methods=['GET', 'POST'])
+def trust_data():
+    ctrler = UserHistory(request)
+    return ctrler.render_by_userid(request.args['uid'])
+
+@app.route("/trustdata_adjust", methods=['GET', 'POST'])
+def adjust_trust():
+    ctrler = UserHistory(request)
+    return ctrler.render_adjust_trust(request.args['uid'], request.args['new'])
 
 @app.route("/logout")
 def logout():

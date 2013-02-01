@@ -27,16 +27,26 @@ function query_new_question() {
                             data.questions[i].answer);
                     }
                 }
-            } else {
-
-                /* Poll for reviewable questions */
-                $.getJSON("/has_new_review", {}, function(data) {
-					if (data.has_new) {
-						window.location.href = "reviewanswer_stub";
-					}
-				});
             }
-        });
+
+            /* Poll for reviewable questions */
+            $.getJSON("/has_new_review", {}, function(data) {
+                if (data.has_new) {
+                    window.location.href = "reviewanswer_stub";
+                }
+            });
+        }
+    );
+}
+
+function show_review_button(number) {
+    console.log("GOT REVIEW", number);
+    if (number > 0) {
+        $('#reviewform #review-answer').val('You have ('+number+') reviewable answers waiting for you!');
+        $('#reviewform').show();
+    } else {
+        $('#reviewform').hide();
+    }
 }
 
 function toggleQ(id){
@@ -45,6 +55,7 @@ function toggleQ(id){
     else
         document.getElementById('answer'+id).style.display = 'none'
 }
+
 function show_question(id, question, time_remaining, question_time, answer) {
     console.log("GOT QUESTION", id, question, time_remaining);
     submit_interval_id[id] = window.setInterval(function(){
@@ -68,10 +79,11 @@ function show_question(id, question, time_remaining, question_time, answer) {
                     '<div class="accordion-inner"><textarea name="answerText" cols=50 rows=5></textarea>' +
                         '<br>' +
                         '<button class="btn btn-info" onclick="submit_answer('+id+'); return false;" value="submit answer">submit answer</button>' +
+                        '<button id="ranking'+id+'" class="btn btn-info" onclick="rank_it('+id+'); return false;" value="rankt it">rank best</button>' +
                         '<div id="submitted'+id+'" style="display:none" class="submitted alert alert-success">' +
                             '<button type="button" class="close close-submitted" onclick="document.getElementById(\'submitted'+ id + '\').style.display = \'none\';">&times;</button>' +
                             '<b>Answer saved!</b><br/>' +
-                            '</div>' +
+                        '</div>' +
                     '</div>' +
                 '</div>' +
                 '<div id="counter'+id+'" class="countdowntime'+timersize+'"></div><br>' +
@@ -198,6 +210,13 @@ function submit_answer(id) {
     });
 }
 
+
+
+function rank_it(id) {
+    window.location="/choicelobby?question_id="+id;
+}
+
+
 function collapse_timer(id){
     if($('#answer'+id).height() == 0){
         $('#counter'+id).removeClass('countdowntimesmall');
@@ -215,24 +234,24 @@ function collapse_timer(id){
 }
 
 function submit_student_question() {
-	text = $('#student_question').val();
-	if(text != '') {
-		$.post("/student_question", {'text': text}, function(data) {
-			succes = $('#question_succes');
-			error = $('#question_error');
-			if(!data.error) {
-				error.hide()
-				succes.show()
-				succes.text('Your question has been submitted.');
-				succes.delay(4000).fadeOut(500);
-			} else if(data.type == 'time') {
-				if(!succes.is(':visible')) {
-					error.show()
-					error.text("You've recently added a question,\
-						please wait a few seconds.");
-					error.delay(4000).fadeOut(500);
-				}
-			}
-		}, 'JSON');
-	}
+    text = $('#student_question').val();
+    if(text != '') {
+        $.post("/student_question", {'text': text}, function(data) {
+            succes = $('#question_succes');
+            error = $('#question_error');
+            if(!data.error) {
+                error.hide()
+                succes.show()
+                succes.text('Your question has been submitted.');
+                succes.delay(4000).fadeOut(500);
+            } else if(data.type == 'time') {
+                if(!succes.is(':visible')) {
+                    error.show()
+                    error.text("You've recently added a question,\
+                    please wait a few seconds.");
+                    error.delay(4000).fadeOut(500);
+                }
+            }
+        }, 'JSON');
+    }
 }

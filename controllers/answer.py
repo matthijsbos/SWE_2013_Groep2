@@ -18,7 +18,7 @@ class Answer():
         questionStartTime = datetime.datetime.now();
         uID = g.lti.get_user_id()
         qID = -1
-        timerD = 25        
+        timerD = 25
 
         # Post should be real data
         if request.method == 'POST' and 'questionID' in request.form:
@@ -84,6 +84,7 @@ class Answer():
             else:
                 answer.AnswerModel.save(qID, uID, answerText)
             flag = "true"
+        user.UserModel.save(uID,g.lti.get_user_name())
         return True#render_template('answersaved.html', flag=flag)
 
     def viewAnswer(self):
@@ -136,7 +137,7 @@ class Answer():
         # Render all
         return render_template('showanswers.html', answers=answer.AnswerModel.get_all())
 
-    def render_filtered(self,questionID=None,data=None):        
+    def render_filtered(self,questionID=None,data=None):
         return render_template('answerfilter.html',
                 hasqid=(questionID is not None),
                 questionID=questionID, data_set=data)

@@ -3,11 +3,11 @@ from sqlalchemy.orm import relationship
 from dbconnection import engine, session, Base
 from datetime import datetime
 from basemodel import BaseEntity
-from models import answer
 from models.answer import AnswerModel
+from models.user import UserModel
+from models.user_history import UserHistoryModel
 
 class AnswerChoiceModel(Base,BaseEntity):
-    K = 100
 
     __tablename__ = 'answerchoice'
 
@@ -25,10 +25,26 @@ class AnswerChoiceModel(Base,BaseEntity):
         self.user_id = user_id
         self.best_answer_id = best_answer_id
         self.other_answer_id = other_answer_id
-        self.calcNewRating()
+        self.calc_new_rating()
+        self.calc_new_trust()
 
-    def calcNewRating(self):
-        newRating = AnswerModel.newRating(self.best_answer_id, self.other_answer_id)
-        AnswerModel.setRanking(self.best_answer_id, newRating[0])
-        AnswerModel.setRanking(self.other_answer_id, newRating[1])
-
+    def calc_new_rating(self):
+        K = UserModel.getTrust(self.user_id) / 20.0
+        new_rating = AnswerModel.new_rating(self.best_answer_id, self.other_answer_id, K)
+        AnswerModel.set_ranking(self.best_answer_id, new_rating[0])
+        AnswerModel.set_ranking(self.other_answer_id, new_rating[1])
+        
+    def calc_new_trust(self):
+        print "GET HERE "
+        winner    = AnswerModel.get_by_answer_id(self.best_answer_id)
+        loser     = AnswerModel.get_by_answer_id(self.other_answer_id)
+        winner_h  = UserHistoryModel.get_by_user_id(winner.userID)
+        loser_h   = UserHistoryModel.get_by_user_id(loser.userID)
+        new_trust = UserModel.newTrust(winner.userID, loser.userID)
+        #UserHistoryModel(winner.userID, new_trust[0], winner_h.answered, winner_h.asked)
+        #UserHistoryModel(loser.userID, new_trust[1], loser_h.answered, loser_h.asked) 
+        session.add(UserHistoryModel(winner.userID, new_trust[0], 17, 22))
+        session.commit()
+        session.add(UserHistoryModel(loser.userID, new_trust[1], 17, 25))
+        session.commit()
+        

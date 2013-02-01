@@ -1,15 +1,33 @@
-{% extends "_base.html" %}
+    {% extends "_base.html" %}
 {% block content %}
+<script type="text/javascript">
+	$(function(){
+		hoogte1 = $("#buttonleft").height();
+        hoogte2 = $("#buttonright").height();
+        if(hoogte1 > hoogte2) {
+            hoogtemax = hoogte1;
+        }
+        else {
+            hoogtemax = hoogte2;
+        }
+        $(buttonleft).height(hoogtemax + 10)
+        $(buttonright).height(hoogtemax + 10)
+	});
+</script>
 <!-- Call the questions and answers from the database -->
-    <div id="quest">
-        {{ question.question }}
+    <br>
+    <div id="rankquestion" class="alert alert-info" style="width: 93%;">
+        <i class="icon-chevron-right"></i>&nbsp;{{ question.question }}
     </div>
+        
     
     <form action="/answerchoice" method="post">
         <input type="hidden" name="answerzero" id="answerzero" value="{{ answer1.id }}">
         <input type="hidden" name="answerone" id="answerone" value="{{ answer2.id }}">
-        <button type="submit" name="bestanswer" value="{{ answer1.id }}">{{ answer1.text }}</button>
-        <button type="submit" name="bestanswer" value="{{ answer2.id }}">{{ answer2.text }}</button>
-        <button type="button" onclick="window.location='/index_student'" class="submit-answer">back</button>
+        <button id="buttonleft" type="submit" style="width: 49%;" class="btn btn-info" name="bestanswer" value="{{ answer1.id }}">{{ answer1.text }}</button>
+        <button id="buttonright" type="submit" style="width: 49%;" class="btn btn-info" name="bestanswer" value="{{ answer2.id }}">{{ answer2.text }}</button>
+        <br>
+        <br>
+        <a style="margin-left: 46%;" class="btn btn-inverse" href="/">back</a>
     </form>
 {% endblock %}
