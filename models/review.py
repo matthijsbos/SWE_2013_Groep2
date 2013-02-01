@@ -16,6 +16,7 @@ from models.user import UserModel
 
 class Review(Base, BaseEntity):
     __tablename__ = 'Review'
+    
     answer_id = Column(Integer, ForeignKey('answer.id', ondelete='CASCADE'))
     user_id = Column(String)
     text = Column(String)
@@ -34,8 +35,8 @@ class Review(Base, BaseEntity):
     @staticmethod
     def add(answer_id, user_id, rating, text):
         if session.query(Review).filter(Review.answer_id == answer_id,
-               Review.user_id == user_id).first() is not None:
-            session.add(Review(answer_id, user_id, rating, text))
+                Review.user_id == user_id).first() is None:
+            session.add(Review(answer_id, user_id, text, rating))
             session.commit()
 
     @staticmethod
@@ -57,3 +58,5 @@ class Review(Base, BaseEntity):
     @staticmethod
     def get_list(answer_id):
         return session.query(Review).filter(Review.answer_id==answer_id).all()
+
+Base.metadata.create_all(engine)

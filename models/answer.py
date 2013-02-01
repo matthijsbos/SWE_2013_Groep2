@@ -14,14 +14,16 @@ class AnswerModel(Base, BaseEntity):
     questionID = Column(Integer)
     userID = Column(String)
     edit = Column(Integer)
-    ranking = Column(Float)
+    ranking = Column(Float)    
+    tags = Column(String)
 
-    def __init__(self,text,questionID,userID,edit,ranking):
+    def __init__(self,text,questionID,userID,edit,ranking, tags=''):
         self.text = text
         self.questionID = questionID
         self.userID = userID
         self.edit = edit
         self.ranking = ranking
+        self.tags = tags
 
     @property
     def username(self):

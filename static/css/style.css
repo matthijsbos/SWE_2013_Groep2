@@ -223,6 +223,14 @@ textarea:focus{
 #buttonright {
     word-wrap: break-word;
 }
+.imptable {
+	width: 80%;
+	margin-top: 10px;
+	margin-left: 10px;
+}
+.imptable .imptablecount {
+	width: 20px;
+}
 #rankquestion {
     word-wrap: break-word;
 }

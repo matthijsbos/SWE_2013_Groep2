@@ -1,7 +1,7 @@
-from models import answer, question, user
-from models.user import UserModel
+﻿from models import answer, question, user
 from models.question import Question
 from models.answer import AnswerModel
+from models.tag import AnswerTag, Tag
 from flask import g, request, redirect
 from utilities import render_template
 from dbconnection import session
@@ -137,7 +137,7 @@ class Answer():
         # Render all
         return render_template('showanswers.html', answers=answer.AnswerModel.get_all())
 
-    def render_filtered(self,questionID=None):
+    def render_filtered(self,questionID=None,data=None):
         return render_template('answerfilter.html',
                 hasqid=(questionID is not None),
                 questionID=questionID, data_set=data)
@@ -148,6 +148,15 @@ class Answer():
 
         hasqid = ('questionID'in kwargs)
         course = g.lti.get_course_id()
+        
+        for a in answers:
+            a.tags = ''
+            tag_ids = AnswerTag.get_tag_ids(a.id)
+            if tag_ids != []:           
+                for id in tag_ids:
+                    tag_name = Tag.get_tag(id)                     
+                    a.tags += tag_name + ', ' 
+                a.tags = a.tags[:-2]            
 
         return render_template('answer_filter_tbl.html',
                 answers=answers,currentpage=curpage,

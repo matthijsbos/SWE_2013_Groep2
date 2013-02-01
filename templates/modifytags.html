@@ -36,12 +36,12 @@
 </script>
 <div id="error"></div>
 
-<form class="form-inline" method="post">
+
   <b>New tag:</b>
   <br>
-  <input id="tagText" type="text" name="newTag">
-  <input id="addTag" class="btn-primary btn" value="Add Tag" onclick=add_tag()>
-</form>
+  <input id="tagText" type="text" name="newTag" />
+  <button id="addTag" class="btn-primary btn" value="Add Tag" onclick=add_tag()>Add Tag</button>
+
 
 <form id="tagForm" action="/removetag" method="post">
 	<b>Current tags:</b>
