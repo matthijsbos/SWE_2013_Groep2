@@ -212,3 +212,11 @@ textarea:focus{
 	margin-bottom: 5px;
     color:#009DCE;
 }
+.imptable {
+	width: 80%;
+	margin-top: 10px;
+	margin-left: 10px;
+}
+.imptable .imptablecount {
+	width: 20px;
+}
