@@ -25,23 +25,16 @@ class ReviewAnswer():
             fsession['reviewanswer']
         except:
             pass
-        else:
-            # for rating in request.form.getlist('rating'):
-            # Review.add(fsession['reviewanswer'], fsession['user_id'], rating, )
-    
+        else:    
             for tag_id in request.form.getlist('remove_tags'):
                 AnswerTag.remove(fsession['reviewanswer'], tag_id)
             
-            try:
-                request.form['rating']
-            except KeyError:
-                pass
-            else:
-                Review.add(fsession['reviewanswer'], g.lti.get_user_id(),
-                           request.form['rating'], request.form['comments'])
-                           
-                # users can review only once per answer so delete from schdule list
-                Schedule.delete(fsession['reviewanswer'], g.lti.get_user_id())
+            print request.form['rating']
+            Review.add(fsession['reviewanswer'], g.lti.get_user_id(),
+                       request.form['rating'], request.form['comments'])
+                       
+            # users can review only once per answer so delete from schdule list
+            Schedule.delete(fsession['reviewanswer'], g.lti.get_user_id())
                                    
             # revoke permission to review answer
             del fsession['reviewanswer']
