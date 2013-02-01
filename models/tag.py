@@ -60,6 +60,11 @@ class Tag(Base, BaseEntity):
         tag = session.query(Tag).filter(Tag.id == tag_id).first()
         session.delete(tag)
         session.commit()
+        
+    @staticmethod
+    def get_tag(tag_id):
+        tag = session.query(Tag).filter(Tag.id == tag_id).first().name
+        return tag
 
 
 class AnswerTag(Base):

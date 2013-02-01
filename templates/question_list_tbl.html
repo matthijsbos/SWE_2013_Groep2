@@ -47,7 +47,7 @@
                         <li {% if question.inactive %}style="display:none"{% endif %} id="q{{question.id}}_drop1"><a href="#" onclick="toggle_state({{question.id}}, 'Inactive')">Inactive</a></li>
                         <li {% if question.answerable %}style="display:none"{% endif %} id="q{{question.id}}_drop2"><a href="#" onclick="toggle_state({{question.id}}, 'Answerable')">Answerable</a></li>
                         <li {% if question.reviewable %}style="display:none"{% endif %} id="q{{question.id}}_drop3"><a href="#" onclick="toggle_state({{question.id}}, 'Reviewable')">Reviewable</a></li>
-                        <li {% if question.archived %}style="display:none"{% endif %} id="q{{question.id}}_drop4"><a href="#" onclick="toggle_state({{question.id}}, 'Archived')">Closed</a></li>
+                        <li {% if question.closed %}style="display:none"{% endif %} id="q{{question.id}}_drop4"><a href="#" onclick="toggle_state({{question.id}}, 'Closed')">Closed</a></li>
                     </ul>              
             </td>
             <td class="comment-field" id="comments_{{question.id}}"><input type="checkbox" name="comments{{question.id}}" onclick="toggle_review_options({{question.id}}, 'comments')" {% if question.comment %}checked{% endif %}></td>
