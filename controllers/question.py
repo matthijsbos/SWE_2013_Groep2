@@ -1,8 +1,8 @@
 import json
-from flask import escape, g
+from flask import g
 from utilities import render_template
 from dbconnection import session
-from models.question import Question
+from models.question import Question, UserQuestion
 from datetime import datetime, timedelta
 
 from controllers.scheduler import Scheduler
@@ -68,14 +68,8 @@ class QuestionController():
     def edit_question(q_id, question, time):
         """Updates a question with given contents and activation status."""
         if g.lti.is_instructor():
-            if question is None:
-                escaped_question = None
-            else:
-                escaped_question = escape(question)
-
-            escaped_time = escape(time)
             q = Question.by_id(q_id)
-            q.question = escaped_question
+            q.question = question
             q.time = int(time)
             activate = q.answerable
 
@@ -83,7 +77,7 @@ class QuestionController():
             session.commit()
 
             return json.dumps({"id": q_id,
-                               "text": escaped_question,
+                               "text": question,
                                "answerable": activate,
                                "time":time,
                                "check": g.lti.is_instructor()})
@@ -119,6 +113,15 @@ class QuestionController():
     def export_course(course_id):
         questions = Question.by_course_id(course_id)
         return [{'question': question.question} for question in questions]
+
+    @staticmethod
+    def import_course(user_id, course_id, data):
+        for question in data:
+            QuestionController.create_question(question['question'], user_id,
+                    course_id, False, 0, True, True, True)
+
+        questions = map(lambda x: x['question'], data)
+        return render_template('import.html', questions=questions)
 
     @staticmethod
     def get_list_asked():
@@ -174,6 +177,16 @@ class QuestionController():
     def delete_question(qid):
         '''removes the question with the provided id from the database'''
         question = Question.by_id(int(qid))
+        if g.lti.is_instructor():
+            session.delete(question)
+            session.commit()
+
+        return json.dumps({'deleted': g.lti.is_instructor()})
+
+    @staticmethod
+    def delete_userquestion(qid):
+        '''removes the question with the provided id from the database'''
+        question = UserQuestion.by_id(int(qid))
         if g.lti.is_instructor():
             session.delete(question)
             session.commit()

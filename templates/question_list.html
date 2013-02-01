@@ -1,4 +1,4 @@
-{% extends "_base.html" %}
+﻿{% extends "_base.html" %}
 {% block content %}
 
 <script language="javascript" type="text/javascript">
@@ -7,9 +7,12 @@
     var edit_count = 0;
     var query_interval = 1000 * 5; // Every 5 sec
     var query_interval_id;
+    var adding_question = false;
+    
     $(function() {    
-        get_student_questions()
+        get_student_questions();
         query_interval_id = setInterval(get_student_questions, query_interval);    
+        
     });
     $(document).ready(function() {
         refresh_table(0,stdlimit);
@@ -19,13 +22,36 @@
     function get_student_questions(){
         $.getJSON("/get_student_questions", {},
         function(data) {          
-            $('#student_questions').html('<thead><tr><td><b>student name</b></td><td><b>suggested question</b></td></tr></thead><tr></tr>');
+            $('#sQuestions').html('');
            for (key in data) {
-               $('#student_questions tr:last').after('<tr><td>'+data[key].user+'</td><td>'+data[key].text+'</td></tr>')
+               $('#sQuestions').append('\
+               <tr id=userrow_'+data[key].id+'> \
+                    <td>'+data[key].user+'</td><td id="user_q'+data[key].id+'">'+data[key].text+'</td> \
+                    <td><input type="submit" value="Copy question" class="btn-primary btn copyQ" onclick=add_userquestion('+data[key].id+') /></td>\
+                    <td><a onClick="delete_userquestion('+data[key].id+')" data-toggle="modal" class="delete-question-link link" ><i class="icon-remove-sign"></i> delete</a></td> \
+               </tr>')     
+            }
+            if (adding_question){
+                $('#addQ').attr('disabled', 'disabled')
+                $('.copyQ').attr('disabled', 'disabled');
             }
         }
-    )
+    )}      
+    
+    function add_userquestion(id){
+        text = $('#user_q'+id).text();        
+        add_question();
+        $('#qtext').prop('value', text);        
     }
+    
+    function delete_userquestion(id){    
+        $.getJSON("/delete_userquestion/"+id,{},
+        function(data){            
+            if (data.deleted)
+                $('#userrow_'+id).remove();                
+        });
+    }
+
     function refresh_table(offset,limit){
         $.get('/question_list_table',{offset:offset,limit:limit},
             function(data){
@@ -45,6 +71,7 @@
         load_page(currPage);
     }
 
+
     function edit_field(id){        
         var elem = $('#question_' + id + ' a');
         var time_elem = $('#time_'+id);
@@ -57,14 +84,14 @@
         
         elem.hide();
         time_elem.text('');
-        
+
         var edit_field = $('<input type="text" class="input-block-level" placeholder="your question">').prop('value', text);
         var time_field = $('<input type="number" size="3" maxlength="3" value="" placeholder="sec">').prop('value', parseInt(time));
 
         var editelem = $('#sedit_'+id);
         edit_count++;
-        
-        editelem.click(function(){            
+
+        editelem.click(function(){
             edit_count--;
             $('#edit_'+id).show();
             elem.show();
@@ -75,13 +102,13 @@
 
                 
             edit_question(id,newText,newTime);
-            
+
             if (newTime == 0)
                 newTime = $("<div/>").html('&#8734').text();
 
             elem.text(newText);
             time_elem.text(newTime);
-            
+
             $(time_field).remove();
             $(edit_field).remove();
             $('#sedit_'+id).unbind('click');
@@ -91,7 +118,7 @@
         editelem.css('font-weight', 'normal');
 
         $('#edit_'+id).hide();
-        
+
         edit_field.blur(function() {
             editelem.css('color', 'darkorange');
             editelem.css('font-weight', 'bold');
@@ -104,8 +131,11 @@
     function edit_question(id,text,time){
         $.getJSON("/edit_question",{id:id,text:text,time:time},
         function(data){
-            if(data.check){                
-                $('#question_'+id).html('<a href=\"/filteranswers/'+data.id+'\">'+data.text+'</a>');
+            if(data.check){
+                $('#question_'+id).html('<a href=\"/filteranswers/'+data.id+'\">'+
+                    escapeMarkup(data.text) +
+                    '</a>'
+                );
                 if (data.time == 0)timeDisplay = '&#8734;'; else timeDisplay = data.time;
                 $('#time_'+id).html(timeDisplay)
             }
@@ -114,7 +144,7 @@
             }
         });
     }
-	
+    
 	var advanced_visible = false;
 	function advanced(){
 		if (advanced_visible) {
@@ -130,7 +160,7 @@
 		}
 		advanced_visible = !advanced_visible;
     }
-	
+    
     function delete_question(id){
         $.getJSON("/delete_question/"+id,{},
         function(data){
@@ -157,14 +187,14 @@
             }
         });
     }
-    
+
     function next_state(id){
         current_state = $('#state'+id).text();
         if(current_state == 'Inactive')
-            toggle_state(id, 'Answerable');        
+            toggle_state(id, 'Answerable');
     }
-    
-    function toggle_state(id, type){   
+
+    function toggle_state(id, type){
     $.getJSON("/togglequestion",{id:id, type:type},
     function(data){
       if(data.check){
@@ -201,7 +231,7 @@
       else{
         $('#error').html("Error while togging question question.");
       }
-    });    
+    });
     }
 
     function checkSubmit(e)
@@ -213,8 +243,9 @@
         }
     }
     function add_question(){
-        $('#addQ').hide()
-            
+        adding_question = true;
+        $('#addQ').attr('disabled', 'disabled')
+        $('.copyQ').attr('disabled', 'disabled');
         $('#qList tr:first').after(
         '<tr>\
 			<td class="question-field"><input id="qtext" type="text" class="input-block-level" name="question" placeholder="your question"></td> \
@@ -231,18 +262,20 @@
 			$('.tags-field').hide();
 			$('.rating-field').hide();
 		}
-        $('#cancelQ').show()   
+        $('#cancelQ').show()
         $('#qtext').focus();
-        
+
         if (edit_count > 0) {
             alert("You have "+edit_count+" open edits, that still need to be submitted.");
-        }
+        }        
     }
-    
+
     function cancel_question(){
-        $('#cancelQ').hide()
-        $('#addQ').show()        
-        $('#qList tr:eq(1)').remove()        
+        adding_question = false;
+        $('#cancelQ').hide()        
+         $('#addQ').attr('disabled', false);
+          $('.copyQ').attr('disabled', false);
+        $('#qList tr:eq(1)').remove()
     }
 
     function save_question(){
@@ -257,25 +290,46 @@
         $.getJSON('/handle_question',{active:activev,comment:commentv,tags:tagsv,
             question:questionv,time:timev,rating:ratingv},
             function(data){
-                if (data.done)
-                {
-                    reload();
+                if (data.done) {
+                    adding_question = false;                    
                     $('#save_question').attr('disabled', false);
-                    $('#cancelQ').hide();
-                    $('#addQ').show();
+                    $('#addQ').attr('disabled', false);
+                    $('.copyQ').attr('disabled', false);                 
+                    $('#cancelQ').hide();      
+                    $('#qList tr:eq(1)').remove() 
+                    reload();
                 }                
-                else                                        
+                else {                                       
                     alert("Please fill in a question");
                     cancel_question();
+                }
             });
-				
         return false;
+    }
+    
+    var student_questions_visible = false;
+	function student_questions(){
+		if (student_questions_visible) {
+			$('#student_questions').hide();
+            $('#student_questions_btn').prop('value', 'Show student questions');
+		} else {
+			$('#student_questions').show();
+            $('#student_questions_btn').prop('value', 'Hide student questions');
+		}
+		student_questions_visible = !student_questions_visible;
     }
 
 </script>
-<table id="student_questions" class="table table-hover table-bordered table-striped"></table>
-<div id="error" style="background-color: #a33; color: white;"></div>
-<div id="questListForm" onKeyPress="return checkSubmit(event)" style="display:block">
 
-</div>
+    <a id="student_questions_btn" class="accordion-header" class="accordion-toggle" data-toggle="collapse" data-parent="#collapse_student_questions" href="#collapse_student_questions" >Student questions</a>
+<div class="accordion-body collapse" id="collapse_student_questions"><table id="student_questions" class="table table-hover table-bordered table-striped">
+        <thead><tr><td><b>Student name</b></td><td><b>Suggested question</b></td></tr></thead>
+        <tbody  id="sQuestions"></tbody>
+    </table></div>
+
+<hr>
+
+<div id="error" style="background-color: #a33; color: white;"></div>
+<div id="questListForm" onKeyPress="return checkSubmit(event)" style="display:block"></div>
+
 {% endblock %}

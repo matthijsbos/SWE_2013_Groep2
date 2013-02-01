@@ -36,10 +36,6 @@
             function(data){
                 if (data.deleted) {
                     $('#assign_tag_'+tid).remove();
-                    $('#assigned_tags').append('\
-                            <div id="assigned_tag_'+tid+'">\
-                                '+tname+',\
-                            </div>')
                     $('#remove_tags').append('\
                             <div class="tags" id="remove_'+tid+'">\
                                 <div>'+tname+'</div>\
@@ -80,30 +76,33 @@
         </div>        
         {% endif %}
         
-        {% if question.tags %}                
-        <div id="remove_tags">
-		<b>Current tags:</b>
-        {% for tag in tags %}
-            {% if tag.id in enabledtags %}
-                <div class="tags" id="remove_{{tag.id}}">
-                    <div>{{tag.name}}</div>
-                    <a onclick="javascript:remove_tag({{answer.id}},{{tag.id}},'{{tag.name}}');"/><i class="icon-remove-sign"></i> delete </a>
-                </div>
-            {% endif %}
-        {% endfor %}
+        <div>
+            <b>Assign tags:</b>
+            <input type="text" id="demo-input-facebook-theme" />
+            <script type="text/javascript">
+                $(document).ready(function() {
+                    $("#demo-input-facebook-theme").tokenInput("/json/get_tags", {
+                        theme: "facebook",
+                        noResultsText: "No results found",
+                        preventDuplicates: true,
+                        onAdd: function(tag) {
+                            add_tag({{answer.id}},tag.id,'"'+tag.name+'"')
+                        },
+                        onDelete: function(tag) {
+                            remove_tag({{answer.id}},tag.id,'"'+tag.name+'"')
+                        },
+                        prePopulate: [
+                            {% for tag in tags %}
+                                {% if tag.id in enabledtags %}
+                                    {id: '{{tag.id}}', name: '{{tag.name}}'},
+                                {% endif %}
+                            {% endfor %}
+                        ]
+                        
+                    });
+                });
+            </script>
         </div>
-        <div id="available_tags">
-		<b>Assign tags:</b>
-            {% for tag in tags %}
-                {% if not tag.id in enabledtags %}
-                    <div class="tags" id="assign_tag_{{tag.id}}">
-                        <a onclick="javascript:add_tag({{answer.id}},{{tag.id}},'{{tag.name}}');"/><i class="icon-ok"></i> {{tag.name}} </a>
-                    </div>
-                {% endif %}
-            {% endfor %}
-        </div>
-        {% endif %}
-        
         <br>
         <input type="submit" class="btn-primary btn" name="rating" value="Submit review">
     </div>

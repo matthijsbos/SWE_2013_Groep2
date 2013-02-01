@@ -85,7 +85,6 @@ class Answer():
                 answer.AnswerModel.save(qID, uID, answerText)
             flag = "true"
         user.UserModel.save(uID,g.lti.get_user_name())
-        #AnswerModel.update_q_history(qID)
         return True#render_template('answersaved.html', flag=flag)
 
     def viewAnswer(self):
@@ -141,7 +140,7 @@ class Answer():
     def render_filtered(self,questionID=None):
         return render_template('answerfilter.html',
                 hasqid=(questionID is not None),
-                questionID=questionID)
+                questionID=questionID, data_set=data)
 
     def render_filtered_tbl(self,limit,offset,**kwargs):
         (answers, curpage, maxpages, startpage, pagecount) = self.get_filtered(limit=limit,

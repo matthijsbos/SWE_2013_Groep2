@@ -17,7 +17,7 @@ def test():
 
 # error class for cluster module
 class ClusterError(Exception):
-  def __init__(self,value):
+  def __init__(self,msg):
     self.msg = msg
   
   def __str__(self):
@@ -56,6 +56,7 @@ class Clusterer():
     if len(self.answers) < 1:
       raise ClusterError('you need to add at least 1 answer to Clusterer before calling run_clustering')
     lp = lang_parser.LanguageParser('en',self.answers)
+    lp.detect_language()
     lemma_answers = lp.get_keywords()
     
     # add lemmatized answers to data analyzer
@@ -114,12 +115,125 @@ class Clusterer():
         text_clusters[c].append(data.string)
     return text_clusters
 
+# initialize an instance of this class to do clustering with stars
+
+class ClustererStars(Clusterer):
+  def __init__(self):
+    self.answers = []
+    self.stars = []
+    self.data = _DataClusterer()
+    self.best_error = sys.maxsize
+    self.nr_tries = 10
+    self.best_clustering = self.nr_tries + 1
+    self.clustering_list = []
+    self.n_clusters = 0
+    self.best_n = None
+  
+  # add answer to cluster module
+  def add_answer(self,answer,stars):
+    self.answers.append(answer)
+    self.stars.append(stars)
+    
+  # runs clustering over the data, run this function only once for a clusterer instance
+  def run_clustering(self):
+    if len(self.answers) < 1:
+      raise ClusterError('you need to add at least 1 answer to Clusterer before calling run_clustering')
+    lp = lang_parser.LanguageParser('en',self.answers)
+    lp.detect_language()
+    lemma_answers = lp.get_keywords()
+    
+    # add lemmatized answers to data analyzer
+    for i in range(len(lemma_answers)):
+      self.data.add_answer(lemma_answers[i],self.answers[i],self.stars[i])
+    self.data.tokenize_all()
+    self.data.count_frequency()
+    
+    # determine best cluster found in n tries
+    for n in range(self.nr_tries):
+      self.clustering_list.append(_N_random())
+      if self.n_clusters != 0:
+        self.clustering_list[n].set_n(self.n_clusters)
+      for data in self.data.answers:
+        self.clustering_list[n].add_data(data)
+      self.clustering_list[n].execute()
+      if self.clustering_list[n].error < self.best_error:
+        self.best_clustering = n
+        self.best_error=self.clustering_list[n].error
+    
+    # generate info for cluster
+    self.best_n = self.clustering_list[self.best_clustering]
+    best_clusters = self.best_n.clusters
+    cluster_info = []
+    for cluster in best_clusters:
+      best_stars = 0
+      best_str = ""
+      worst_stars = 6
+      worst_str = ""
+      number = 0
+      avg_stars = 0
+      for data in cluster:
+        if data.stars > best_stars:
+          best_stars = data.stars
+          best_str = data.string
+        if data.stars < worst_stars:
+          worst_stars = data.stars
+          worst_str = data.string
+        number += 1
+        avg_stars += data.stars
+      if number != 0:
+        avg_stars /= number
+      cluster_info.append([best_stars,best_str,worst_stars,worst_str,number,avg_stars])
+    return cluster_info
+
+  # remove cluster with index 'index' and rerun clustering
+  def remove_cluster(self,index):
+    if len(self.best_n.selected_indices) < 2:
+      raise ClusterError('removing this cluster would cause the clusterer to work with 0 clusters')
+    # remove and reset some data
+    self.best_n.selected_indices.pop(index)
+    self.best_n.selected_data.pop(index)
+    self.best_n.clusters = []
+    self.best_n.error = 0
+    for a in range(len(self.best_n.selected_indices)):
+      self.best_n.clusters.append([])
+    
+    # rerun clustering
+    self.best_n.assign_cluster()
+    for c in self.best_n.clusters:
+      self.best_n.calc_average_error(c)
+    
+    # generate info for cluster
+    self.best_n = self.clustering_list[self.best_clustering]
+    best_clusters = self.best_n.clusters
+    cluster_info = []
+    for cluster in best_clusters:
+      best_stars = 0
+      best_str = ""
+      worst_stars = 6
+      worst_str = ""
+      number = 0
+      avg_stars = 0
+      for data in cluster:
+        if data.stars > best_stars:
+          best_stars = data.stars
+          best_str = data.string
+        if data.stars < worst_stars:
+          worst_stars = data.stars
+          worst_str = data.string
+        number += 1
+        avg_stars += data.stars
+      if number != 0:
+        avg_stars /= number
+      cluster_info.append([best_stars,best_str,worst_stars,worst_str,number,avg_stars])
+    return cluster_info
+    
 # contains an answer and its vector representation
 class _Data():  
   def __init__(self):
     self.answer = ""
     self.string = ""
     self.vector = []
+    self.stars = 0
 
 # takes all answers and builds a matrix which shows which words are in which answer
 class _DataClusterer():
@@ -129,10 +243,11 @@ class _DataClusterer():
     self.token_occurs = []
   
   # add answer to list
-  def add_answer(self,answer,string):
+  def add_answer(self,answer,string,stars=0):
     data = _Data()
     data.answer = answer
     data.string = string
+    data.stars = stars
     self.answers.append(data)
   
   # tokenize all answers, generate list of tokens and create term frequency matrix

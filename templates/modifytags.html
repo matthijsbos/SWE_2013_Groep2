@@ -13,17 +13,20 @@
     }
     function add_tag(){
         $('#addTag').attr('disabled', 'disabled')
-        text = $('#tagText').val();        
-        $.getJSON("/addtags",{tag:text},            
-            function(data){                
+        text = $('#tagText').val();
+        $.getJSON("/addtags",{tag:text},
+            function(data){
+                $('#addTag').attr('disabled', false);
                 if (data.succes) {
-                    $('#addTag').attr('disabled', false);
                     $('#tagText').val('');
-                    $('#tagForm').append('\
-                    <div class="tags" id="remove_'+data.id+'">\
-                    <div>'+text+'</div>\
-                    <a onclick="javascript:remove_tag('+data.id+');"><i class="icon-remove-sign"></i> delete </a>\
-                    </div>')
+                    $('#tagForm').append(
+                        '<div class="tags" id="remove_' + data.id + '">' +
+                        '<div>' + escapeMarkup(text) + '</div>' +
+                        '<a onclick="javascript:remove_tag(' + data.id + ');">' +
+                            '<i class="icon-remove-sign"></i> delete ' +
+                        '</a>' +
+                        '</div>'
+                    );
                 }
                 else
                     alert('Please fill in a new tag');

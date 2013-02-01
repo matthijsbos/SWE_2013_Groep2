@@ -1,10 +1,11 @@
-body{
+﻿body{
       color:#009DCE;
       width: 950px;
       font-family: sans-serif;
 }
-
-br { clear: both; }
+br {
+    clear: both;
+}
 
 #qList input, #addQuestion-table input{
     margin-bottom: 0px;
@@ -46,6 +47,9 @@ br { clear: both; }
 .state-buttons{
     text-align: center;
     width: 70px;
+}
+#buttons{
+    margin-bottom: 20px;
 }
 #qList {
 	width: auto;
@@ -107,10 +111,16 @@ br { clear: both; }
     color: #000;
 }
 .tags div{
-    width:80px;
+    width:120px;
     display:inline-block;
+	word-wrap:break-word;
 }
 .tags a:hover{ 
+	text-decoration: none; 
+	font-weight: bold;
+	cursor: pointer;
+}
+.link:hover{ 
 	text-decoration: none; 
 	font-weight: bold;
 	cursor: pointer;

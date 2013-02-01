@@ -1,4 +1,4 @@
-﻿/*
+/*
  * Handles all actions for students: showing them the current question and
  * letting them answer it.
  *
@@ -20,23 +20,23 @@ function query_new_question() {
     $.getJSON("/has_new_question", {},
         function(data) {
             if (data.has_new) {
-                for (var i=0;i<data.len;i++) {
+                for (var i=0;i<data.len;i++){
                     if($('#answerform'+data.questions[i].question_id).length == 0) {
                         show_question(data.questions[i].question_id, data.questions[i].question_text,
                             data.questions[i].time_remaining, data.questions[i].question_time,
                             data.questions[i].answer);
                     }
                 }
-            } else {
-
-                /* Poll for reviewable questions */
-                $.getJSON("/has_new_review", {}, function(data) {
-                    if (data.has_new) {
-                        window.location.href = "reviewanswer_stub";
-                    }
-                });
             }
-    });
+
+            /* Poll for reviewable questions */
+            $.getJSON("/has_new_review", {}, function(data) {
+                if (data.has_new) {
+                    window.location.href = "reviewanswer_stub";
+                }
+            });
+        }
+    );
 }
 
 function show_review_button(number) {
@@ -75,19 +75,19 @@ function show_question(id, question, time_remaining, question_time, answer) {
         '<form id="answerform'+id+'" method="post" style="display:none;">' +
             '<div class="accordion-group no-border" id="questionArea'+id+'" class="questionArea">' +
                 '<div id="question'+id+'" class="question accordion-header"></div>' +
-                '<div id="answer'+id+'" class="accordion-body collapse '+ expanded + '">' +
+                '<div id="answer'+id+'"  class="accordion-body collapse '+ expanded + '">' +
                     '<div class="accordion-inner"><textarea name="answerText" cols=50 rows=5></textarea>' +
                         '<br>' +
                         '<button class="btn btn-info" onclick="submit_answer('+id+'); return false;" value="submit answer">submit answer</button>' +
+                        '<button id="ranking'+id+'" class="btn btn-info" onclick="rank_it('+id+'); return false;" value="rankt it">rank best</button>' +
                         '<div id="submitted'+id+'" style="display:none" class="submitted alert alert-success">' +
                             '<button type="button" class="close close-submitted" onclick="document.getElementById(\'submitted'+ id + '\').style.display = \'none\';">&times;</button>' +
-                            '<button id="ranking'+id+'" class="btn btn-info" onclick="rank_it('+id+'); return false;" value="rankt it">rank best</button>' +
                             '<b>Answer saved!</b><br/>' +
-                            '</div>' +
+                        '</div>' +
                     '</div>' +
                 '</div>' +
                 '<div id="counter'+id+'" class="countdowntime'+timersize+'"></div><br>' +
-                '<div id="prolongedText'+id+'" class="alert alert-info" style="display: none;">Question time has changed</div>' +
+                '<div id="prolongedText'+id+'"  class="alert alert-info" style="display: none;">Question time has changed</div>' +
             '</div>' +
         '</form>' +
         '<div id="questionWasDeleted'+id+'" class="alert alert-error" style="display: none;">The question was deleted. Your answer was not saved</div>'
@@ -101,7 +101,7 @@ function show_question(id, question, time_remaining, question_time, answer) {
             onExpiry: function(){
 				check_submit_answer(id, question_time)
 				$.post('/start_review', {'question_id': id});
-			}        
+			}
         });
     }
 
@@ -119,7 +119,6 @@ function show_question(id, question, time_remaining, question_time, answer) {
     $('#answerform'+id).show();
 }
 
-
 function check_submit_answer(id, question_time){
     console.log("Check SUBMIT" + id);
     if (!check_remaining_time(id, question_time))
@@ -135,7 +134,6 @@ function check_submit_answer(id, question_time){
         $('#pleasewait').show();
     }
 }
-
 
 function check_remaining_time(id, time_delta){
     var res = false;
@@ -199,7 +197,7 @@ function popup_div(div,time) {
 }, 5000)
     else
         $(div).delay(time).hide(1);
-}	
+}
 
 function submit_answer(id) {
     console.log("SUBMIT");
@@ -257,4 +255,3 @@ function submit_student_question() {
         }, 'JSON');
     }
 }
-

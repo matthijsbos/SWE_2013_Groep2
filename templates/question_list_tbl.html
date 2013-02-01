@@ -11,7 +11,13 @@
             });
     });
 </script>
+
 <div id="paginationtop"/>
+    <div id="buttons" style="margin-bottom: 20px;"> 
+        <input type="submit"id="addQ" value="Add Question" class="btn-primary btn" onclick=add_question() ></button>
+        <input type="submit"id="advanced" value="Advanced" class="btn" onclick=advanced() ></button>    
+    </div>
+    
     <table id="qList" class="table table-hover table-bordered table-striped">
         <thead>
             <tr>
@@ -35,26 +41,26 @@
             <td class="time-field" id="time_{{question.id}}">{% if question.time == 0 %}&#8734; {% else %} {{question.time}} {% endif %}</td>
             <td class="state-field" id="available_{{question.id}}">
                 <div class="btn-group">
-                    <a id ="state{{question.id}}" class="btn btn-primary state-buttons" href="#" onclick=next_state({{question.id}})>{{question.state}}</a>
-                    <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown" href="#"><span class="caret"></span></a>
+                    <a id ="state{{question.id}}" class="btn btn-info state-buttons" href="#" onclick=next_state({{question.id}})>{{question.state}}</a>
+                    <a class="btn btn-info dropdown-toggle" data-toggle="dropdown" href="#"><span class="caret"></span></a>
                     <ul class="dropdown-menu">
                         <li {% if question.inactive %}style="display:none"{% endif %} id="q{{question.id}}_drop1"><a href="#" onclick="toggle_state({{question.id}}, 'Inactive')">Inactive</a></li>
                         <li {% if question.answerable %}style="display:none"{% endif %} id="q{{question.id}}_drop2"><a href="#" onclick="toggle_state({{question.id}}, 'Answerable')">Answerable</a></li>
                         <li {% if question.reviewable %}style="display:none"{% endif %} id="q{{question.id}}_drop3"><a href="#" onclick="toggle_state({{question.id}}, 'Reviewable')">Reviewable</a></li>
-                        <li {% if question.archived %}style="display:none"{% endif %} id="q{{question.id}}_drop4"><a href="#" onclick="toggle_state({{question.id}}, 'Archived')">Archived</a></li>
+                        <li {% if question.archived %}style="display:none"{% endif %} id="q{{question.id}}_drop4"><a href="#" onclick="toggle_state({{question.id}}, 'Archived')">Closed</a></li>
                     </ul>              
             </td>
             <td class="comment-field" id="comments_{{question.id}}"><input type="checkbox" name="comments{{question.id}}" onclick="toggle_review_options({{question.id}}, 'comments')" {% if question.comment %}checked{% endif %}></td>
             <td class="tags-field" id="tags_{{question.id}}"><input type="checkbox" name="tags{{question.id}}" onclick="toggle_review_options({{question.id}}, 'tags')" {% if question.tags %}checked{% endif %}></td>
             <td class="rating-field" id="rating_{{question.id}}"><input type="checkbox" name="rating{{question.id}}" onclick="toggle_review_options({{question.id}}, 'rating')" {% if question.rating %}checked{% endif %}></td>
 			<td class="rankscore-field" id="rr_{{question.id}}">
-                <a href="/rankresults?questionid={{question.id}}" class="blue">view</a>
+                <a href="/rankresults?questionid={{question.id}}" class="blue link">view</a>
 			</td>
             <td class="edit-field">
-                <a href="#" id="edit_{{question.id}}" onclick=edit_field({{question.id}}) ><i class="icon-pencil"></i> edit</a>
-                <a href="#" id="sedit_{{question.id}}" style="display:none"><i class=" icon-ok-sign"></i> submit</a>
+                <a href="#" id="edit_{{question.id}}" onclick=edit_field({{question.id}}) class="link") ><i class="icon-pencil"></i> edit</a>
+                <a href="#" id="sedit_{{question.id}}" style="display:none"><i class=" icon-ok-sign link"></i> submit</a>
             </td>
-            <td class="delete-field"><a href="#delete_question{{question.id}}" data-toggle="modal" class="delete-question-link" ><i class="icon-remove-sign"></i> delete</a></td>
+            <td class="delete-field"><a href="#delete_question{{question.id}}" data-toggle="modal" class="delete-question-link link" ><i class="icon-remove-sign"></i> delete</a></td>
         </tr>
         <div id="delete_question{{question.id}}" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
             <div class="modal-header">
@@ -71,6 +77,4 @@
         </div>
         {% endfor %}
     </table>
-<input type="submit"id="addQ" value="Add Question" class="btn-primary btn" onclick=add_question() ></button>
-<input type="submit"id="advanced" value="Advanced" class="btn" onclick=advanced() ></button>
 <div id="paginationbottom"/>

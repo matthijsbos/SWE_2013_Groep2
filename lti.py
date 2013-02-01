@@ -60,6 +60,8 @@ class LTI():
         The consumer name is automatically prepended to the user and course id
         to prevent collisions when using one app for multiple systems."""
 
+        print params
+
         if "oauth_consumer_key" in params:
             # Start new session.
 
