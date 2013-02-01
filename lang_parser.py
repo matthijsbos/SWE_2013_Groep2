@@ -104,8 +104,9 @@ class LanguageParser():
             from pattern.es import parse
         elif self.language == self.LANG_UNKNOWN:
             # Don't do any language parsing depending on a specific language.
-            return text.lower().translate(string.maketrans("", ""),
-                                          string.punctuation).split()
+            text = text.lower()
+            text = reduce(lambda s,c: s.replace(c, ''), string.punctuation, text)
+            return text.split()
         else:
             raise Exception("Unsupported language: %s" % repr(self.language))
 
@@ -123,4 +124,4 @@ class LanguageParser():
 
     def detect_language(self):
         if self.lang_detector:
-            self.language = self.lang_detector.parse_answers(texts)
+            self.language = self.lang_detector.parse_answers(self.texts)
