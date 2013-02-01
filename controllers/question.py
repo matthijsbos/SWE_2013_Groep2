@@ -3,6 +3,7 @@ from flask import g
 from utilities import render_template
 from dbconnection import session
 from models.question import Question, UserQuestion
+from models.answer import AnswerModel
 from datetime import datetime, timedelta
 
 from controllers.scheduler import Scheduler

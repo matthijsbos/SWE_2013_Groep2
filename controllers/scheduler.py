@@ -5,6 +5,7 @@ Created on Mon Jan 21 16:50:07 2013
 @author: Mustafa Karaalioglu
 """
 from models.answer import AnswerModel
+from models.user import UserModel
 from models.schedule import Schedule
 
 
@@ -16,7 +17,8 @@ class Scheduler():
         
         answers = AnswerModel.get_question_answers(question_id)
         for a in answers:
-            scores.append((a.get_rating(question_id), a))
+            uid = a.userID
+            scores.append((UserModel.getTrust(uid), a))
             user_list.append(a.userID)
             
         scores.sort(key=lambda tup: tup[0])

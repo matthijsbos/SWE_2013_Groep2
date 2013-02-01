@@ -27,6 +27,7 @@ class Review(Base, BaseEntity):
         self.user_id = user_id
         self.rating = rating
         self.text = text
+        self.updateTrust()
 
     def __repr__(self):
         return "<Review(aid='%d', uid='%s', '%s')" % (self.answer_id,
@@ -52,7 +53,7 @@ class Review(Base, BaseEntity):
             Review.user_id == user_id).all()
 
     def updateTrust(self):
-        trust = UserModel.getTrust(user_id) + ((self.rating * 25.0) - 75.0)
+        trust = UserModel.getTrust(self.user_id) + ((float(self.rating) * 25.0) - 75.0)
         UserModel.setTrust(self.user_id, trust)            
 
     @staticmethod
