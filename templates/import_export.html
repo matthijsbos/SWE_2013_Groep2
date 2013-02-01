@@ -41,9 +41,11 @@ $(function() {
                <a class="btn" onclick="$('input[id=import_file]').click();">Browse</a>
             </div>
 
+            <!-- NOT IMPLEMENTED YET, see controllers/question.py, import_course
             <label class="checkbox">
-                <input type="checkbox" /> Include answers
+                <input type="checkbox" name="answers" /> Include answers
             </label>
+            -->
 
             <input class="btn btn-primary" type="submit" value="Import" />
         </fieldset>
@@ -58,7 +60,7 @@ $(function() {
             <legend>Export data</legend>
 
             <label class="checkbox">
-                <input type="checkbox" /> Include answers
+                <input type="checkbox" name="answers" /> Include answers
             </label>
 
             <input class="btn btn-primary" type="submit" value="Export" />

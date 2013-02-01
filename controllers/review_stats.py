@@ -3,14 +3,17 @@ from flask import g
 from dbconnection import session
 from utilities import render_template
 from models.answer import *
-from models.review import * 
+from models.review import *
 from clusterer import *
+from sakai_ldig import Ldig_parser
 
 class Review_stats():
   @staticmethod
   def run(self,qid):
     answers=AnswerModel.get_question_answers(qid).all()
-    clusterer=ClustererStars()
+    #init language detection
+    lang_detector = Ldig_parser("ldig_model.small")
+    clusterer=ClustererStars(lang_detector)
     data_set=[]
     output=[]
     best_avg_nr=0
@@ -49,25 +52,25 @@ class Review_stats():
       if data_set[i][5] < worst_avg:
         worst_avg=data_set[i][5]
         worst_avg_nr=i
-    
+
     for i in range (6):
       biggest.append(data_set[biggest_nr][i])
-      
+
     for i in range (6):
       best.append(data_set[best_avg_nr][i])
-      
+
     for i in range (6):
       worst.append(data_set[worst_avg_nr][i])
-    
+
     biggest.append("Biggest cluster")
     best.append("Best rated cluster")
     worst.append("Worst rated cluster")
-    
+
     output.append(biggest)
     output.append(best)
     output.append(worst)
-    
+
     return output
-      
+
   def render(self,qid):
     return self.run(self,qid)
