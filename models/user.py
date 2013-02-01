@@ -53,8 +53,6 @@ class UserModel(Base):
         user.trust = trust
         # fetch last known history record
         old = UserHistoryModel.get_user_latest_data(uID)
-        print old.answered
-        print old.asked
         # create a new trust entry in userhistory
         history = UserHistoryModel(uID, trust, old.answered, old.asked)
         session.add(history)
