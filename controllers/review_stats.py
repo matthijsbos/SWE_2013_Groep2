@@ -12,7 +12,7 @@ class Review_stats():
   def run(self,qid):
     answers=AnswerModel.get_question_answers(qid).all()
     #init language detection
-    lang_detector = Lang_parser("ldig_model.small")
+    lang_detector = Ldig_parser("ldig_model.small")
     clusterer=ClustererStars(lang_detector)
     data_set=[]
     output=[]
