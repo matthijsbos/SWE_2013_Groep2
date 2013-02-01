@@ -36,6 +36,8 @@ class Review_stats():
       else:
         average_stars=-1
       clusterer.add_answer(answer_text,average_stars)
+    if clusterer.answers == []:
+      return None
     data_set=clusterer.run_clustering()
     for i in range(len(data_set)):
       if data_set[i][4] > biggest:

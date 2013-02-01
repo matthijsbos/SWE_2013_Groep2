@@ -91,7 +91,9 @@
     <td>{{data[5]}}</td>
   </tr>
   {%endfor%}
-  {% endif %}
 </table>
+{% else %}
+There is no answer for this question yet
+{% endif %}
 <div id='tblContainer'></div>
 {% endblock %}
