@@ -67,11 +67,11 @@ def launch():
     ctrler = Index(debug=True)
     return ctrler.render()
 
+
 @app.route("/stats", methods=['GET', 'POST'])
 def show_stats():
-  ctrler = Stats()
-  return ctrler.render()
-
+    ctrler = Stats()
+    return ctrler.render()
 
 
 @app.route("/edit_question", methods=['GET', 'POST'])
@@ -80,11 +80,12 @@ def edit_question():
                                   request.args['text'],
                                   request.args['time'])
 
+
 @app.route("/togglequestion", methods=['GET', 'POST'])
 def toggle_options():
     return Question.toggle_options(request.args)
 
-# this route is used to ask a question to students
+
 @app.route("/question", methods=['GET', 'POST'])
 def ask_question():
     """Used to asked questions to students."""
@@ -93,47 +94,30 @@ def ask_question():
 
     return Question.ask_question(g.lti.get_user_id())
 
-# this route is used for the feedback from inserting the question into the
-# database, it also inserts the question into the database
-@app.route("/handle_question", methods=['GET','POST'])
+
+@app.route("/handle_question", methods=['GET', 'POST'])
 def handle_question():
-    try:
-        question_text = request.args['question']
-    except KeyError:
-        return json.dumps({'done':False})
+    """Used inserting the question into the database and its feedback."""
 
-    if question_text == '':
-        return json.dumps({'done':False})
+    if 'question' not in request.args or request.args['question'] == '':
+        return json.dumps({'done': False})
 
-    try:
-        isActive = request.args['active'] in ['true','True']
-    except:
-        isActive = False
-
-    try:
-        comment = request.args['comment'] in ['true','True']
-    except:
-        comment = False
-
-    try:
-        tags = request.args['tags'] in ['true','True']
-    except:
-        tags = False
-
-    try:
-        rating = request.args['rating'] in ['true','True']
-    except:
-        rating = False
+    question_text = request.args['question']
+    isActive = request.args.get('active', "false") in ['true', 'True']
+    comment = request.args.get('comment', "false") in ['true', 'True']
+    tags = request.args.get('tags', "false") in ['true', 'True']
+    rating = request.args.get('rating', "false") in ['true', 'True']
 
     Question.create_question(question_text,
-                                    g.lti.get_user_id(),
-                                    g.lti.get_course_id(),
-                                    isActive,
-                                    request.args['time'],
-                                    comment,
-                                    tags,
-                                    rating)
-    return json.dumps({'done':True})
+                             g.lti.get_user_id(),
+                             g.lti.get_course_id(),
+                             isActive,
+                             request.args['time'],
+                             comment,
+                             tags,
+                             rating)
+    return json.dumps({'done': True})
+
 
 @app.route("/question_list", methods=['GET', 'POST'])
 def list_questions():
@@ -155,6 +139,7 @@ def list_questions_table():
 @app.route("/question_list/asked", methods=['GET', 'POST'])
 def list_questions_asked():
     return Question.get_list_asked()
+
 
 @app.route("/question_list/to_answer", methods=['GET', 'POST'])
 def list_questions_answer():
@@ -178,16 +163,13 @@ def import_export():
 
 @app.route("/import", methods=['GET', 'POST'])
 def import_data():
-    # do file uploading stuff
-    print repr(request.files)
     if 'file' not in request.files or not request.files['file']:
         return render_template('error.html', error="No file given.")
 
     data = request.files['file'].read()
     data = yaml.load(data)
     return Question.import_course(g.lti.get_user_id(), g.lti.get_course_id(),
-            data)
-
+                                  data)
 
 
 @app.route("/export", methods=['GET', 'POST'])
@@ -207,43 +189,49 @@ def question_import():
     list = yaml.load(request.args['file'])
     print list
 
+
 @app.route("/student_question", methods=['POST'])
 def student_question():
     ctrlr = Index()
     return ctrlr.student_question(request)
+
 
 @app.route("/get_student_questions", methods=['GET'])
 def get_student_questions():
     ctrlr = Index()
     return ctrlr.student_question(request)
 
+
 @app.route("/managetags", methods=['GET', 'POST'])
 def managetags():
     ctrler = Modifytags()
     return ctrler.render()
+
 
 @app.route("/addtags", methods=['GET', 'POST'])
 def addtags():
     ctrler = Modifytags()
     return ctrler.addtag(request.args)
 
+
 @app.route("/removetag", methods=['GET'])
 def removetags():
     ctrler = Modifytags()
     return ctrler.delete_tag_question(request.args['tagid'])
-    # return ctrler.render()
 
 
 @app.route("/removetaganswer", methods=['POST', 'GET'])
 def removetag_answer():
     ctrler = ReviewAnswer(request)
-    return ctrler.remove_tag_answer(request.args['answerid'], request.args['tagid'])
+    return ctrler.remove_tag_answer(request.args['answerid'],
+                                    request.args['tagid'])
 
 
 @app.route("/addtaganswer", methods=['POST', 'GET'])
 def addtag_answer():
     ctrler = ReviewAnswer(request)
-    return ctrler.add_tag_answer(request.args['answerid'], request.args['tagid'])
+    return ctrler.add_tag_answer(request.args['answerid'],
+                                 request.args['tagid'])
 
 
 @app.route("/answer", methods=['GET', 'POST'])
@@ -287,23 +275,23 @@ def handle_remove_tags():
     AssignTags.remove(request)
     return Index(request).render()
 
-    
+
 @app.route("/json/get_tags", methods=['POST', 'GET'])
 def json_get_tags():
-    query = request.args['q'] 
+    query = request.args['q']
     return Modifytags.json_get_tags(query)
 
 
 @app.route("/reviewanswer", methods=['POST', 'GET'])
 def handle_review_answer():
-    """ To review a answer, return reviewanswer.review(x) should be called from
+    """To review a answer, return reviewanswer.review(x) should be called from
     the controller deciding wich answer to review, this url handles storing the
-    reviews in the database (given a user has permission to do so) """
+    reviews in the database (given a user has permission to do so)."""
     ReviewAnswer(request)
     ctrler = Index()
     return ctrler.render()
 
-    
+
 @app.route("/reviewanswer_stub", methods=["POST", "GET"])
 def do_review_answer_stub():
     return ReviewAnswer.review()
@@ -325,12 +313,13 @@ def render_results():
 def review_stars(questionid):
     ctrler = Review_stats()
     return ctrler.render(questionid)
-    
+
+
 @app.route("/filteranswers/<questionid>", methods=['POST', 'GET'])
 def answerFilterByQuestionID(questionid):
     ctrler = Answer()
-    return ctrler.render_filtered(questionID=questionid, data=Review_stats().render(questionid))
-
+    return ctrler.render_filtered(questionID=questionid,
+                                  data=Review_stats().render(questionid))
 
 
 @app.route("/filteranswerstbl", methods=['POST', 'GET'])
@@ -341,7 +330,8 @@ def answerFilterTable():
         offset = int(request.args['offset'])
 
     ctrler = Answer()
-    return ctrler.render_filtered_tbl(limit,offset)
+    return ctrler.render_filtered_tbl(limit, offset)
+
 
 @app.route("/rankresults", methods=['POST', 'GET'])
 def render_results():

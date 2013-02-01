@@ -1,13 +1,69 @@
 {% extends "_base.html" %}
+
+{% block css %}
+{{ super() }}
+<style>
+    .vsep {
+        background-color: #e5e5e5;
+        width: 1px;
+        height: 200px;
+        margin: 3px 7px;
+    }
+
+    fieldset {
+        padding: 4px;
+    }
+</style>
+{% endblock %}
+
+{% block js %}
+{{ super() }}
+<script type="text/javascript">
+$(function() {
+    $('input[id=import_file]').change(function() {
+       $('#import_file_text').val($(this).val().split('\\').pop());
+    });
+});
+</script>
+{% endblock %}
+
+
 {% block content %}
-<form action="/import" method="post" enctype="multipart/form-data">
-    
-    <input type="file" name="file" />
-    <input class="btn btn-primary" type="submit" value="Import" />
-</form>
-<hr /> <!-- TODO: side-by-side? -->
-<form action="/export" method="post">
-    <!-- Options... -->
-    <input class="btn btn-primary" type="submit" value="Export" />
-</form>
+<div class="pull-left" style="min-width:250px;">
+    <form action="/import" method="post" enctype="multipart/form-data">
+        <fieldset>
+            <legend>Import data</legend>
+
+            <!-- Make the file thing look pretty by faking one. See JS too. -->
+            <input id="import_file" type="file" name="file" style="display:none" />
+            <div class="input-append">
+               <input id="import_file_text" class="input-large" type="text" />
+               <a class="btn" onclick="$('input[id=import_file]').click();">Browse</a>
+            </div>
+
+            <label class="checkbox">
+                <input type="checkbox" /> Include answers
+            </label>
+
+            <input class="btn btn-primary" type="submit" value="Import" />
+        </fieldset>
+    </form>
+</div>
+
+<div class="pull-left vsep"></div>
+
+<div class="pull-left" style="min-width:250px;">
+    <form action="/export" method="post">
+        <fieldset>
+            <legend>Export data</legend>
+
+            <label class="checkbox">
+                <input type="checkbox" /> Include answers
+            </label>
+
+            <input class="btn btn-primary" type="submit" value="Export" />
+        </fieldset>
+    </form>
+</div>
+
 {% endblock %}

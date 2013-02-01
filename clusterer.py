@@ -56,6 +56,7 @@ class Clusterer():
     if len(self.answers) < 1:
       raise ClusterError('you need to add at least 1 answer to Clusterer before calling run_clustering')
     lp = lang_parser.LanguageParser('en',self.answers)
+    lp.detect_language()
     lemma_answers = lp.get_keywords()
     
     # add lemmatized answers to data analyzer
@@ -138,6 +139,7 @@ class ClustererStars(Clusterer):
     if len(self.answers) < 1:
       raise ClusterError('you need to add at least 1 answer to Clusterer before calling run_clustering')
     lp = lang_parser.LanguageParser('en',self.answers)
+    lp.detect_language()
     lemma_answers = lp.get_keywords()
     
     # add lemmatized answers to data analyzer
