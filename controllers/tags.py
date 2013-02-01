@@ -35,9 +35,10 @@ class Modifytags():
         return render_template('modifytags.html',tags=self.taglist)        
         
     @staticmethod
-    def json_get_tags():    
+    def json_get_tags(q):    
        #create json file of all tags
        tags = Tag.get_all()
+       #tags = Tag.get_searched_tags(q)
        #list of dicytionaries
        data = []
        for tag in tags:

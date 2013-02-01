@@ -39,6 +39,11 @@ class Tag(Base, BaseEntity):
     @staticmethod
     def get_all():
         return session.query(Tag).filter().all()
+    
+    @staticmethod
+    def get_searched_tags(q):
+        return session.query(Tag).filter(Tag.name == q)
+    
 
     @staticmethod
     def add_tag(name):
